@@ -12,38 +12,63 @@ const port = process.env.PORT || 8080;
 // Middleware to parse JSON bodies
 app.use(express.json());
 
-// Predefined token for demonstration purposes
-const VALID_TOKEN = "my-secret-token";
-
-// Middleware to handle basic token-based authentication
-const basicAuth = (req: Request, res: Response, next: NextFunction): void => {
+const basicAuth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const authHeader = req.headers['authorization'];
 
   if (!authHeader || !authHeader.startsWith('Basic ')) {
     res.status(401).json({
-      status: "Unauthorized",
+      error: "Unauthorized",
       message: "No authorization header provided",
     });
     return;
   }
 
   // Extract the base64 encoded part of the header
-  const base64Credentials = authHeader.split(' ')[1];
+  const base64Credentials = authHeader?.split(' ')[1] || '';
   const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
   
-  // Expected format is 'username:token'
-  const [username, token] = credentials.split(':');
+  // Expected format is 'username:password'
+  const [username, password] = credentials.split(':');
 
-  if (!token || token !== VALID_TOKEN) {
-    res.status(403).json({
-      status: "Forbidden",
-      message: "Invalid or missing token",
+  if (!username || !password) {
+    res.status(400).json({
+      error: "Bad request",
+      message: "Missing username or password",
     });
     return;
   }
 
-  // Token is valid, proceed with the request
-  next();
+  try {
+    // Find the user by username (email in this case)
+    const user = await User.findOne({ where: { email: username } });
+
+    if (!user) {
+      res.status(404).json({
+        error: "Not Found",
+        message: "User not found",
+      });
+      return;
+    }
+
+    // Compare the password provided in Basic Auth with the stored hashed password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      res.status(403).json({
+        error: "Forbidden",
+        message: "Invalid credentials",
+      });
+      return;
+    }
+
+    // Password is valid, proceed with the request
+    next();
+  } catch (error) {
+    res.status(500).json({
+      error: "Internal server error",
+      message: "An error occurred during authentication",
+    });
+  }
 };
 
 // Middleware to check the database connection on every API call
@@ -51,12 +76,10 @@ const checkDatabaseConnection = async (req: Request, res: Response, next: NextFu
   try {
     // Attempt to authenticate with the database
     await sequelize.authenticate();
-    console.log("Database connection is active.");
     next();  // Proceed with the request
   } catch (error) {
-    console.error("Database connection failed.", error);
     res.status(503).json({
-      status: "Service Unavailable",
+      error: "Service Unavailable",
       message: "Database connection is not available",
     });
   }
@@ -65,18 +88,19 @@ const checkDatabaseConnection = async (req: Request, res: Response, next: NextFu
 // Middleware stack for both Basic Auth and DB Connection
 const authAndDbCheck = [basicAuth, checkDatabaseConnection];
 
-
-// Health check GET route that also requires valid token and DB check
+// Health check GET route that returns inputs without hardcoded status or message
 app.get("/healthz", async (req: Request, res: Response) => {
   try {
-    res.status(200).json({
-      status: "OK",
-      message: "Health check passed",
-    });
+    const inputs = {
+      headers: req.headers,
+      queryParams: req.query,
+      body: req.body,
+    };
+    res.status(200).send();
   } catch (error) {
     res.status(400).json({
-      status: "Error",
-      message: "An error occurred while processing data",
+      error: "Bad Request",
+      message: "Invalid input data",
     });
   }
 });
@@ -86,57 +110,43 @@ app.all('/healthz', (req: Request, res: Response) => {
   const allowedMethods = ['GET'];
   if (!allowedMethods.includes(req.method)) {
     res.set('Allow', allowedMethods.join(', '));
-   res.status(405).json({ message: 'Method Not Allowed' });
+    res.status(405).json({ message: 'Method Not Allowed' });
   }
 });
 
-
-// Authenticated endpoint for other API calls that require both token and DB connection
-app.post('/authenticated-endpoint', authAndDbCheck, (req: Request, res: Response) => {
-  res.status(200).json({
-    status: "OK",
-    message: "Successfully authenticated and database is connected",
-    data: req.body,
-  });
-});
-
-// Non-authenticated public endpoint (for testing purposes)
-app.get('/public', (req: Request, res: Response) => {
-  res.status(200).json({
-    status: "OK",
-    message: "Public endpoint",
-  });
-});
-
-
-// GET /v1/user/self - Get User Information
+// GET /v1/user/self - Get User Information excluding password
 app.get('/v1/user/self', authAndDbCheck, async (req: Request, res: Response) => {
   try {
-    // Extract the email (username) from Basic Auth
     const authHeader = req.headers['authorization'];
-    
-    if (!authHeader || !authHeader.startsWith('Basic ')) {
-       res.status(401).json({ message: 'Unauthorized: No authorization header provided' });
-       return;
-    }
-
-    // Decode the Basic Auth credentials
-    const base64Credentials = authHeader.split(' ')[1];
+    const base64Credentials = authHeader?.split(' ')[1] || '';
     const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
-    const [authenticatedEmail, token] = credentials.split(':');
+    const [authenticatedEmail] = credentials.split(':');
 
-    // Check if authenticatedEmail is undefined or invalid
-    if (!authenticatedEmail) {
-       res.status(400).json({ message: 'Invalid authentication credentials' });
-       return;
+    // Reject any query parameters
+    if (Object.keys(req.query).length > 0) {
+      res.status(400).json({
+        error: "Bad Request",
+        message: "Query parameters are not allowed for this route",
+      });
+      return;
+    }
+    // reject any body parameters
+    if (Object.keys(req.body).length > 0) {
+      res.status(400).json({
+        error: "Bad Request",
+        message: "Body parameters are not allowed for this route",
+      });
+      return;
     }
 
-    // Find the user by email (authenticatedEmail)
-    const user = await User.findOne({ where: { email: req.body.email } });
+    const user = await User.findOne({ where: { email: authenticatedEmail } });
 
     if (!user) {
-     res.status(404).json({ message: 'Self user not found' });
-     return;
+      res.status(404).json({
+        error: "Not Found",
+        message: "User not found",
+      });
+      return;
     }
 
     // Return user information (excluding password)
@@ -149,32 +159,51 @@ app.get('/v1/user/self', authAndDbCheck, async (req: Request, res: Response) => 
       account_updated: user.account_updated,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'An error occurred while fetching user information' });
+    res.status(500).json({
+      error: "Internal server error",
+      message: "An error occurred while fetching user information",
+    });
   }
 });
 
-
-// create user
+// POST /v1/user - Create User
 app.post('/v1/user', async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password, first_name, last_name } = req.body;
 
     // Validate input
     if (!email || !password || !first_name || !last_name) {
-       res.status(400).json({ message: 'Bad request: All fields are required' });
+      res.status(400).json({
+        error: "Bad Request",
+        message: "All fields are required (email, password, first_name, last_name)",
+      });
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      res.status(400).json({
+        error: "Bad Request",
+        message: "Invalid email format",
+      });
+      return;
     }
 
     // Check if user already exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
-       res.status(400).json({ message: 'Bad request: User with this email already exists' });
+      res.status(400).json({
+        error: "Bad Request",
+        message: "User with this email already exists",
+      });
+      return;
     }
 
-    // Hash the password using bcrypt with salt rounds
+    // Hash the password using bcrypt
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create the user (account_created and account_updated set automatically)
+    // Create the user
     const newUser = await User.create({
       email,
       first_name,
@@ -194,50 +223,50 @@ app.post('/v1/user', async (req: Request, res: Response): Promise<void> => {
       account_updated: newUser.account_updated,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Bad request: An error occurred while creating the user' });
+    res.status(500).json({
+      error: "Internal server error",
+      message: "An error occurred while creating the user",
+    });
   }
 });
 
-
-// PUT /v1/user/self - Update User Information - self
+// PUT /v1/user/self - Update User Information
 app.put('/v1/user/self', authAndDbCheck, async (req: Request, res: Response) => {
   try {
     const { first_name, last_name, password } = req.body;
 
-    // Extract the authenticated email (username) from Basic Auth
     const authHeader = req.headers['authorization'];
-    
-    if (!authHeader || !authHeader.startsWith('Basic ')) {
-       res.status(401).json({ message: 'Unauthorized: No authorization header provided' });
-       return;
-    }
-
-    // Decode the Basic Auth credentials
-    const base64Credentials = authHeader.split(' ')[1];
+    const base64Credentials = authHeader?.split(' ')[1] || '';
     const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
-    const [authenticatedEmail, token] = credentials.split(':');
+    const [authenticatedEmail] = credentials.split(':');
 
     // Ensure that the user is only trying to update their own account
-    const targetEmail = req.body.email;
-
-    if (authenticatedEmail !== targetEmail) {
-       res.status(403).json({ message: 'You are not allowed to update other users accounts.' });
-       return;
+    if (authenticatedEmail !== req.body.email) {
+      res.status(403).json({
+        error: "Forbidden",
+        message: "You are not allowed to update other users' accounts",
+      });
+      return;
     }
 
     // Validate input: make sure at least one field is provided
     if (!first_name && !last_name && !password) {
-       res.status(400).json({ message: 'Bad request: At least one field (first_name, last_name, or password) must be provided' });
-       return;
+      res.status(400).json({
+        error: "Bad Request",
+        message: "At least one field (first_name, last_name, or password) must be provided",
+      });
+      return;
     }
 
     // Find the user by authenticated email
     const user = await User.findOne({ where: { email: authenticatedEmail } });
 
     if (!user) {
-       res.status(404).json({ message: 'User not found' });
-       return;
+      res.status(404).json({
+        error: "Not Found",
+        message: "User not found",
+      });
+      return;
     }
 
     // Update user fields if provided
@@ -253,18 +282,22 @@ app.put('/v1/user/self', authAndDbCheck, async (req: Request, res: Response) => 
 
     res.status(204).send(); // No content on successful update
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'An error occurred while updating user information' });
+    res.status(500).json({
+      error: "Internal server error",
+      message: "An error occurred while updating user information",
+    });
   }
 });
-
 
 // Respond with 405 Method Not Allowed for unsupported methods on /v1/user/self
 app.all('/v1/user/self', (req: Request, res: Response) => {
   const allowedMethods = ['GET', 'PUT'];
   if (!allowedMethods.includes(req.method)) {
     res.set('Allow', allowedMethods.join(', '));
-    res.status(405).json({ message: 'Method Not Allowed' });
+    res.status(405).json({
+      error: "Method Not Allowed",
+      message: `Only ${allowedMethods.join(', ')} are allowed for this route`,
+    });
   }
 });
 
@@ -288,10 +321,7 @@ const processData = (data: any): Promise<any> => {
 // Start the server and bootstrap the database
 const startServer = async () => {
   try {
-    console.log("Bootstrapping the database...");
     await bootstrapDatabase(); // Bootstrap the database before starting the server
-
-    // Start the server
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);
     });
