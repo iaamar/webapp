@@ -69,7 +69,11 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
-
+      
+      - name: Kill Port 9000
+        run: |
+            sudo lsof -t -i tcp:9000 | xargs sudo kill -9
+    
       - name: Run Tests
         env:
           DB_HOST: localhost
