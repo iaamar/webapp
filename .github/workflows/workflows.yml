@@ -70,10 +70,10 @@ jobs:
       - name: Install Dependencies
         run: npm install
       
-      - name: Kill Port 9000
+      - name: Kill process using port 9000 if exists
         run: |
-            sudo lsof -t -i tcp:9000 | xargs sudo kill -9
-    
+          sudo lsof -t -i tcp:9000 | grep -q . && sudo lsof -t -i tcp:9000 | xargs sudo kill -9 || echo "No process running on port 9000"
+      
       - name: Run Tests
         env:
           DB_HOST: localhost
