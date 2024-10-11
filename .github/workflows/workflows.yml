@@ -9,20 +9,51 @@ on:
       - main
 
 jobs:
-  terraform-validate:
+  build:
     name: Integration Test Check
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout to our code
+      - name: Checkout our code
         uses: actions/checkout@v3
+
+      # Set up PostgreSQL
+      - name: Start PostgreSQL service
+        run: |
+          sudo systemctl start postgresql
+          sudo psql --version
+
+      # Set up PostgreSQL environment (create user, DB, and configure)
+      - name: Setup PostgreSQL Database
+        run: |
+          sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.DATABASE_NAME }};"
+          sudo -u postgres psql -c "CREATE USER ${{ secrets.DATABASE_USER }} WITH PASSWORD '${{ secrets.DATABASE_PASSWORD }}';"
+          sudo -u postgres psql -c "ALTER USER ${{ secrets.DATABASE_USER }} CREATEDB;"
+          sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.DATABASE_NAME }} TO ${{ secrets.DATABASE_USER }};"
+          sudo -u postgres psql -c "ALTER SYSTEM SET listen_addresses = '*';"
+        env:
+          PGHOST: localhost
+          PGUSER: ${{ secrets.DATABASE_USER }}
+          PGPASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          PGDATABASE: ${{ secrets.DATABASE_NAME }}
+          PGPORT: 5432
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: "21.x"
 
-      - name: npm install
-        run: npm install
+      - name: Install Dependencies
+        run: npm ci
 
-      - name: npm test
+      - name: "Check Environment Variables"
+        run: echo ${{ secrets.DATABASE_NAME }}
+
+      - name: Run Tests
+        env:
+          PGHOST: localhost
+          PGUSER: ${{ secrets.DATABASE_USER }}
+          PGPASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          PGDATABASE: ${{ secrets.DATABASE_NAME }}
+          PGPORT: 5432
         run: npm test

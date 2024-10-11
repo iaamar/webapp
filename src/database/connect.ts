@@ -6,7 +6,7 @@ const { Sequelize } = require('sequelize');
 
 // Construct the database URI using environment variables
 const DB_URI = `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`;
-console.log(DB_URI);
+
 // Initialize the Sequelize instance
 const sequelize = new Sequelize(DB_URI);
 
