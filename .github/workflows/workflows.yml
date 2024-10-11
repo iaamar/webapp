@@ -17,39 +17,38 @@ jobs:
       - name: Checkout our code
         uses: actions/checkout@v3
 
-      # Set up PostgreSQL
+      # Start PostgreSQL service
       - name: Start PostgreSQL service
         run: |
           sudo systemctl start postgresql
           sudo systemctl enable postgresql
           sudo psql --version
 
-      # Set up PostgreSQL environment (create user, DB, and configure)
+      # Destroy all databases and users, except for defaults (postgres, template0, template1)
+      - name: Drop all databases and users (except default ones)
+        run: |
+          sudo -u postgres psql -c "SELECT 'DROP DATABASE ' || datname || ';' FROM pg_database WHERE datname NOT IN ('postgres', 'template0', 'template1')" | sudo -u postgres psql
+          sudo -u postgres psql -c "SELECT 'DROP ROLE ' || rolname || ';' FROM pg_roles WHERE rolname NOT IN ('postgres', 'pg_signal_backend', 'pg_read_all_settings', 'pg_read_all_stats', 'pg_stat_scan_tables', 'pg_monitor')" | sudo -u postgres psql
+        shell: /bin/bash
+
+      # Recreate PostgreSQL environment (create user, DB, and configure)
       - name: Setup PostgreSQL Database
         run: |
-          # Check if the role exists, create if not
-          sudo -u postgres psql -c "DO \$$
-          BEGIN
-            IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = '${{ secrets.DB_USER }}') THEN
-              CREATE ROLE ${{ secrets.DB_USER }} WITH LOGIN PASSWORD '${{ secrets.DB_PASSWORD }}';
-            END IF;
-          END\$$;"
-          
-          # Check if the database exists and create it if it doesn't exist
-          if ! sudo -u postgres psql -lqt | cut -d \| -f 1 | grep -qw ${{ secrets.DB_DATABASE }}; then
-            sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.DB_DATABASE }};"
-          fi
-          # Grant privileges
+          # Create user and database for the application
+          sudo -u postgres psql -c "CREATE ROLE ${{ secrets.DB_USER }} WITH LOGIN PASSWORD '${{ secrets.DB_PASSWORD }}';"
+          sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.DB_DATABASE }};"
           sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.DB_DATABASE }} TO ${{ secrets.DB_USER }};"
-          sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON SCHEMA public TO ${{ secrets.DB_USER }};"
-          sudo -u postgres psql -c "ALTER USER ${{ secrets.DB_USER }} WITH SUPERUSER;"
-
+          sudo -u postgres psql -c "ALTER ROLE ${{ secrets.DB_USER }} WITH SUPERUSER;"
         env:
           DB_HOST: localhost
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_DATABASE: ${{ secrets.DB_DATABASE }}
           DB_PORT: ${{ secrets.DB_PORT }}
+
+      # Restart PostgreSQL to apply changes
+      - name: Restart PostgreSQL service
+        run: sudo systemctl restart postgresql
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -61,14 +60,7 @@ jobs:
 
       - name: "Check Environment Variables"
         run: echo ${{ secrets.DB_DATABASE }}
-      
-      - name: Drop conflicting schema if exists
-        run: |
-          sudo -u postgres psql -c "DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public;"
-      
-      - name: Restart PostgreSQL
-        run: sudo systemctl restart postgresql
-      
+
       - name: Run Tests
         env:
           DB_HOST: localhost
