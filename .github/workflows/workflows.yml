@@ -21,17 +21,16 @@ jobs:
       - name: Start PostgreSQL service
         run: |
           sudo systemctl start postgresql
+          sudo systemctl enable postgresql
           sudo psql --version
 
       # Set up PostgreSQL environment (create user, DB, and configure)
       - name: Setup PostgreSQL Database
         run: |
+          sudo -u postgres psql -c "CREATE ROLE ${{ secrets.DB_USER }} WITH LOGIN PASSWORD '${{ secrets.DB_PASSWORD }}';"
           sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.DB_DATABASE }};"
-          sudo -u postgres psql -c "CREATE USER ${{ secrets.DB_USER }} WITH PASSWORD '${{ secrets.DB_PASSWORD }}';"
-          sudo -u postgres psql -c "ALTER USER ${{ secrets.DB_USER }} CREATEDB;"
-          sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.DB_DATABASE }} TO ${{ secrets.DB_USER }};"
-          sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON SCHEMA public TO ${{ secrets.DB_USER }};"
-          sudo -u postgres psql -c "ALTER SYSTEM SET listen_addresses = '*';"
+          sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.DB_DATABASE }} TO ${{ secrets.DB_USER }}";
+          sudo -u postgres psql -c "ALTER USER ${{ secrets.DB_USER }} WITH SUPERUSER;
         env:
           DB_HOST: localhost
           DB_USER: ${{ secrets.DB_USER }}
