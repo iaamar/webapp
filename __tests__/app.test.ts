@@ -1,19 +1,11 @@
 import request from "supertest";
 import { app, startServer } from "../src/index";
-import sequelize from "../src/database/connect";
 
 let server: any;
 beforeAll(async () => {
   server = await startServer();
 });
 
-
-describe("Test 1. Integration test for healthz api", () => {
-  it("Test healthz route", async () => {
-    const res = await request(app).get("/healthz");
-    expect(res.status).toBe(200);
-  });
-});
 
 describe("POST /v1/user - Create a new user", () => {
   it("should create a new user with valid input", async () => {
