@@ -9,7 +9,7 @@ beforeAll(async () => {
 
 
 describe("Test 1. Integration test for healthz api", () => {
-  test("Test healthz route", async () => {
+  it("Test healthz route", async () => {
     const res = await request(app).get("/healthz");
     expect(res.status).toBe(200);
   });
