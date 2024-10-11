@@ -1,0 +1,78 @@
+name: Integration Test Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Integration Test Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout our code
+        uses: actions/checkout@v3
+
+      # Uninstall PostgreSQL completely (optional)
+      - name: Uninstall PostgreSQL
+        run: |
+          sudo systemctl stop postgresql
+          sudo apt-get --purge remove postgresql postgresql-client postgresql-client-common postgresql-common -y
+          sudo apt-get autoremove -y
+          sudo apt-get autoclean -y
+          sudo rm -rf /var/lib/postgresql/
+          sudo rm -rf /etc/postgresql/
+          sudo rm -rf /etc/postgresql-common/
+          sudo rm -rf /var/log/postgresql/
+          sudo deluser postgres
+
+      # Reinstall PostgreSQL
+      - name: Reinstall PostgreSQL
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install postgresql postgresql-contrib -y
+          sudo systemctl start postgresql
+          sudo systemctl enable postgresql
+          sudo psql --version
+
+      # Recreate PostgreSQL environment (create user, DB, and configure)
+     # Recreate PostgreSQL environment (create user, DB, and configure)
+      - name: Setup PostgreSQL Database
+        run: |
+          sudo -u postgres psql -c "DROP DATABASE IF EXISTS ${{ secrets.DB_DATABASE }};"
+          sudo -u postgres psql -c "DROP ROLE IF EXISTS ${{ secrets.DB_USER }};"
+          sudo -u postgres psql -c "CREATE ROLE ${{ secrets.DB_USER }} WITH LOGIN PASSWORD '${{ secrets.DB_PASSWORD }}';"
+          sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.DB_DATABASE }};"
+          sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.DB_DATABASE }} TO ${{ secrets.DB_USER }};"
+          sudo -u postgres psql -c "ALTER ROLE ${{ secrets.DB_USER }} WITH SUPERUSER;"
+
+      # Restart PostgreSQL to apply changes
+      - name: Restart PostgreSQL service
+        run: sudo systemctl restart postgresql
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "21.x"
+
+      - name: Install Dependencies
+        run: npm install
+      
+      - name: Reset PostgreSQL Schema
+        run: |
+          sudo -u postgres psql -c "DROP SCHEMA public CASCADE;"
+          sudo -u postgres psql -c "CREATE SCHEMA public;"
+      
+      - name: Run Tests
+        env:
+          DB_HOST: localhost
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_DATABASE: ${{ secrets.DB_DATABASE }}
+          DB_PORT: 5432
+          PORT: 9001
+        run: npm test

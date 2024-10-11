@@ -7,7 +7,7 @@ import bcrypt from "bcrypt";
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 9001;
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -336,3 +336,5 @@ const startServer = async () => {
 
 // Initialize the server
 startServer();
+
+export {app, startServer};
