@@ -61,7 +61,12 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
-
+      
+      - name: Reset PostgreSQL Schema
+        run: |
+          sudo -u postgres psql -c "DROP SCHEMA public CASCADE;"
+          sudo -u postgres psql -c "CREATE SCHEMA public;"
+      
       - name: Run Tests
         env:
           DB_HOST: localhost
