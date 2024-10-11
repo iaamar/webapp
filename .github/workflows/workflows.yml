@@ -30,6 +30,7 @@ jobs:
           sudo -u postgres psql -c "CREATE USER ${{ secrets.DB_USER }} WITH PASSWORD '${{ secrets.DB_PASSWORD }}';"
           sudo -u postgres psql -c "ALTER USER ${{ secrets.DB_USER }} CREATEDB;"
           sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.DB_DATABASE }} TO ${{ secrets.DB_USER }};"
+          sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON SCHEMA public TO ${{ secrets.DATABASE_USER }};"
           sudo -u postgres psql -c "ALTER SYSTEM SET listen_addresses = '*';"
         env:
           DB_HOST: localhost
