@@ -29,7 +29,6 @@ jobs:
           sudo rm -rf /etc/postgresql-common/
           sudo rm -rf /var/log/postgresql/
           sudo deluser postgres
-          sudo delgroup postgres
         shell: bash
 
       # Reinstall PostgreSQL
