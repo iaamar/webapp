@@ -17,7 +17,7 @@ jobs:
       - name: Checkout our code
         uses: actions/checkout@v3
 
-      # Uninstall PostgreSQL completely
+      # Uninstall PostgreSQL completely (optional)
       - name: Uninstall PostgreSQL
         run: |
           sudo systemctl stop postgresql
@@ -29,7 +29,6 @@ jobs:
           sudo rm -rf /etc/postgresql-common/
           sudo rm -rf /var/log/postgresql/
           sudo deluser postgres
-        shell: bash
 
       # Reinstall PostgreSQL
       - name: Reinstall PostgreSQL
@@ -39,24 +38,14 @@ jobs:
           sudo systemctl start postgresql
           sudo systemctl enable postgresql
           sudo psql --version
-        shell: bash
 
       # Recreate PostgreSQL environment (create user, DB, and configure)
       - name: Setup PostgreSQL Database
         run: |
-          # Drop the database if it exists, then recreate it
-          sudo -u postgres psql -c "DROP DATABASE IF EXISTS ${{ secrets.DB_DATABASE }};"
-          sudo -u postgres psql -c "DROP ROLE IF EXISTS ${{ secrets.DB_USER }};"
           sudo -u postgres psql -c "CREATE ROLE ${{ secrets.DB_USER }} WITH LOGIN PASSWORD '${{ secrets.DB_PASSWORD }}';"
           sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.DB_DATABASE }};"
           sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.DB_DATABASE }} TO ${{ secrets.DB_USER }};"
           sudo -u postgres psql -c "ALTER ROLE ${{ secrets.DB_USER }} WITH SUPERUSER;"
-        env:
-          DB_HOST: localhost
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_DATABASE: ${{ secrets.DB_DATABASE }}
-          DB_PORT: ${{ secrets.DB_PORT }}
 
       # Restart PostgreSQL to apply changes
       - name: Restart PostgreSQL service
@@ -69,11 +58,7 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
-      
-      - name: Kill process using port 9000 if exists
-        run: |
-          sudo lsof -t -i tcp:9000 | grep -q . && sudo lsof -t -i tcp:9000 | xargs sudo kill -9 || echo "No process running on port 9000"
-      
+
       - name: Run Tests
         env:
           DB_HOST: localhost
@@ -81,5 +66,5 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_DATABASE: ${{ secrets.DB_DATABASE }}
           DB_PORT: 5432
-          PORT: 9000
+          PORT: 9001
         run: npm test
