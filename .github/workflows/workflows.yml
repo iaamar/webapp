@@ -39,11 +39,11 @@ jobs:
           if ! sudo -u postgres psql -lqt | cut -d \| -f 1 | grep -qw ${{ secrets.DB_DATABASE }}; then
             sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.DB_DATABASE }};"
           fi
-          
           # Grant privileges
           sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.DB_DATABASE }} TO ${{ secrets.DB_USER }};"
           sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON SCHEMA public TO ${{ secrets.DB_USER }};"
           sudo -u postgres psql -c "ALTER USER ${{ secrets.DB_USER }} WITH SUPERUSER;"
+
         env:
           DB_HOST: localhost
           DB_USER: ${{ secrets.DB_USER }}
@@ -58,14 +58,17 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
-        
-      - name: Drop existing schema if exists
-        run: |
-          sudo -u postgres psql -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
-      
+
       - name: "Check Environment Variables"
         run: echo ${{ secrets.DB_DATABASE }}
-
+      
+      - name: Drop conflicting schema if exists
+        run: |
+          sudo -u postgres psql -c "DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public;"
+      
+      - name: Restart PostgreSQL
+        run: sudo systemctl restart postgresql
+      
       - name: Run Tests
         env:
           DB_HOST: localhost
