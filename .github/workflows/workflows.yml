@@ -44,7 +44,7 @@ jobs:
           node-version: "21.x"
 
       - name: Install Dependencies
-        run: npm ci
+        run: npm install
 
       - name: "Check Environment Variables"
         run: echo ${{ secrets.DB_DATABASE }}
