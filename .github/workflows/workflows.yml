@@ -17,35 +17,44 @@ jobs:
       - name: Checkout our code
         uses: actions/checkout@v3
 
-       # Start PostgreSQL service
-      - name: Start PostgreSQL service
+      # Uninstall PostgreSQL completely
+      - name: Uninstall PostgreSQL
         run: |
+          sudo systemctl stop postgresql
+          sudo apt-get --purge remove postgresql postgresql-client postgresql-client-common postgresql-common -y
+          sudo apt-get autoremove -y
+          sudo apt-get autoclean -y
+          sudo rm -rf /var/lib/postgresql/
+          sudo rm -rf /etc/postgresql/
+          sudo rm -rf /etc/postgresql-common/
+          sudo rm -rf /var/log/postgresql/
+          sudo deluser postgres
+        shell: bash
+
+      # Reinstall PostgreSQL
+      - name: Reinstall PostgreSQL
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install postgresql postgresql-contrib -y
           sudo systemctl start postgresql
           sudo systemctl enable postgresql
+          sudo psql --version
+        shell: bash
 
-          - name: Setup PostgreSQL Database
-          run: |
-            # Check if the role exists, create it if not
-            sudo -u postgres psql -c "DO \$\$
-            BEGIN
-              IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = '${{ secrets.DB_USER }}') THEN
-                CREATE ROLE ${{ secrets.DB_USER }} WITH LOGIN PASSWORD '${{ secrets.DB_PASSWORD }}';
-              END IF;
-            END\$\$;"
-        
-            # Check if the database exists, create it if not
-            sudo -u postgres psql -c "DO \$\$
-            BEGIN
-              IF NOT EXISTS (SELECT FROM pg_database WHERE datname = '${{ secrets.DB_DATABASE }}') THEN
-                CREATE DATABASE ${{ secrets.DB_DATABASE }};
-              END IF;
-            END\$\$;"
-        
-            # Grant privileges
-            sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.DB_DATABASE }} TO ${{ secrets.DB_USER }};"
-            sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON SCHEMA public TO ${{ secrets.DB_USER }};"
-            sudo -u postgres psql -c "ALTER USER ${{ secrets.DB_USER }} WITH SUPERUSER;"
-        
+      # Recreate PostgreSQL environment (create user, DB, and configure)
+      - name: Setup PostgreSQL Database
+        run: |
+          sudo -u postgres psql -c "CREATE ROLE ${{ secrets.DB_USER }} WITH LOGIN PASSWORD '${{ secrets.DB_PASSWORD }}';"
+          sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.DB_DATABASE }};"
+          sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.DB_DATABASE }} TO ${{ secrets.DB_USER }};"
+          sudo -u postgres psql -c "ALTER ROLE ${{ secrets.DB_USER }} WITH SUPERUSER;"
+        env:
+          DB_HOST: localhost
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_DATABASE: ${{ secrets.DB_DATABASE }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+
       # Restart PostgreSQL to apply changes
       - name: Restart PostgreSQL service
         run: sudo systemctl restart postgresql
