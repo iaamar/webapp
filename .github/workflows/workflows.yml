@@ -22,7 +22,33 @@ jobs:
         run: |
           sudo systemctl start postgresql
           sudo systemctl enable postgresql
-          sudo psql --version
+
+          - name: Setup PostgreSQL Database
+          run: |
+            # Check if the role exists, create it if not
+            sudo -u postgres psql -c "DO \$\$
+            BEGIN
+              IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = '${{ secrets.DB_USER }}') THEN
+                CREATE ROLE ${{ secrets.DB_USER }} WITH LOGIN PASSWORD '${{ secrets.DB_PASSWORD }}';
+              END IF;
+            END\$\$;"
+        
+            # Check if the database exists, create it if not
+            sudo -u postgres psql -c "DO \$\$
+            BEGIN
+              IF NOT EXISTS (SELECT FROM pg_database WHERE datname = '${{ secrets.DB_DATABASE }}') THEN
+                CREATE DATABASE ${{ secrets.DB_DATABASE }};
+              END IF;
+            END\$\$;"
+        
+            # Grant privileges
+            sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.DB_DATABASE }} TO ${{ secrets.DB_USER }};"
+            sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON SCHEMA public TO ${{ secrets.DB_USER }};"
+            sudo -u postgres psql -c "ALTER USER ${{ secrets.DB_USER }} WITH SUPERUSER;"
+        
+      # Restart PostgreSQL to apply changes
+      - name: Restart PostgreSQL service
+        run: sudo systemctl restart postgresql
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -39,4 +65,5 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_DATABASE: ${{ secrets.DB_DATABASE }}
           DB_PORT: 5432
+          PORT: 3000
         run: npm test
