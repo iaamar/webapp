@@ -26,17 +26,17 @@ jobs:
       # Set up PostgreSQL environment (create user, DB, and configure)
       - name: Setup PostgreSQL Database
         run: |
-          sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.DATABASE_NAME }};"
-          sudo -u postgres psql -c "CREATE USER ${{ secrets.DATABASE_USER }} WITH PASSWORD '${{ secrets.DATABASE_PASSWORD }}';"
-          sudo -u postgres psql -c "ALTER USER ${{ secrets.DATABASE_USER }} CREATEDB;"
-          sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.DATABASE_NAME }} TO ${{ secrets.DATABASE_USER }};"
+          sudo -u postgres psql -c "CREATE DATABASE ${{ env.DB_USER }};"
+          sudo -u postgres psql -c "CREATE USER ${{ env.DB_USER }} WITH PASSWORD '${{ env.DB_PASSWORD }}';"
+          sudo -u postgres psql -c "ALTER USER ${{ env.DB_USER }} CREATEDB;"
+          sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ env.DB_USER }} TO ${{ env.DB_USER }};"
           sudo -u postgres psql -c "ALTER SYSTEM SET listen_addresses = '*';"
         env:
           PGHOST: localhost
-          PGUSER: ${{ secrets.DATABASE_USER }}
-          PGPASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-          PGDATABASE: ${{ secrets.DATABASE_NAME }}
-          PGPORT: 5432
+          PGUSER: ${{ env.DB_USER }}
+          PGPASSWORD: ${{ env.DB_PASSWORD }}
+          PGDATABASE: ${{ env.DB_DATABASE }}
+          PGPORT: ${{ env.DB_PORT }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -47,13 +47,13 @@ jobs:
         run: npm ci
 
       - name: "Check Environment Variables"
-        run: echo ${{ secrets.DATABASE_NAME }}
+        run: echo ${{ env.DB_DATABASE }}
 
       - name: Run Tests
         env:
           PGHOST: localhost
-          PGUSER: ${{ secrets.DATABASE_USER }}
-          PGPASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-          PGDATABASE: ${{ secrets.DATABASE_NAME }}
+          PGUSER: ${{ env.DB_USER }}
+          PGPASSWORD: ${{ env.DB_PASSWORD }}
+          PGDATABASE: ${{ env.DB_NAME }}
           PGPORT: 5432
         run: npm test
