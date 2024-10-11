@@ -11,7 +11,7 @@ beforeAll(async () => {
 describe("Test 1. Integration test for healthz api", () => {
   test("Test healthz route", async () => {
     const res = await request(app).get("/healthz");
-    expect(res.status).toEqual(200);
+    expect(res.status).toBe(200);
   });
 });
 
@@ -25,7 +25,6 @@ describe("POST /v1/user - Create a new user", () => {
     };
 
     const response = await request(app).post("/v1/user").send(dummyUser);
-    console.log(response.body);
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty("id");
     expect(response.body.email).toBe(dummyUser.email);
