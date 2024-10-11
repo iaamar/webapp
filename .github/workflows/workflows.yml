@@ -17,26 +17,29 @@ jobs:
       - name: Checkout our code
         uses: actions/checkout@v3
 
-      # Start PostgreSQL service
-      - name: Start PostgreSQL service
+      # Uninstall PostgreSQL completely
+      - name: Uninstall PostgreSQL
         run: |
+          sudo systemctl stop postgresql
+          sudo apt-get --purge remove postgresql postgresql-client postgresql-client-common postgresql-common -y
+          sudo apt-get autoremove -y
+          sudo apt-get autoclean -y
+          sudo rm -rf /var/lib/postgresql/
+          sudo rm -rf /etc/postgresql/
+          sudo rm -rf /etc/postgresql-common/
+          sudo rm -rf /var/log/postgresql/
+          sudo deluser postgres
+          sudo delgroup postgres
+        shell: bash
+
+      # Reinstall PostgreSQL
+      - name: Reinstall PostgreSQL
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install postgresql postgresql-contrib -y
           sudo systemctl start postgresql
           sudo systemctl enable postgresql
           sudo psql --version
-
-      # Destroy all databases and users, except for defaults (postgres, template0, template1)
-      - name: Drop all databases and users (except default ones)
-        run: |
-          sudo -u postgres psql -c "DO $$ BEGIN
-            EXECUTE 'DROP DATABASE IF EXISTS ' || datname || ';'
-            FROM pg_database
-            WHERE datname NOT IN ('postgres', 'template0', 'template1');
-          END $$;"
-          sudo -u postgres psql -c "DO $$ BEGIN
-            EXECUTE 'DROP ROLE IF EXISTS ' || rolname || ';'
-            FROM pg_roles
-            WHERE rolname NOT IN ('postgres', 'pg_signal_backend', 'pg_read_all_settings', 'pg_read_all_stats', 'pg_stat_scan_tables', 'pg_monitor');
-          END $$;"
         shell: bash
 
       # Recreate PostgreSQL environment (create user, DB, and configure)
@@ -64,9 +67,6 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
-
-      - name: "Check Environment Variables"
-        run: echo ${{ secrets.DB_DATABASE }}
 
       - name: Run Tests
         env:
