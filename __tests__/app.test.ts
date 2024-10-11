@@ -7,10 +7,6 @@ beforeAll(async () => {
   server = await startServer();
 });
 
-afterAll(async () => {
-  await sequelize.close();
-  server.close();
-});
 
 describe("Test 1. Integration test for healthz api", () => {
   test("Test healthz route", async () => {
