@@ -17,6 +17,13 @@ jobs:
       - name: Checkout our code
         uses: actions/checkout@v3
 
+       # Start PostgreSQL service
+      - name: Start PostgreSQL service
+        run: |
+          sudo systemctl start postgresql
+          sudo systemctl enable postgresql
+          sudo psql --version
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -32,5 +39,4 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_DATABASE: ${{ secrets.DB_DATABASE }}
           DB_PORT: 5432
-          PORT: 3000
         run: npm test
