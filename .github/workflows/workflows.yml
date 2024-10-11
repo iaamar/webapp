@@ -58,7 +58,11 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
-
+        
+      - name: Drop existing schema if exists
+        run: |
+          sudo -u postgres psql -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+      
       - name: "Check Environment Variables"
         run: echo ${{ secrets.DB_DATABASE }}
 
