@@ -335,4 +335,6 @@ const startServer = async () => {
 };
 
 // Initialize the server
-startServer();
+// startServer();
+
+export {app, startServer};
