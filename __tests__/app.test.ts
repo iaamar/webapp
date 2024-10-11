@@ -1,20 +1,36 @@
 import request from "supertest";
 import { app, startServer } from "../src/index";
+import { bootstrapDatabase } from "../src/database/connect";
+
 
 let server: any;
+let port;
+
 beforeAll(async () => {
-  server = await startServer();
+  await bootstrapDatabase(); // Initialize the database once before the tests
+});
+
+afterEach(async () => {
+  if (server) {
+    await server.close(); // Close the server after each test to free the port
+  }
 });
 
 
 describe("Test 1. Integration test for healthz api", () => {
-  it("Test healthz route", async () => {
-    const res = await request(app).get("/healthz");
-    expect(res.status).toBe(200);
+  server = app.listen(0); // Use dynamic port assignment
+  port = server.address().port; // Get the dynamically assigned port
+  
+  test('Test healthz route', async () => {
+    const res = await request(app).get(`/healthz`);
+    expect(res.statusCode).toEqual(200);
   });
 });
 
 describe("POST /v1/user - Create a new user", () => {
+  server = app.listen(0); // Use dynamic port assignment
+  port = server.address().port; // Get the dynamically assigned port
+  
   it("should create a new user with valid input", async () => {
     const dummyUser = {
       email: "ama@gmail.com",
