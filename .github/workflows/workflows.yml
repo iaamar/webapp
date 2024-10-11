@@ -1,14 +1,17 @@
 name: Integaration Test Workflow
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
-  build:
+  terraform-validate:
     name: Integration Test Check
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout to our code
         uses: actions/checkout@v3
@@ -18,8 +21,8 @@ jobs:
         with:
           node-version: "21.x"
 
-      - name: Install Dependencies
-        run: npm ci
+      - name: npm install
+        run: npm install
 
-      - name: Run Test
+      - name: npm test
         run: npm test
