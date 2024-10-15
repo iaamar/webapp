@@ -5,7 +5,7 @@ on:
     branches:
       - main
 
-      
+
 jobs:
   build:
     name: Integration Test Check
@@ -74,11 +74,12 @@ jobs:
       # Install Node.js dependencies
       - name: Install Dependencies
         run: npm install
-
-      # Run Sequelize migrations or schema sync (if applicable)
-      - name: Run Sequelize Migrations
-        run: npx sequelize-cli db:migrate
-
+      
+      - name: Reset PostgreSQL Schema
+        run: |
+          sudo -u postgres psql -c "DROP SCHEMA public CASCADE;"
+          sudo -u postgres psql -c "CREATE SCHEMA public;"
+      
       # Run Tests
       - name: Run Tests
         env:
