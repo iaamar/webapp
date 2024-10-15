@@ -6,7 +6,7 @@ on:
       - main
 env:
   PKR_VAR_ami_name: ${{ secrets.AMI_NAME }}
-  PKR_VAR_ami_regions: ${{ secrets.AMI_REGION }}
+  PKR_VAR_ami_regions: ${{ secrets.AMI_REGIONS }}
   PKR_VAR_ami_description: ${{ secrets.AMI_DESCRIPTION }}
   PKR_VAR_source_ami: ${{ secrets.SOURCE_AMI }}
   PKR_VAR_instance_type: ${{ secrets.INSTANCE_TYPE }}
