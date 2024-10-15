@@ -1,0 +1,42 @@
+name: Packer CI Workflow
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  built:
+    name: Packer CI
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Install Packer
+      uses: hashicorp/setup-packer@main
+      id: setup
+      with:
+        version: latest
+  
+    - name: Setup env
+      run: echo "Setting up environment variables"
+      env:
+        ami_name: ${{ secrets.AMI_NAME }}
+        ami_regions: ${{ secrets.AWS_REGION }}
+        ami_description: ${{ secrets.AMI_DESCRIPTION }}
+        source_ami: ${{ secrets.SOURCE_AMI }}
+        instance_type: ${{ secrets.INSTANCE_TYPE }}
+        ssh_username: ${{ secrets.SSH_USERNAME }}
+        subnet_id: ${{ secrets.SUBNET_ID }}
+        region: ${{ secrets.REGION }}
+
+    - name: Install plugins
+      run: packer init packer/aws.pkr.hcl
+
+    - name: Run packer fmt
+      run: packer fmt -check packer/aws.pkr.hcl
+
+    - name: Validate Packer template
+      run: packer validate packer/aws.pkr.hcl
