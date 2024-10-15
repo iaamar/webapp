@@ -1,4 +1,4 @@
-name: Build Packer Image Workflow
+name: Packer Build Image Workflow
 
 on:
   push:
@@ -16,7 +16,7 @@ env:
   PKR_VAR_region: ${{ secrets.REGION }}
   PKR_VAR_db_user: ${{ secrets.DB_USER }}
   PKR_VAR_db_password: ${{ secrets.DB_PASSWORD }}
-  PKR_VAR_db_name: ${{ secrets.DB_NAME }}
+  PKR_VAR_db_name: ${{ secrets.DB_DATABASE }}
       
 jobs:
   build:
