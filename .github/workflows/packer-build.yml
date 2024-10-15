@@ -55,6 +55,7 @@ jobs:
     #     npm install
     #     npm run build
 
+    
     - name: Build Packer Image
       run: |
         packer build packer/aws.pkr.hcl
