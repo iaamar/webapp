@@ -5,17 +5,17 @@ on:
     branches:
       - main
 env:
-  ami_name: ${{ secrets.AMI_NAME }}
-  ami_regions: ${{ secrets.AMI_REGION }}
-  ami_description: ${{ secrets.AMI_DESCRIPTION }}
-  source_ami: ${{ secrets.SOURCE_AMI }}
-  instance_type: ${{ secrets.INSTANCE_TYPE }}
-  ssh_username: ${{ secrets.SSH_USERNAME }}
-  subnet_id: ${{ secrets.SUBNET_ID }}
-  region: ${{ secrets.REGION }}
-  db_user: ${{ secrets.DB_USER }}
-  db_password: ${{ secrets.DB_PASSWORD }}
-  db_name: ${{ secrets.DB_NAME }}
+  PKR_VAR_ami_name: ${{ secrets.AMI_NAME }}
+  PKR_VAR_ami_regions: ${{ secrets.AMI_REGION }}
+  PKR_VAR_ami_description: ${{ secrets.AMI_DESCRIPTION }}
+  PKR_VAR_source_ami: ${{ secrets.SOURCE_AMI }}
+  PKR_VAR_instance_type: ${{ secrets.INSTANCE_TYPE }}
+  PKR_VAR_ssh_username: ${{ secrets.SSH_USERNAME }}
+  PKR_VAR_subnet_id: ${{ secrets.SUBNET_ID }}
+  PKR_VAR_region: ${{ secrets.REGION }}
+  PKR_VAR_db_user: ${{ secrets.DB_USER }}
+  PKR_VAR_db_password: ${{ secrets.DB_PASSWORD }}
+  PKR_VAR_db_name: ${{ secrets.DB_NAME }}
         
 jobs:
   built:
@@ -31,6 +31,31 @@ jobs:
       id: setup
       with:
         version: latest
+    
+    - name: Show env variables
+      run: |
+        echo $PKR_VAR_ami_name
+        echo $PKR_VAR_ami_regions
+        echo $PKR_VAR_ami_description
+        echo $PKR_VAR_source_ami
+        echo $PKR_VAR_instance_type
+        echo $PKR_VAR_ssh_username
+        echo $PKR_VAR_subnet_id
+        echo $PKR_VAR_region
+        echo $PKR_VAR_db_user
+        echo $PKR_VAR_db_password
+        echo $PKR_VAR_db_name
+        echo $ami_name
+        echo $ami_regions
+        echo $ami_description
+        echo $source_ami
+        echo $instance_type
+        echo $ssh_username
+        echo $subnet_id
+        echo $region
+        echo $db_user
+        echo $db_password
+        echo $db_name
 
     - name: Install plugins
       run: packer init packer/aws.pkr.hcl
