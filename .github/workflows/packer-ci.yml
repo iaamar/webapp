@@ -4,7 +4,19 @@ on:
   push:
     branches:
       - main
-
+env:
+  ami_name: ${{ secrets.AMI_NAME }}
+  ami_regions: ${{ secrets.AMI_REGION }}
+  ami_description: ${{ secrets.AMI_DESCRIPTION }}
+  source_ami: ${{ secrets.SOURCE_AMI }}
+  instance_type: ${{ secrets.INSTANCE_TYPE }}
+  ssh_username: ${{ secrets.SSH_USERNAME }}
+  subnet_id: ${{ secrets.SUBNET_ID }}
+  region: ${{ secrets.REGION }}
+  db_user: ${{ secrets.DB_USER }}
+  db_password: ${{ secrets.DB_PASSWORD }}
+  db_name: ${{ secrets.DB_NAME }}
+        
 jobs:
   built:
     name: Packer CI
@@ -19,35 +31,6 @@ jobs:
       id: setup
       with:
         version: latest
-  
-    - name: Setup env
-      env:
-        ami_name: ${{ secrets.AMI_NAME }}
-        ami_regions: ${{ secrets.AWS_REGION }}
-        ami_description: ${{ secrets.AMI_DESCRIPTION }}
-        source_ami: ${{ secrets.SOURCE_AMI }}
-        instance_type: ${{ secrets.INSTANCE_TYPE }}
-        ssh_username: ${{ secrets.SSH_USERNAME }}
-        subnet_id: ${{ secrets.SUBNET_ID }}
-        region: ${{ secrets.REGION }}
-      # echo the env vars to the console
-      run: |
-        echo "AMI Name: $ami_name"
-        echo "AMI Regions: $ami_regions"
-        echo "AMI Description: $ami_description"
-        echo "Source AMI: $source_ami"
-        echo "Instance Type: $instance_type"
-        echo "SSH Username: $ssh_username"
-        echo "Subnet ID: $subnet_id"
-        echo "Region: $region"
-        echo ${{ secrets.AMI_NAME }}
-        echo ${{ secrets.AWS_REGION }}
-        echo ${{ secrets.AMI_DESCRIPTION }}
-        echo ${{ secrets.SOURCE_AMI }}
-        echo ${{ secrets.INSTANCE_TYPE }}
-        echo ${{ secrets.SSH_USERNAME }}
-        echo ${{ secrets.SUBNET_ID }}
-        echo ${{ secrets.REGION }}
 
     - name: Install plugins
       run: packer init packer/aws.pkr.hcl
