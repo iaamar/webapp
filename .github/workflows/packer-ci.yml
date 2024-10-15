@@ -39,4 +39,4 @@ jobs:
       run: packer fmt -check packer/aws.pkr.hcl
 
     - name: Validate Packer template
-      run: packer validate packer/aws.pkr.hcl
+      run: packer validate -var-file=packer/aws.auto.pkrvars.hcl packer/aws.pkr.hcl
