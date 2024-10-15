@@ -1,9 +1,6 @@
 name: Integration Test Workflow
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
@@ -15,22 +12,34 @@ jobs:
 
     steps:
       - name: Checkout our code
-        env:
-          ACTIONS_RUNNER_DEBUG: true
         uses: actions/checkout@v3
 
-      # Uninstall PostgreSQL completely (optional)
-      - name: Uninstall PostgreSQL
+      # Uninstall PostgreSQL completely and remove all related files
+      - name: Uninstall PostgreSQL and clean up
         run: |
+          # Stop the PostgreSQL service
           sudo systemctl stop postgresql
+
+          # Uninstall PostgreSQL and related packages
           sudo apt-get --purge remove postgresql postgresql-client postgresql-client-common postgresql-common -y
           sudo apt-get autoremove -y
           sudo apt-get autoclean -y
+
+          # Remove PostgreSQL data directories and configuration files
           sudo rm -rf /var/lib/postgresql/
           sudo rm -rf /etc/postgresql/
           sudo rm -rf /etc/postgresql-common/
           sudo rm -rf /var/log/postgresql/
-          sudo deluser postgres
+          sudo rm -rf /usr/lib/postgresql/
+          sudo rm -rf /usr/share/postgresql/
+          sudo rm -rf /run/postgresql/
+
+          # Remove the 'postgres' user and group (if it exists)
+          sudo deluser postgres || true
+          sudo delgroup postgres || true
+
+          # Clean up any lingering systemd services related to PostgreSQL
+          sudo systemctl daemon-reload
 
       # Reinstall PostgreSQL
       - name: Reinstall PostgreSQL
@@ -55,31 +64,15 @@ jobs:
       - name: Restart PostgreSQL service
         run: sudo systemctl restart postgresql
 
+      # Setup Node.js environment
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: "21.x"
 
+      # Install Node.js dependencies
       - name: Install Dependencies
         run: npm install
-
-      # Reset PostgreSQL Schema and ensure no leftover types or constraints remain
-      - name: Reset PostgreSQL Schema
-        run: |
-          sudo -u postgres psql -c "DROP SCHEMA public CASCADE;"
-          sudo -u postgres psql -c "CREATE SCHEMA public;"
-          sudo -u postgres psql -c "DO $$ 
-            DECLARE
-              r RECORD;
-            BEGIN
-              FOR r IN (SELECT typname, nspname 
-                        FROM pg_type
-                        JOIN pg_namespace ON pg_type.typnamespace = pg_namespace.oid
-                        WHERE nspname = 'public') 
-              LOOP
-                EXECUTE 'DROP TYPE IF EXISTS ' || quote_ident(r.nspname) || '.' || quote_ident(r.typname) || ' CASCADE';
-              END LOOP;
-            END $$;"
 
       # Run Sequelize migrations or schema sync (if applicable)
       - name: Run Sequelize Migrations
