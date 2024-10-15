@@ -21,7 +21,6 @@ jobs:
         version: latest
   
     - name: Setup env
-      run: echo "Setting up environment variables"
       env:
         ami_name: ${{ secrets.AMI_NAME }}
         ami_regions: ${{ secrets.AWS_REGION }}
@@ -31,6 +30,24 @@ jobs:
         ssh_username: ${{ secrets.SSH_USERNAME }}
         subnet_id: ${{ secrets.SUBNET_ID }}
         region: ${{ secrets.REGION }}
+      # echo the env vars to the console
+      run: |
+        echo "AMI Name: $ami_name"
+        echo "AMI Regions: $ami_regions"
+        echo "AMI Description: $ami_description"
+        echo "Source AMI: $source_ami"
+        echo "Instance Type: $instance_type"
+        echo "SSH Username: $ssh_username"
+        echo "Subnet ID: $subnet_id"
+        echo "Region: $region"
+        echo ${{ secrets.AMI_NAME }}
+        echo ${{ secrets.AWS_REGION }}
+        echo ${{ secrets.AMI_DESCRIPTION }}
+        echo ${{ secrets.SOURCE_AMI }}
+        echo ${{ secrets.INSTANCE_TYPE }}
+        echo ${{ secrets.SSH_USERNAME }}
+        echo ${{ secrets.SUBNET_ID }}
+        echo ${{ secrets.REGION }}
 
     - name: Install plugins
       run: packer init packer/aws.pkr.hcl
@@ -39,4 +56,4 @@ jobs:
       run: packer fmt -check packer/aws.pkr.hcl
 
     - name: Validate Packer template
-      run: packer validate -var-file=packer/aws.auto.pkrvars.hcl packer/aws.pkr.hcl
+      run: packer validate packer/aws.pkr.hcl
