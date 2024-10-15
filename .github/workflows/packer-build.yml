@@ -14,14 +14,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Install AWS CLI latest version
+    - name: Update AWS CLI to the latest version
       run: |
         sudo apt-get update
         sudo apt-get install -y curl unzip
         curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
         unzip awscliv2.zip
-        sudo ./aws/install
-        aws --version  # Check the installed version
+        sudo ./aws/install --update   # Add the --update flag to update the existing CLI
+        aws --version  # Check the updated version
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
