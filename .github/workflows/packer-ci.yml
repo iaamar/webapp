@@ -18,7 +18,7 @@ env:
   PKR_VAR_db_name: ${{ secrets.DB_NAME }}
         
 jobs:
-  built:
+  build:
     name: Packer CI
     runs-on: ubuntu-latest
 
@@ -31,31 +31,6 @@ jobs:
       id: setup
       with:
         version: latest
-    
-    - name: Show env variables
-      run: |
-        echo $PKR_VAR_ami_name
-        echo $PKR_VAR_ami_regions
-        echo $PKR_VAR_ami_description
-        echo $PKR_VAR_source_ami
-        echo $PKR_VAR_instance_type
-        echo $PKR_VAR_ssh_username
-        echo $PKR_VAR_subnet_id
-        echo $PKR_VAR_region
-        echo $PKR_VAR_db_user
-        echo $PKR_VAR_db_password
-        echo $PKR_VAR_db_name
-        echo $ami_name
-        echo $ami_regions
-        echo $ami_description
-        echo $source_ami
-        echo $instance_type
-        echo $ssh_username
-        echo $subnet_id
-        echo $region
-        echo $db_user
-        echo $db_password
-        echo $db_name
 
     - name: Install plugins
       run: packer init packer/aws.pkr.hcl
