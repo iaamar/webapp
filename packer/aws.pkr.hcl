@@ -33,19 +33,31 @@ source "amazon-ebs" "a04-ami" {
 build {
   sources = ["source.amazon-ebs.a04-ami"]
 
+  provisioner "file" {
+    source      = "webapp.zip"
+    destination = "/tmp/webapp.zip"
+  }
+  
+  provisioner "file" {
+    source      = "packer/scripts/mywebapp.service"
+    destination = "/tmp/mywebapp.service"
+  }
+
+  provisioner "file" {
+    source      = ".env"
+    destination = "/tmp/.env"
+    generated   = true
+  }
+
   provisioner "shell" {
-    environment_vars = [
-      "DEBIAN_FRONTEND=noninteractive",
-      "CHECKPOINT_DISABLE=1",
-    ]
-    inline = [
-      "sudo apt-get update",
-      "sudo apt-get install -y nodejs npm postgresql postgresql-contrib",
-      "sudo systemctl start postgresql",
-      "sudo systemctl enable postgresql",
-      "sudo -u postgres psql -c \"CREATE USER ${var.db_user} WITH PASSWORD '${var.db_password}';\"",
-      "sudo -u postgres psql -c \"CREATE DATABASE ${var.db_name} OWNER ${var.db_user};\"",
-      "sudo -u postgres psql -c \"GRANT ALL PRIVILEGES ON DATABASE ${var.db_name} TO ${var.db_user};\""
+    scripts = [
+      // "packer/scripts/build-artifact.sh",
+      "packer/scripts/dependencies.sh",
+      "packer/scripts/file-transfer.sh",
+      "packer/scripts/create-user.sh",
+      "packer/scripts/user-data.sh",
+      "packer/scripts/db-setup.sh",
+      "packer/scripts/launch-service.sh",
     ]
   }
 }
