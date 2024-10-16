@@ -1,10 +1,12 @@
 #!/bin/bash
-
-# Set the -e option
 set -e
 
-# Install node
-curl -fsSL https://rpm.nodesource.com/setup_21.x | sudo bash -
+# Update and install prerequisites
+sudo apt-get update -y
+sudo apt-get install -y curl gnupg2
+
+# Add NodeSource PPA for the latest stable version of Node.js (replace version as needed)
+curl -fsSL https://deb.nodesource.com/setup_21.x | sudo -E bash -
 sudo yum install -y nodejs
 sudo yum install -g ts-node
 
