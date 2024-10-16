@@ -37,7 +37,7 @@ build {
     source      = "webapp.zip"
     destination = "/tmp/webapp.zip"
   }
-  
+
   provisioner "file" {
     source      = "packer/scripts/mywebapp.service"
     destination = "/tmp/mywebapp.service"
