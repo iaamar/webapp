@@ -10,7 +10,7 @@ sudo mv /tmp/webapp.zip /opt
 # sudo mv https://github.com/CSYE6225-NetworkStruct-CloudComputing/webapp/archive/refs/heads/main.zip /opt
 
 # move file
-sudo mv /tmp/webapp.service /etc/systemd/system
+sudo mv /tmp/mywebapp.service /etc/systemd/system
 
 # unzip file
 sudo unzip /opt/webapp.zip -d /opt/webapp
