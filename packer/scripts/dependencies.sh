@@ -6,7 +6,7 @@ sudo apt-get update -y
 sudo apt-get install -y curl gnupg2
 
 # Add NodeSource PPA for the latest stable version of Node.js (replace version as needed)
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+curl -fsSL https://deb.nodesource.com/setup_21.x | sudo -E bash -
 
 # Install Node.js and npm
 sudo apt-get install -y nodejs
@@ -21,7 +21,7 @@ sudo npm install -g pm2
 echo "Node.js and npm installed successfully."
 
 # install unzip
-sudo npm install unzip -y
+sudo apt-get install -y unzip zip
 
 sudo apt-get install postgresql postgresql-contrib -y
 sudo systemctl start postgresql
