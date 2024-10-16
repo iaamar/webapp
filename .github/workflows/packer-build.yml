@@ -27,6 +27,15 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Create .env file
+      run: |
+          touch .env
+
+          cat .env
+
+    - name: Zip folder
+      run: zip -r webapp.zip . -x "*.git*" "node_modules/*" "packer/aws.auto.pkrvars.hcl"
+    
     - name: Update AWS CLI to the latest version
       run: |
         sudo apt-get update
@@ -50,17 +59,6 @@ jobs:
       run: |
         packer init packer/aws.pkr.hcl
 
-    # - name: Build Artifact
-    #   run: |
-    #     npm install
-    #     npm run build
-  
     - name: Build Packer Image
       run: |
         packer build packer/aws.pkr.hcl
-
-    - name: Store Artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: application-artifact
-        path: dist/
