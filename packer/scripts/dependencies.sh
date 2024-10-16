@@ -21,9 +21,11 @@ sudo npm install -g pm2
 echo "Node.js and npm installed successfully."
 
 # install unzip
-sudo yum install unzip -y
+sudo npm install unzip -y
 
-sudo apt-get update
-sudo apt-get install -y nodejs npm postgresql postgresql-contrib
+sudo apt-get install postgresql postgresql-contrib -y
 sudo systemctl start postgresql
 sudo systemctl enable postgresql
+sudo psql --version
+
+echo "postgresql installed and service started successfully."

@@ -1,7 +1,7 @@
 name: Packer CI Workflow
 
 on:
-  push:
+  pull_request:
     branches:
       - main
 env:
@@ -31,7 +31,11 @@ jobs:
       id: setup
       with:
         version: latest
-
+    
+    - name: Create webapp.zip
+      run: |
+        zip -r webapp.zip . -x "*.git*" "node_modules/*" "packer/aws.auto.pkrvars.hcl"
+  
     - name: Install plugins
       run: packer init packer/aws.pkr.hcl
 
