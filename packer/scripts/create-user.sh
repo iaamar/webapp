@@ -10,3 +10,4 @@ sudo adduser csye6225 --shell /usr/sbin/nologin
 sudo chown -R csye6225:csye6225 /opt/webapp.zip
 sudo chown -R csye6225:csye6225 /opt/webapp
 
+echo "User created successfully."
