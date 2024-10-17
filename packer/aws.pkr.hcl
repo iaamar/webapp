@@ -55,7 +55,7 @@ build {
       "packer/scripts/dependencies.sh",
       "packer/scripts/file-transfer.sh",
       "packer/scripts/create-user.sh",
-      "packer/scripts/user-data.sh",
+      // "packer/scripts/user-data.sh",
       "packer/scripts/db-setup.sh",
       "packer/scripts/launch-service.sh",
     ]
