@@ -12,10 +12,15 @@ sudo ./aws/install
 
 # Verify AWS CLI installation
 aws --version
+AWS_ACCESS_KEY_ID="AKIA3TD2SF4MDSZDW523"
+AWS_SECRET_ACCESS_KEY="8iUN5TMnJy2iEc7s5/KbnnNr5jd9f9ZTn6oxlq23"
+AWS_DEFAULT_REGION="us-east-1"  # e.g., us-east-1
+AWS_OUTPUT_FORMAT="json"  # You can set this to json, text, or table
+
 aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile dev
 aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile dev
 aws configure set region $AWS_DEFAULT_REGION --profile dev
-aws configure set output json --profile dev
+aws configure set output $AWS_OUTPUT_FORMAT --profile dev
 aws configure list --profile dev
 
 echo "AWS credentials and region have been configured successfully for the 'dev' profile."
