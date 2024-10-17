@@ -13,12 +13,23 @@ sudo ./aws/install
 # Verify AWS CLI installation
 aws --version
 
-# Configure AWS credentials using environment variables from GitHub Secrets
-aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID" --profile dev
-aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY" --profile dev
-aws configure set region "$AWS_DEFAULT_REGION" --profile dev
-aws configure set region "$REGION" --profile dev
-aws configure set output json --profile dev
+# Write the credentials to the AWS credentials file for the "dev" profile
+cat <<EOT >> ~/.aws/credentials
+[dev]
+aws_access_key_id = $AWS_ACCESS_KEY_ID
+aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
+EOT
+
+# Write the region to the AWS config file for the "dev" profile
+mkdir -p ~/.aws
+cat <<EOT >> ~/.aws/config
+[profile dev]
+region = $AWS_DEFAULT_REGION
+EOT
+
+echo "AWS credentials and region have been configured successfully for the 'dev' profile."
+cat ~/.aws/credentials
+cat ~/.aws/config
 
 # Verify the AWS CLI is configured and working
 aws configure list --profile dev
