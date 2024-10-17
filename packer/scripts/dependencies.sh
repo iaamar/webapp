@@ -19,7 +19,6 @@ aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
 aws configure set region "$REGION"
 
 # Verify the AWS CLI is configured and working
-aws sts get-caller-identity
 aws configure list
 
 # Add NodeSource PPA for the latest stable version of Node.js (replace version as needed)
