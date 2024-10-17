@@ -14,12 +14,12 @@ sudo ./aws/install
 aws --version
 
 # Configure AWS credentials using environment variables from GitHub Secrets
-aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
-aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
-aws configure set region "$REGION"
+aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID" --profile dev
+aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY" --profile dev
+aws configure set region "$AWS_DEFAULT_REGION" --profile dev
 
 # Verify the AWS CLI is configured and working
-aws configure list
+aws configure list --profile dev
 
 # Add NodeSource PPA for the latest stable version of Node.js (replace version as needed)
 curl -fsSL https://deb.nodesource.com/setup_21.x | sudo -E bash -
