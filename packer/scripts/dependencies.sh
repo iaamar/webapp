@@ -17,6 +17,8 @@ aws --version
 aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID" --profile dev
 aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY" --profile dev
 aws configure set region "$AWS_DEFAULT_REGION" --profile dev
+aws configure set region "$REGION" --profile dev
+aws configure set output json --profile dev
 
 # Verify the AWS CLI is configured and working
 aws configure list --profile dev
