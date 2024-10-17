@@ -10,15 +10,12 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip
 unzip awscliv2.zip
 sudo ./aws/install
 
-# Add AWS CLI to path if necessary
-export PATH=$PATH:/usr/local/bin/aws
-
 # Verify AWS CLI installation
 aws --version
 
 # Verify the AWS CLI is configured and working
 aws sts get-caller-identity
-
+aws configure list
 # Add NodeSource PPA for the latest stable version of Node.js (replace version as needed)
 curl -fsSL https://deb.nodesource.com/setup_21.x | sudo -E bash -
 
