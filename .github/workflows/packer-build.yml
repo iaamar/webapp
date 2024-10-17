@@ -46,6 +46,9 @@ jobs:
         unzip awscliv2.zip
         sudo ./aws/install --update   # Add the --update flag to update the existing CLI
         aws --version  # Check the updated version
+        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws configure set region ${{ secrets.REGION }}
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -61,7 +64,7 @@ jobs:
         export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
         export AWS_DEFAULT_REGION=${{ secrets.REGION }}
         echo "AWS credentials exported successfully."
-        
+
     - name: Set up Packer
       uses: hashicorp/setup-packer@v2
 
