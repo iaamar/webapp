@@ -28,7 +28,7 @@ source "amazon-ebs" "a04-ami" {
     delay_seconds = 10
     max_attempts  = 60
   }
-  ami_stop = false
+
 }
 
 build {
