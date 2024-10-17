@@ -32,7 +32,7 @@ source "amazon-ebs" "a04" {
 }
 
 build {
-  sources = ["source.amazon-ebs.a04-ami"]
+  sources = ["source.amazon-ebs.a04"]
 
   provisioner "file" {
     source      = "webapp.zip"
