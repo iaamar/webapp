@@ -16,6 +16,9 @@ export PATH=$PATH:/usr/local/bin/aws
 # Verify AWS CLI installation
 aws --version
 
+# Verify the AWS CLI is configured and working
+aws sts get-caller-identity
+
 # Add NodeSource PPA for the latest stable version of Node.js (replace version as needed)
 curl -fsSL https://deb.nodesource.com/setup_21.x | sudo -E bash -
 
