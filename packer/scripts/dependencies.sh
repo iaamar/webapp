@@ -12,8 +12,7 @@ sudo ./aws/install
 
 # Verify AWS CLI installation
 aws --version
-cat ~/.aws/credentials
-cat ~/.aws/config
+
 # Ensure that AWS credentials directory exists
 mkdir -p ~/.aws
 # Write the credentials to the AWS credentials file for the "dev" profile

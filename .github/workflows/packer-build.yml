@@ -52,7 +52,25 @@ jobs:
         aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} --profile dev
         aws configure set region ${{ secrets.REGION }} --profile dev
         aws configure list --profile dev
-
+    
+    - name: Verify AWS Configuration
+      run: |
+        echo "Checking AWS credentials and config files"
+          
+        # Check AWS credentials file
+        echo "AWS Credentials file:"
+        cat ~/.aws/credentials
+  
+        # Check AWS config file
+        echo "AWS Config file:"
+        cat ~/.aws/config
+  
+        # Check AWS CLI configuration
+        aws configure list --profile dev
+  
+        # Output the current working directory and location of credentials
+        echo "Credentials and config files are located at ~/.aws/"
+  
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
