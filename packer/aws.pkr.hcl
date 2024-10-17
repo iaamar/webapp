@@ -7,7 +7,7 @@ packer {
   }
 }
 
-source "amazon-ebs" "a04-ami" {
+source "amazon-ebs" "a04" {
   ami_name        = var.ami_name
   ami_description = var.ami_description
   instance_type   = var.instance_type
