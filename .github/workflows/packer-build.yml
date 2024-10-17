@@ -51,6 +51,7 @@ jobs:
         aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} --profile dev
         aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} --profile dev
         aws configure set region ${{ secrets.REGION }} --profile dev
+        aws configure set output json --profile dev
         aws configure list --profile dev
     
     - name: Verify AWS Configuration
@@ -97,5 +98,9 @@ jobs:
         packer init packer/aws.pkr.hcl
 
     - name: Build Packer Image
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
       run: |
         packer build packer/aws.pkr.hcl
