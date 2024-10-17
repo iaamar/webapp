@@ -9,18 +9,12 @@ DB_PASSWORD=$(aws secretsmanager get-secret-value --secret-id "alias/my-db-passw
 DB_USER=$(aws secretsmanager get-secret-value --secret-id "alias/my-db-user" --region us-east-1 --query SecretString --output text | jq -r .DB_USER)
 DB_DATABASE=$(aws secretsmanager get-secret-value --secret-id "alias/my-db-database" --region us-east-1 --query SecretString --output text | jq -r .DB_DATABASE)
 
-# Ensure that the secrets are not empty
-if [[ -z "$DB_USER" || -z "$DB_PASSWORD" || -z "$DB_DATABASE" ]]; then
-  echo "Error: One or more required secrets are missing."
-  exit 1
-fi
-
 # Export environment variables for use in other scripts
-export DB_HOST
-export DB_PORT
-export PORT
-export DB_PASSWORD
-export DB_USER
-export DB_DATABASE
+export process.env.DB_HOST
+export process.env.DB_PORT
+export process.env.PORT
+export process.env.DB_PASSWORD
+export process.env.DB_USER
+export process.env.DB_DATABASE
 
 echo "Secrets retrieved and environment variables set successfully."
