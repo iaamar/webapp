@@ -12,15 +12,20 @@ sudo ./aws/install
 
 # Verify AWS CLI installation
 aws --version
+AWS_ACCESS_KEY_ID="AKIA3TD2SF4MDSZDW523"
+AWS_SECRET_ACCESS_KEY="8iUN5TMnJy2iEc7s5/KbnnNr5jd9f9ZTn6oxlq23"
+AWS_DEFAULT_REGION="us-east-1"  # e.g., us-east-1
+AWS_OUTPUT_FORMAT="json"  # You can set this to json, text, or table
 
-# Configure AWS credentials using environment variables from GitHub Secrets
-aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
-aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
-aws configure set region "$REGION"
+aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile dev
+aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile dev
+aws configure set region $AWS_DEFAULT_REGION --profile dev
+aws configure set output $AWS_OUTPUT_FORMAT --profile dev
+aws configure list --profile dev
 
-# Verify the AWS CLI is configured and working
-aws sts get-caller-identity
-aws configure list
+echo "AWS credentials and region have been configured successfully for the 'dev' profile."
+cat ~/.aws/credentials
+cat ~/.aws/config
 
 # Add NodeSource PPA for the latest stable version of Node.js (replace version as needed)
 curl -fsSL https://deb.nodesource.com/setup_21.x | sudo -E bash -
