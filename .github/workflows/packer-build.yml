@@ -17,7 +17,9 @@ env:
   PKR_VAR_db_user: ${{ secrets.DB_USER }}
   PKR_VAR_db_password: ${{ secrets.DB_PASSWORD }}
   PKR_VAR_db_name: ${{ secrets.DB_DATABASE }}
-      
+  PKR_VAR_AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  PKR_VAR_AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        
 jobs:
   build:
     name: Packer Build Image
@@ -52,6 +54,14 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.REGION }}
 
+    - name: Export AWS credentials for Packer
+      run: |
+        echo "Exporting AWS credentials for Packer"
+        export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+        export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        export AWS_DEFAULT_REGION=${{ secrets.REGION }}
+        echo "AWS credentials exported successfully."
+        
     - name: Set up Packer
       uses: hashicorp/setup-packer@v2
 
