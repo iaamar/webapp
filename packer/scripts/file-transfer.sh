@@ -17,5 +17,5 @@ sudo unzip /opt/webapp.zip -d /opt/webapp
 
 # move file
 sudo mv /tmp/.env /opt/webapp
-
+cat /opt/webapp/.env
 echo "File transfer completed successfully."
