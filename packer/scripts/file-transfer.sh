@@ -1,25 +1,51 @@
 #!/bin/bash
 
-# Set the -e option
+# Set the -e option to exit on any error
 set -e
 
-# move file locally
+# Move the webapp.zip file to /opt
 sudo mv /tmp/webapp.zip /opt
 
-# move file from git repo
-# sudo mv https://github.com/CSYE6225-NetworkStruct-CloudComputing/webapp/archive/refs/heads/main.zip /opt
-
-# move file
+# Move the systemd service file to /etc/systemd/system
 sudo mv /tmp/mywebapp.service /etc/systemd/system
 
-# unzip file
+# Unzip the webapp.zip file into the /opt/webapp directory
 sudo unzip /opt/webapp.zip -d /opt/webapp
 
-# move file
+# Move the .env file to the /opt/webapp directory
 sudo mv /tmp/.env /opt/webapp
-echo "Listing files in /opt/webapp:"
-ls -l /opt/webapp
 
-echo "Displaying the contents of the .env file:"
-cat /opt/webapp/.env
-echo "File transfer completed successfully."
+# Ensure the systemd service file has the correct permissions
+sudo chown root:root /etc/systemd/system/mywebapp.service
+sudo chmod 644 /etc/systemd/system/mywebapp.service
+
+# Ensure the .env file has the correct permissions
+sudo chown root:root /opt/webapp/.env
+sudo chmod 644 /opt/webapp/.env
+
+# Check if the .env file exists and has content; if not, create it
+if [ ! -f /opt/webapp/.env ] || [ ! -s /opt/webapp/.env ]; then
+  echo "Creating .env file with environment variables"
+  sudo bash -c 'cat <<EOF > /opt/webapp/.env
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=amarnagargoje
+DB_PASSWORD=user1234
+DB_DATABASE=healthcare
+AWS_ACCESS_KEY_ID="AKIA3TD2SF4MDSZDW523"
+AWS_SECRET_ACCESS_KEY="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"
+AWS_DEFAULT_REGION="us-east-1"
+AWS_OUTPUT_FORMAT="json"
+EOF'
+else
+  echo ".env file already exists and has content, skipping creation"
+fi
+
+# Ensure the .env file has the proper permissions
+sudo chown root:root /opt/webapp/.env
+sudo chmod 644 /opt/webapp/.env
+
+# Reload systemd to apply the service configuration
+sudo systemctl daemon-reload
+
+echo "File transfer and setup completed successfully."
