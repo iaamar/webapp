@@ -23,10 +23,6 @@ aws configure set region $AWS_DEFAULT_REGION --profile dev
 aws configure set output $AWS_OUTPUT_FORMAT --profile dev
 aws configure list --profile dev
 
-echo "AWS credentials and region have been configured successfully for the 'dev' profile."
-cat ~/.aws/credentials
-cat ~/.aws/config
-
 # Add NodeSource PPA for the latest stable version of Node.js (replace version as needed)
 curl -fsSL https://deb.nodesource.com/setup_21.x | sudo -E bash -
 
