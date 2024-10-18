@@ -35,27 +35,25 @@ build {
 
   provisioner "file" {
     source      = "webapp.zip"
-    destination = "/tmp/webapp.zip"
+    destination = "/opt/webapp.zip"
   }
 
   provisioner "file" {
     source      = "packer/scripts/mywebapp.service"
-    destination = "/tmp/mywebapp.service"
+    destination = "/opt/mywebapp.service"
   }
 
   provisioner "file" {
     source      = ".env"
-    destination = "/tmp/.env"
+    destination = "/opt/.env"
     generated   = true
   }
 
   provisioner "shell" {
     scripts = [
-      // "packer/scripts/build-artifact.sh",
       "packer/scripts/dependencies.sh",
       "packer/scripts/file-transfer.sh",
       "packer/scripts/create-user.sh",
-      // "packer/scripts/user-data.sh",
       "packer/scripts/db-setup.sh",
       "packer/scripts/launch-service.sh",
     ]

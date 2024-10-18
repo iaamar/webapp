@@ -33,9 +33,11 @@ curl -fsSL https://deb.nodesource.com/setup_21.x | sudo -E bash -
 # Install Node.js and npm
 sudo apt-get install -y nodejs
 
-# Verify installation
-node -v
-npm -v
+# Install Node.js dependencies
+sudo npm install
+
+# Run database migrations (with custom config if needed)
+sudo npx sequelize-cli db:migrate --config src/database/connect.js
 
 # Optionally, install pm2 process manager globally for production use
 sudo npm install -g pm2
