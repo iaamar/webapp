@@ -89,6 +89,8 @@ jobs:
         echo $AWS_SECRET_ACCESS_KEY
         echo $AWS_DEFAULT_REGION
         echo "AWS credentials exported successfully."
+        export AWS_PROFILE=dev
+        echo $AWS_PROFILE
 
     - name: Set up Packer
       uses: hashicorp/setup-packer@v2
