@@ -14,12 +14,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
     
-    - name: Ensure all files have the correct permissions
-      run: |
-        # Grant read and write permissions to the current user for all files
-        sudo chmod -R 600 .env
-        sudo chmod -R u+rw .
-        
     - name: Zip folder
       run: zip -r webapp.zip . -x "*.git*" "node_modules/*" "aws.auto.pkrvars.hcl"
     

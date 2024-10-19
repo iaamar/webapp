@@ -13,9 +13,8 @@ sudo unzip -l /tmp/webapp.zip | grep "\.env" || echo "No .env file found in the 
 # Unzip the webapp.zip file into /opt/webapp
 sudo unzip -o /tmp/webapp.zip -d /opt/webapp
 cd /opt/webapp
-ls -la
-# Display all files, including hidden ones, in /opt/webapp
-echo "Listing contents of /opt/webapp, including hidden files:"
+
+# Display all files, including hidden ones
 ls -la
 
 # Check if .env file exists after extraction
@@ -23,7 +22,22 @@ if [ -f ".env" ]; then
   echo ".env file found:"
   cat .env  # Display the contents of the .env file
 else
-  echo "Error: .env file not found in /opt/webapp"
+  echo ".env file not found. Creating a new .env file with default variables."
+
+  # Create a new .env file with specified variables
+  sudo bash -c 'cat <<EOF > /opt/webapp/.env
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=amarnagargoje
+DB_PASSWORD=user1234
+DB_DATABASE=healthcare
+AWS_ACCESS_KEY_ID="AKIA3TD2SF4MLQA4AQNC"
+AWS_SECRET_ACCESS_KEY="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"
+AWS_DEFAULT_REGION="us-east-1"
+AWS_OUTPUT_FORMAT="json"
+EOF'
+
+  echo ".env file created successfully."
 fi
 
 # Move the mywebapp.service file to /etc/systemd/system
@@ -33,7 +47,7 @@ sudo mv /tmp/mywebapp.service /etc/systemd/system
 sudo chown -R csye6225:csye6225 /opt/webapp
 sudo chmod 755 /opt/webapp
 
-# Set permissions for .env and systemd service files if .env exists
+# Set permissions for .env and systemd service files
 if [ -f ".env" ]; then
   sudo chown csye6225:csye6225 /opt/webapp/.env
   sudo chmod 600 /opt/webapp/.env
