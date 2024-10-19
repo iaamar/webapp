@@ -45,6 +45,35 @@ build {
     destination = "/tmp/mywebapp.service"
   }
 
+  # Set up environment variables and install dependencies
+  provisioner "shell" {
+    environment_vars = [
+      "AWS_ACCESS_KEY_ID={{env `AWS_ACCESS_KEY_ID`}}",
+      "AWS_SECRET_ACCESS_KEY={{env `AWS_SECRET_ACCESS_KEY`}}",
+      "AWS_DEFAULT_REGION={{env `AWS_DEFAULT_REGION`}}"
+    ]
+    inline = [
+      "set -e",
+
+      # Update and install prerequisites
+      "sudo apt-get update -y"
+      "sudo apt-get install -y curl gnupg2 unzip zip"
+
+      # Install AWS CLI
+      "curl 'https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip' -o 'awscliv2.zip'",
+      "unzip awscliv2.zip",
+      "sudo ./aws/install",
+
+      # Configure AWS CLI with environment variables
+      "aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile dev",
+      "aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile dev",
+      "aws configure set region $AWS_DEFAULT_REGION --profile dev",
+      "aws configure set output json --profile dev",
+      "aws configure list"
+    ]
+  }
+
+  # Execute additional scripts after environment setup
   provisioner "shell" {
     scripts = [
       "scripts/dependencies.sh",

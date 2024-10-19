@@ -1,26 +1,7 @@
 #!/bin/bash
 set -e
 
-# Update and install prerequisites
-sudo apt-get update -y
-sudo apt-get install -y curl gnupg2 unzip zip
-
-# Install AWS CLI
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-sudo ./aws/install
-
-# Verify AWS CLI installation
-aws --version
-
-aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile dev
-aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile dev
-aws configure set region $AWS_DEFAULT_REGION --profile dev
-aws configure set output json --profile dev
-aws configure list --profile dev
-cd ~./.aws
-cat credentials
-# Add NodeSource PPA for the latest stable version of Node.js (replace version as needed)
+# Add Node.js
 curl -fsSL https://deb.nodesource.com/setup_21.x | sudo -E bash -
 
 # Install Node.js and npm
