@@ -56,8 +56,8 @@ build {
       "set -e",
 
       # Update and install prerequisites
-      "sudo apt-get update -y"
-      "sudo apt-get install -y curl gnupg2 unzip zip"
+      "sudo apt-get update -y",
+      "sudo apt-get install -y curl gnupg2 unzip zip",
 
       # Install AWS CLI
       "curl 'https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip' -o 'awscliv2.zip'",
@@ -69,7 +69,7 @@ build {
       "aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile dev",
       "aws configure set region $AWS_DEFAULT_REGION --profile dev",
       "aws configure set output json --profile dev",
-      "aws configure list"
+      "aws configure list",
     ]
   }
 
