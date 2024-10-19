@@ -49,5 +49,4 @@ jobs:
       run: packer validate \
             -var "aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}" \
             -var "aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
-            -var "aws_default_region=${{ secrets.AWS_DEFAULT_REGION }}" \
-            aws.pkr.hcl
+            -var "aws_default_region=${{ secrets.AWS_DEFAULT_REGION }}" aws.pkr.hcl

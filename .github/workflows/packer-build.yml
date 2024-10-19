@@ -5,23 +5,6 @@ on:
     branches:
       - main
 
-env:
-  PKR_VAR_ami_name: ${{ secrets.AMI_NAME }}
-  PKR_VAR_ami_regions: ${{ secrets.AMI_REGIONS }}
-  PKR_VAR_ami_description: ${{ secrets.AMI_DESCRIPTION }}
-  PKR_VAR_source_ami: ${{ secrets.SOURCE_AMI }}
-  PKR_VAR_instance_type: ${{ secrets.INSTANCE_TYPE }}
-  PKR_VAR_ssh_username: ${{ secrets.SSH_USERNAME }}
-  PKR_VAR_subnet_id: ${{ secrets.SUBNET_ID }}
-  PKR_VAR_region: ${{ secrets.REGION }}
-  PKR_VAR_db_user: ${{ secrets.DB_USER }}
-  PKR_VAR_db_password: ${{ secrets.DB_PASSWORD }}
-  PKR_VAR_db_name: ${{ secrets.DB_DATABASE }}
-  PKR_VAR_AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  PKR_VAR_AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  AWS_DEFAULT_REGION: ${{ secrets.REGION }}     
 jobs:
   build:
     name: Packer Build Image
@@ -42,11 +25,11 @@ jobs:
         unzip awscliv2.zip
         sudo ./aws/install --update   # Add the --update flag to update the existing CLI
         aws --version  # Check the updated version
-        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} --profile dev
-        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} --profile dev
-        aws configure set region ${{ secrets.REGION }} --profile dev
-        aws configure set output json --profile dev
-        aws configure list --profile dev
+        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} --profile demo
+        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} --profile demo
+        aws configure set region ${{ secrets.REGION }} --profile demo
+        aws configure set output json --profile demo
+        aws configure list --profile demo
     
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -70,8 +53,13 @@ jobs:
         packer init .
 
     - name: Build Packer Image
-      run: packer build \
+      run: |
+          packer build \
             -var "aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}" \
             -var "aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
             -var "aws_default_region=${{ secrets.AWS_DEFAULT_REGION }}" \
-            aws.pkr.hcl
+            -var "db_host=${{ secrets.DB_HOST }}" \
+            -var "db_port=${{ secrets.DB_PORT }}" \
+            -var "db_user=${{ secrets.DB_USER }}" \
+            -var "db_password=${{ secrets.DB_PASSWORD }}" \
+            -var "db_database=${{ secrets.DB_DATABASE }}" aws.pkr.hcl
