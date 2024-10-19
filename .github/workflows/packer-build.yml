@@ -15,8 +15,15 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Zip folder
-      run: zip -r webapp.zip . -x "*.git*" "node_modules/*" "aws.auto.pkrvars.hcl"
-    
+      run: |
+        zip -r webapp.zip .
+        if unzip -l webapp.zip | grep -q "\.env"; then
+          echo ".env file is included in the ZIP archive."
+        else
+          echo "Error: .env file not found in the ZIP archive. Failing the workflow."
+          exit 1
+        fi
+      
     - name: Update AWS CLI to the latest version
       run: |
         sudo apt-get update

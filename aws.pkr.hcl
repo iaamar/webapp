@@ -104,8 +104,8 @@ build {
    # Execute additional scripts after environment setup
   provisioner "shell" {
     scripts = [
-      "scripts/file-transfer.sh",
       "scripts/create-user.sh",
+      "scripts/file-transfer.sh",
       "scripts/db-setup.sh",
       "scripts/launch-service.sh",
     ]
