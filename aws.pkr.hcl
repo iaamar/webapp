@@ -38,13 +38,6 @@ build {
       "DEBIAN_FRONTEND=noninteractive",
       "CHECKPOINT_DISABLE=1",
     ]
-    inline = [
-      "aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile dev",
-      "aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile dev",
-      "aws configure set default.region $AWS_DEFAULT_REGION --profile dev",
-      "aws configure set default.output json",
-      "export AWS_PROFILE=dev",
-    ]
   }
 
   provisioner "file" {
