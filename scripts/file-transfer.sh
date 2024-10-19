@@ -22,10 +22,21 @@ fi
 sudo usermod -aG sudo csye6225
 
 # Move files from /tmp to their final destinations
-sudo mv /tmp/webapp.zip /opt
-sudo unzip /opt/webapp.zip -d /opt
+sudo mkdir -p /opt/webapp
+sudo unzip /opt/webapp.zip -d /opt/webapp
 cd /opt/webapp
 ls -la
+# Display all files, including hidden ones, in /opt/webapp
+echo "Listing contents of /opt/webapp, including hidden files:"
+ls -la
+
+# Check if .env file exists after extraction
+if [ -f ".env" ]; then
+  echo ".env file found:"
+  cat .env  # Display the contents of the .env file
+else
+  echo "Error: .env file not found in /opt/webapp"
+fi
 
 sudo mv /tmp/mywebapp.service /etc/systemd/system
 
