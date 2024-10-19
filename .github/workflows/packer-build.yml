@@ -66,7 +66,6 @@ jobs:
             -var 'instance_type=${{ secrets.INSTANCE_TYPE }}' \
             -var 'ami_name=${{ secrets.AMI_NAME }}' \
             -var 'ami_description=${{ secrets.AMI_DESCRIPTION }}' \
-            -var 'ami_regions=${{ secrets.AMI_REGIONS }}' \
             -var 'region=${{ secrets.REGION }}' \
             -var 'source_ami=${{ secrets.SOURCE_AMI }}' \
             -var 'ssh_username=${{secrets.SSH_USERNAME}}'\
