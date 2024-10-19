@@ -54,5 +54,4 @@ jobs:
             -var "db_port=${{ secrets.DB_PORT }}" \
             -var "db_user=${{ secrets.DB_USER }}" \
             -var "db_password=${{ secrets.DB_PASSWORD }}" \
-            -var "db_database=${{ secrets.DB_DATABASE }}" \
-            aws.pkr.hcl
+            -var "db_database=${{ secrets.DB_DATABASE }}" .
