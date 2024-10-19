@@ -76,6 +76,7 @@ build {
       "sudo ./aws/install",
 
       # Configure AWS CLI using environment variables
+      "export AWS_PROFILE=demo",
       "aws configure set aws_access_key_id \"$AWS_ACCESS_KEY_ID\" --profile demo",
       "aws configure set aws_secret_access_key \"$AWS_SECRET_ACCESS_KEY\" --profile demo",
       "aws configure set region \"$AWS_DEFAULT_REGION\" --profile demo",
@@ -95,13 +96,18 @@ build {
       "sudo -u postgres psql -c \"CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';\"",
       "sudo -u postgres psql -c \"CREATE DATABASE $DB_DATABASE OWNER $DB_USER;\"",
       "sudo -u postgres psql -c \"GRANT ALL PRIVILEGES ON DATABASE $DB_DATABASE TO $DB_USER;\""
+      # Run database migrations (with custom config if needed)
+      "sudo npx sequelize-cli db:migrate --config src/database/connect.js"
+
+      # Optionally, install pm2 process manager globally for production use
+      "sudo npm install -g pm2"
+      "echo Node.js, npm, and AWS CLI installed successfully."
     ]
   }
 
    # Execute additional scripts after environment setup
   provisioner "shell" {
     scripts = [
-      "scripts/dependencies.sh",
       "scripts/file-transfer.sh",
       "scripts/create-user.sh",
       "scripts/db-setup.sh",
