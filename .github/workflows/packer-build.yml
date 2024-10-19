@@ -55,19 +55,20 @@ jobs:
     - name: Build Packer Image
       run: |
           packer build \
-            -var "aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}" \
-            -var "aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
-            -var "aws_default_region=${{ secrets.AWS_DEFAULT_REGION }}" \
-            -var "db_host=${{ secrets.DB_HOST }}" \
-            -var "db_port=${{ secrets.DB_PORT }}" \
-            -var "db_user=${{ secrets.DB_USER }}" \
-            -var "db_password=${{ secrets.DB_PASSWORD }}" \
-            -var "db_database=${{ secrets.DB_DATABASE }}" \
-            -var "instance_type=${{ secrets.INSTANCE_TYPE }}" \
-            -var "ami_name=${{ secrets.AMI_NAME }}" \
-            -var "ami_description=${{ secrets.AMI_DESCRIPTION }}" \
-            -var "ami_regions=${{ secrets.AMI_REGIONS }}" \
-            -var "region=${{ secrets.REGION }}" \
-            -var "source_ami=${{ secrets.SOURCE_AMI }}" \
-            -var "subnet_id=${{ secrets.SUBNET_ID }}" \
-            -var "ssh_username=${{secrets.SSH_USERNAME}}" aws.pkr.hcl
+            -var 'aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}' \
+            -var 'aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}' \
+            -var 'aws_default_region=${{ secrets.AWS_DEFAULT_REGION }}' \
+            -var 'db_host=${{ secrets.DB_HOST }}' \
+            -var 'db_port=${{ secrets.DB_PORT }}' \
+            -var 'db_user=${{ secrets.DB_USER }}' \
+            -var 'db_password=${{ secrets.DB_PASSWORD }}' \
+            -var 'db_database=${{ secrets.DB_DATABASE }}' \
+            -var 'instance_type=${{ secrets.INSTANCE_TYPE }}' \
+            -var 'ami_name=${{ secrets.AMI_NAME }}' \
+            -var 'ami_description=${{ secrets.AMI_DESCRIPTION }}' \
+            -var 'ami_regions=${{ secrets.AMI_REGIONS }}' \
+            -var 'region=${{ secrets.REGION }}' \
+            -var 'source_ami=${{ secrets.SOURCE_AMI }}' \
+            -var 'subnet_id=${{ secrets.SUBNET_ID }}' \
+            -var 'ssh_username=${{secrets.SSH_USERNAME}}'\
+             aws.pkr.hcl
