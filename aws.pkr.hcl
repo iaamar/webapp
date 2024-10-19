@@ -94,6 +94,16 @@ build {
       "sudo -u postgres psql -c \"GRANT ALL PRIVILEGES ON DATABASE $DB_DATABASE TO $DB_USER;\"",
       "sudo -u postgres psql -c \"ALTER USER $DB_USER WITH SUPERUSER;\"",
 
+        # Restart PostgreSQL service
+      "sudo systemctl restart postgresql",
+
+      # Debug info
+      "echo 'Database: $DB_DATABASE, User: $DB_USER'",
+
+      # Wait for the database to become accessible
+      "until sudo -u postgres psql -d $DB_DATABASE -c '\\q' > /dev/null 2>&1; do echo 'Waiting for $DB_DATABASE to be accessible...'; sleep 2; done",
+      "echo 'Database $DB_DATABASE is now accessible.'",
+
       # Grant schema privileges to the user
       "sudo -u postgres psql -d $DB_DATABASE -c 'GRANT ALL ON SCHEMA public TO $DB_USER;'",
       "sudo -u postgres psql -d $DB_DATABASE -c 'ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO $DB_USER;'",
