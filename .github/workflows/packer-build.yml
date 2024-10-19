@@ -13,33 +13,15 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-
-    - name: Copy .env file temporarily
-      run: |
-        if [ -f .env ]; then
-          echo "Copying .env file temporarily for zipping."
-          cp .env .env.temp
-        else
-          echo "Error: .env file not found. Failing the workflow."
-          exit 1
-        fi
     
-    - name: Zip folder with .env
+    - name: Ensure all files have the correct permissions
       run: |
-        zip -r webapp.zip . -x "*.git*" "node_modules/*" "aws.auto.pkrvars.hcl"
-    
-        # Check if .env.temp is in the ZIP file
-        if unzip -l webapp.zip | grep -q "\.env.temp"; then
-          echo ".env file included as .env.temp in the ZIP archive."
-        else
-          echo "Error: .env file not found in the ZIP archive. Failing the workflow."
-          exit 1
-        fi
-    
-    - name: Remove temporary .env file
-      run: |
-        rm -f .env.temp
-        echo "Temporary .env file removed."
+        # Grant read and write permissions to the current user for all files
+        sudo chmod -R 600 .env
+        sudo chmod -R u+rw .
+        
+    - name: Zip folder
+      run: zip -r webapp.zip . -x "*.git*" "node_modules/*" "aws.auto.pkrvars.hcl"
     
     - name: Update AWS CLI to the latest version
       run: |
