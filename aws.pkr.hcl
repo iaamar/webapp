@@ -68,6 +68,8 @@ build {
   inline = [
     "set -e",
 
+      "sudo apt-get install -y unzip",
+
       # Install AWS CLI
       "curl 'https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip' -o 'awscliv2.zip'",
       "unzip awscliv2.zip",
@@ -93,6 +95,17 @@ build {
       "sudo -u postgres psql -c \"CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';\"",
       "sudo -u postgres psql -c \"CREATE DATABASE $DB_DATABASE OWNER $DB_USER;\"",
       "sudo -u postgres psql -c \"GRANT ALL PRIVILEGES ON DATABASE $DB_DATABASE TO $DB_USER;\""
+    ]
+  }
+
+   # Execute additional scripts after environment setup
+  provisioner "shell" {
+    scripts = [
+      "scripts/dependencies.sh",
+      "scripts/file-transfer.sh",
+      "scripts/create-user.sh",
+      "scripts/db-setup.sh",
+      "scripts/launch-service.sh",
     ]
   }
 }
