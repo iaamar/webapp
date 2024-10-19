@@ -15,7 +15,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Zip folder
-      run: zip -r webapp.zip . -x "*.git*" "node_modules/*" "scripts/aws.auto.pkrvars.hcl"
+      run: zip -r webapp.zip . -x "*.git*" "node_modules/*" "aws.auto.pkrvars.hcl"
     
     - name: Update AWS CLI to the latest version
       run: |

@@ -22,13 +22,16 @@ fi
 sudo usermod -aG sudo csye6225
 
 # Move files from /tmp to their final destinations
-sudo mv /tmp/webapp.zip /opt
+sudo mkdir -p /opt/webapp
+sudo unzip /opt/webapp.zip -d /opt/webapp
+cd /opt/webapp
+ls -la
+
 sudo mv /tmp/mywebapp.service /etc/systemd/system
 
 # Change ownership of /opt/webapp to the 'csye6225' user
 #unzip the file
-sudo unzip /opt/webapp.zip -d /opt/webapp
-ls -a /opt/webapp
+
 sudo chown -R csye6225:csye6225 /opt/webapp
 sudo chmod 755 /opt/webapp
 
