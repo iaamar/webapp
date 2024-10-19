@@ -23,7 +23,7 @@ sudo usermod -aG sudo csye6225
 
 # Move files from /tmp to their final destinations
 sudo mkdir -p /opt/webapp
-sudo unzip /opt/webapp.zip -d /opt/webapp
+sudo unzip /tmp/webapp.zip -d /opt/webapp
 cd /opt/webapp
 ls -la
 # Display all files, including hidden ones, in /opt/webapp
