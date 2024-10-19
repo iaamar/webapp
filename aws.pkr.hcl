@@ -88,28 +88,28 @@ build {
       "sudo systemctl start postgresql",
       "sudo systemctl enable postgresql",
 
-      # Set up the database using environment variables
-      "sudo -u postgres psql -c \"CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';\"",
-      "sudo -u postgres psql -c \"CREATE DATABASE $DB_DATABASE WITH OWNER $DB_USER;\"",
-      "sudo -u postgres psql -c \"GRANT ALL PRIVILEGES ON DATABASE $DB_DATABASE TO $DB_USER;\"",
-      "sudo -u postgres psql -c \"ALTER USER $DB_USER WITH SUPERUSER;\"",
+    # Set up the database using environment variables
+    "sudo -u postgres psql -c \"CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';\"",
+    "sudo -u postgres psql -c \"CREATE DATABASE $DB_DATABASE WITH OWNER $DB_USER;\"",
+    "sudo -u postgres psql -c \"GRANT ALL PRIVILEGES ON DATABASE $DB_DATABASE TO $DB_USER;\"",
+    "sudo -u postgres psql -c \"ALTER USER $DB_USER WITH SUPERUSER;\"",
 
-        # Restart PostgreSQL service
-      "sudo systemctl restart postgresql",
+    # Restart PostgreSQL service
+    "sudo systemctl restart postgresql",
 
-      # Debug info
-      "echo 'Database: $DB_DATABASE, User: $DB_USER'",
+    # Debug info
+    "echo \"Database: $DB_DATABASE, User: $DB_USER\"",
 
-      # Wait for the database to become accessible
-      "until sudo -u postgres psql -d $DB_DATABASE -c '\\q' > /dev/null 2>&1; do echo 'Waiting for $DB_DATABASE to be accessible...'; sleep 2; done",
-      "echo 'Database $DB_DATABASE is now accessible.'",
+    # Wait for the database to become accessible
+    "until sudo -u postgres psql -d $DB_DATABASE -c '\\q' > /dev/null 2>&1; do echo \"Waiting for $DB_DATABASE to be accessible...\"; sleep 2; done",
+    "echo \"Database $DB_DATABASE is now accessible.\"",
 
-      # Grant schema privileges to the user
-      "sudo -u postgres psql -d $DB_DATABASE -c 'GRANT ALL ON SCHEMA public TO $DB_USER;'",
-      "sudo -u postgres psql -d $DB_DATABASE -c 'ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO $DB_USER;'",
-      "sudo -u postgres psql -d $DB_DATABASE -c 'ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO $DB_USER;'",
+    # Grant schema privileges to the user
+    "sudo -u postgres psql -d $DB_DATABASE -c 'GRANT ALL ON SCHEMA public TO $DB_USER;'",
+    "sudo -u postgres psql -d $DB_DATABASE -c 'ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO $DB_USER;'",
+    "sudo -u postgres psql -d $DB_DATABASE -c 'ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO $DB_USER;'",
 
-      "echo 'PostgreSQL and user configuration completed successfully.'"
+    "echo 'PostgreSQL and user configuration completed successfully.'"
     ]
   }
 
