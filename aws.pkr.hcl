@@ -8,20 +8,22 @@ packer {
 }
 
 source "amazon-ebs" "a04" {
-  ami_name        = var.ami_name
-  ami_description = var.ami_description
-  instance_type   = var.instance_type
-  region          = var.region
-  source_ami      = var.source_ami
-  ssh_username    = var.ssh_username
-  subnet_id       = var.subnet_id
-  ami_regions     = var.ami_regions
+  ami_name             = var.ami_name
+  ami_description      = var.ami_description
+  instance_type        = var.instance_type
+  region               = var.region
+  source_ami           = var.source_ami
+  ssh_username         = var.ssh_username
+  subnet_id            = var.subnet_id
+  ami_regions          = var.ami_regions
+  ssh_interface        = "public_ip"
 
   launch_block_device_mappings {
     delete_on_termination = true
     device_name           = "/dev/sda1"
     volume_size           = 10
     volume_type           = "gp2"
+    encrypted             = true
   }
 
   aws_polling {
@@ -52,7 +54,7 @@ build {
   }
 
   provisioner "file" {
-    source      = "packer/scripts/mywebapp.service"
+    source      = "scripts/mywebapp.service"
     destination = "/opt/mywebapp.service"
   }
 
@@ -64,11 +66,11 @@ build {
 
   provisioner "shell" {
     scripts = [
-      "packer/scripts/dependencies.sh",
-      "packer/scripts/file-transfer.sh",
-      "packer/scripts/create-user.sh",
-      "packer/scripts/db-setup.sh",
-      "packer/scripts/launch-service.sh",
+      "scripts/dependencies.sh",
+      "scripts/file-transfer.sh",
+      "scripts/create-user.sh",
+      "scripts/db-setup.sh",
+      "scripts/launch-service.sh",
     ]
   }
 }
