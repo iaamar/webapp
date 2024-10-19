@@ -45,11 +45,6 @@ build {
     destination = "/tmp/mywebapp.service"
   }
 
-  provisioner "file" {
-    source      = ".env"
-    destination = "/tmp/.env"
-  }
-
   provisioner "shell" {
     scripts = [
       "scripts/dependencies.sh",
