@@ -33,12 +33,6 @@ source "amazon-ebs" "a04" {
 
 build {
   sources = ["source.amazon-ebs.a04"]
-  provisioner "shell" {
-    environment_vars = [
-      "DEBIAN_FRONTEND=noninteractive",
-      "CHECKPOINT_DISABLE=1",
-    ]
-  }
 
   provisioner "file" {
     source      = "webapp.zip"
