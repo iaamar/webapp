@@ -32,15 +32,11 @@ jobs:
       with:
         version: latest
     
-    - name: Create webapp.zip
-      run: |
-        zip -r webapp.zip . -x "*.git*" "node_modules/*" "packer/aws.auto.pkrvars.hcl"
-  
     - name: Install plugins
-      run: packer init packer/aws.pkr.hcl
+      run: packer init .
 
     - name: Run packer fmt
-      run: packer fmt -check packer/aws.pkr.hcl
+      run: packer fmt .
 
     - name: Validate Packer template
-      run: packer validate packer/aws.pkr.hcl
+      run: packer validate .

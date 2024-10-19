@@ -16,7 +16,6 @@ source "amazon-ebs" "a04" {
   ssh_username         = var.ssh_username
   subnet_id            = var.subnet_id
   ami_regions          = var.ami_regions
-  ssh_interface        = "public_ip"
 
   launch_block_device_mappings {
     delete_on_termination = true
