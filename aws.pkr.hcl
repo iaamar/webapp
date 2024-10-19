@@ -46,19 +46,27 @@ build {
   }
 
   # Set up environment variables and install dependencies
-  provisioner "shell" {
-    environment_vars = [
-      "AWS_ACCESS_KEY_ID=${var.aws_access_key_id}",
-      "AWS_SECRET_ACCESS_KEY=${var.aws_secret_access_key}",
-      "AWS_DEFAULT_REGION=${var.aws_default_region}",
-      "DB_HOST=${var.db_host}",
-      "DB_PORT=${var.db_port}",
-      "DB_USER=${var.db_user}",
-      "DB_PASSWORD=${var.db_password}",
-      "DB_DATABASE=${var.db_database}"
-    ]
-    inline = [
-      "set -e",
+ provisioner "shell" {
+  environment_vars = [
+    "AWS_ACCESS_KEY_ID=${var.aws_access_key_id}",
+    "AWS_SECRET_ACCESS_KEY=${var.aws_secret_access_key}",
+    "AWS_DEFAULT_REGION=${var.aws_default_region}",
+    "DB_HOST=\"${var.db_host}\"",
+    "DB_PORT=\"${var.db_port}\"",
+    "DB_USER=\"${var.db_user}\"",
+    "DB_PASSWORD=\"${var.db_password}\"",
+    "DB_DATABASE=\"${var.db_database}\"",
+    "INSTANCE_TYPE=\"${var.instance_type}\"",
+    "REGION=\"${var.region}\"",
+    "SOURCE_AMI=\"${var.source_ami}\"",
+    "SSH_USERNAME=\"${var.ssh_username}\"",
+    "SUBNET_ID=\"${var.subnet_id}\"",
+    "AMI_REGIONS=\"${join(",", var.ami_regions)}\"",
+    "AMI_NAME=\"${var.ami_name}\"",
+    "AMI_DESCRIPTION=\"${var.ami_description}\""
+  ]
+  inline = [
+    "set -e",
 
       # Install AWS CLI
       "curl 'https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip' -o 'awscliv2.zip'",
@@ -92,46 +100,57 @@ build {
 
 variable "ami_name" {
   type = string
+  default = ""
 }
 
 variable "ami_description" {
   type = string
+  default = ""
 }
 
 variable "instance_type" {
   type = string
+  default = ""
 }
 
 variable "region" {
   type = string
+  default = ""
 }
 
 variable "source_ami" {
   type = string
+  default = ""
 }
 
 variable "ssh_username" {
   type = string
+  default = ""
 }
 
 variable "subnet_id" {
   type = string
+  default = ""
 }
 
 variable "ami_regions" {
   type = list(string)
+  default = []
 }
 
 variable "db_user" {
   type = string
+  default = ""
 }
 
 variable "db_password" {
   type = string
+  default = ""
 }
 
 variable "db_name" {
   type = string
+  default = ""
 }
 
 variable "db_database" {
