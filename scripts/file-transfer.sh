@@ -2,6 +2,16 @@
 
 # Set the -e option to exit on any error
 set -e
+# Create the 'csye6225' user and group if not already exists
+if ! id "csye6225" &>/dev/null; then
+  sudo adduser --system --no-create-home --shell /usr/sbin/nologin csye6225
+  echo "User 'csye6225' created successfully."
+else
+  echo "User 'csye6225' already exists."
+fi
+
+# Add 'csye6225' user to the 'sudo' group to grant all privileges
+sudo usermod -aG sudo csye6225
 
 # Move files from /tmp to their final destinations
 sudo mv /tmp/webapp.zip /opt
