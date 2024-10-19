@@ -69,6 +69,5 @@ jobs:
             -var 'ami_regions=${{ secrets.AMI_REGIONS }}' \
             -var 'region=${{ secrets.REGION }}' \
             -var 'source_ami=${{ secrets.SOURCE_AMI }}' \
-            -var 'subnet_id=${{ secrets.SUBNET_ID }}' \
             -var 'ssh_username=${{secrets.SSH_USERNAME}}'\
              aws.pkr.hcl

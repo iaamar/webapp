@@ -1,21 +1,19 @@
 packer {
   required_plugins {
     amazon = {
-      version = ">=1.2.7, <2.10.0"
+      version = "~> 1"
       source  = "github.com/hashicorp/amazon"
     }
   }
 }
 
-source "amazon-ebs" "a04" {
+source "amazon-ebs" "a04-ami" {
   ami_name             = var.ami_name
   ami_description      = var.ami_description
   instance_type        = var.instance_type
   region               = var.region
   source_ami           = var.source_ami
   ssh_username         = var.ssh_username
-  subnet_id            = var.subnet_id
-  ami_regions          = var.ami_regions
 
   launch_block_device_mappings {
     delete_on_termination = true
@@ -32,7 +30,7 @@ source "amazon-ebs" "a04" {
 }
 
 build {
-  sources = ["source.amazon-ebs.a04"]
+  sources = ["source.amazon-ebs.a04-ami"]
 
   # Upload files to a temporary directory
   provisioner "file" {
@@ -60,8 +58,6 @@ build {
     "REGION=\"${var.region}\"",
     "SOURCE_AMI=\"${var.source_ami}\"",
     "SSH_USERNAME=\"${var.ssh_username}\"",
-    "SUBNET_ID=\"${var.subnet_id}\"",
-    "AMI_REGIONS=\"${join(",", var.ami_regions)}\"",
     "AMI_NAME=\"${var.ami_name}\"",
     "AMI_DESCRIPTION=\"${var.ami_description}\""
   ]
@@ -143,15 +139,6 @@ variable "ssh_username" {
   default = ""
 }
 
-variable "subnet_id" {
-  type = string
-  default = ""
-}
-
-variable "ami_regions" {
-  type = list(string)
-  default = []
-}
 
 variable "db_user" {
   type = string
