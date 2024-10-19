@@ -22,8 +22,8 @@ fi
 sudo usermod -aG sudo csye6225
 
 # Move files from /tmp to their final destinations
-sudo mkdir -p /opt/webapp
-sudo unzip /opt/webapp.zip -d /opt/webapp
+sudo mv /tmp/webapp.zip /opt
+sudo unzip /opt/webapp.zip -d /opt
 cd /opt/webapp
 ls -la
 
