@@ -34,20 +34,20 @@ source "amazon-ebs" "a04" {
 build {
   sources = ["source.amazon-ebs.a04"]
 
+  # Upload files to a temporary directory
   provisioner "file" {
     source      = "webapp.zip"
-    destination = "/opt/webapp.zip"
+    destination = "/tmp/webapp.zip"
   }
 
   provisioner "file" {
     source      = "scripts/mywebapp.service"
-    destination = "/opt/mywebapp.service"
+    destination = "/tmp/mywebapp.service"
   }
 
   provisioner "file" {
     source      = ".env"
-    destination = "/opt/.env"
-    generated   = true
+    destination = "/tmp/.env"
   }
 
   provisioner "shell" {
@@ -60,6 +60,7 @@ build {
     ]
   }
 }
+
 
 variable "ami_name" {
   type = string

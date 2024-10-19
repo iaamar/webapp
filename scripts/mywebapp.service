@@ -9,6 +9,7 @@ User=csye6225
 Group=csye6225
 WorkingDirectory=/opt/webapp
 ExecStartPre=/usr/bin/npm install
+EnvironmentFile=/opt/webapp/.env
 ExecStart=/usr/bin/npm start
 Restart=on-failure
 RestartSec=3

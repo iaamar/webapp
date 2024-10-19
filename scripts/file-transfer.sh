@@ -3,19 +3,22 @@
 # Set the -e option to exit on any error
 set -e
 
-sudo mv /opt/webapp.zip /opt
-sudo mv /opt/.env /opt/webapp
-sudo mv /opt/mywebapp.service /etc/systemd/system
+# Move files from /tmp to their final destinations
+sudo mv /tmp/webapp.zip /opt
+sudo mv /tmp/.env /opt/webapp
+sudo mv /tmp/mywebapp.service /etc/systemd/system
 
-# Change the ownership of the webapp directory to csye6225
+# Change ownership of /opt/webapp to the 'csye6225' user
 sudo chown -R csye6225:csye6225 /opt/webapp
-sudo chmod 777 /opt/webapp
-sudo chown csye6225:csye6225 /opt/webapp/.env
-sudo chmod 777 /opt/webapp/.env
-sudo chown csye6225:csye6225 /etc/systemd/system/mywebapp.service
-sudo chmod 777 /etc/systemd/system/mywebapp.service
+sudo chmod 755 /opt/webapp
 
-# Unzip the webapp.zip file into the /opt/webapp directory
+# Set permissions for .env and systemd service files
+sudo chown csye6225:csye6225 /opt/webapp/.env
+sudo chmod 600 /opt/webapp/.env
+sudo chown csye6225:csye6225 /etc/systemd/system/mywebapp.service
+sudo chmod 644 /etc/systemd/system/mywebapp.service
+
+# Unzip the webapp.zip file into /opt/webapp
 sudo unzip /opt/webapp.zip -d /opt/webapp
 ls -a /opt/webapp
 
