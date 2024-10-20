@@ -89,12 +89,20 @@ build {
       "sudo systemctl start postgresql",
       "sudo systemctl enable postgresql",
 
-      # Create the PostgreSQL database and user using environment variables
+
+      # Switch to the PostgreSQL user and create the database
       "sudo -i -u postgres psql <<EOF",
+      "CREATE USER $DB_USER WITH ENCRYPTED PASSWORD '$DB_PASSWORD';",
       "CREATE DATABASE $DB_DATABASE;",
-      "ALTER USER postgres WITH ENCRYPTED PASSWORD '$DB_PASSWORD';",
-      "GRANT ALL PRIVILEGES ON DATABASE $DB_DATABASE TO postgres;",
+      "GRANT ALL PRIVILEGES ON DATABASE $DB_DATABASE TO $DB_USER;",
       "EOF",
+
+      # Update the pg_hba.conf file to allow md5 authentication
+      "echo 'host all all 127.0.0.1/32 md5' | sudo tee -a /etc/postgresql/16/main/pg_hba.conf",
+      "echo 'host all all ::1/128 md5' | sudo tee -a /etc/postgresql/16/main/pg_hba.conf",
+
+      # Restart PostgreSQL to apply changes
+      "sudo systemctl restart postgresql",
 
       "echo 'PostgreSQL and user configuration completed successfully.'"
     ]
