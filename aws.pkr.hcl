@@ -99,9 +99,7 @@ build {
       "CREATE DATABASE $DB_DATABASE;",
       "GRANT ALL PRIVILEGES ON DATABASE $DB_DATABASE TO $DB_USER;",
       "ALTER USER $DB_USER WITH SUPERUSER;",
-      "\q",
       "PGPASSWORD=\"$DB_PASSWORD\" psql -U $DB_USER -d $DB_DATABASE -h localhost -c 'SELECT version();'",
-      "\q",
       "EOF",
 
       # Restart PostgreSQL to apply changes
