@@ -90,24 +90,9 @@ build {
 
     # Set up the database using environment variables
     "sudo -u postgres psql -c \"CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';\"",
+    "sudo -u postgres psql -c \"ALTER USER $DB_USER WITH PASSWORD '$DB_PASSWORD';\"",
     "sudo -u postgres psql -c \"CREATE DATABASE $DB_DATABASE WITH OWNER $DB_USER;\"",
     "sudo -u postgres psql -c \"GRANT ALL PRIVILEGES ON DATABASE $DB_DATABASE TO $DB_USER;\"",
-    "sudo -u postgres psql -c \"ALTER USER $DB_USER WITH SUPERUSER;\"",
-    
-    # Grant role membership to allow role switching
-    "sudo -u postgres psql -c \"GRANT $DB_USER TO postgres;\"",
-
-    # Restart PostgreSQL service
-    "sudo systemctl restart postgresql",
-
-  # Switch to created user and database
-    "sudo -u postgres psql -d $DB_DATABASE -c 'SET ROLE \"$DB_USER\"; SELECT CURRENT_USER;'",
-
-    # Grant schema privileges to the user
-    "sudo -u postgres psql -d $DB_DATABASE -c 'GRANT ALL ON SCHEMA public TO $DB_USER;'",
-    "sudo -u postgres psql -d $DB_DATABASE -c 'ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO $DB_USER;'",
-    "sudo -u postgres psql -d $DB_DATABASE -c 'ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO $DB_USER;'",
-
     "echo 'PostgreSQL and user configuration completed successfully.'"
     ]
   }
