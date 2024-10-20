@@ -92,7 +92,7 @@ build {
 
       # Write new configuration lines to /etc/postgresql/16/main/pg_hba.conf
       "sudo bash -c 'cat > /etc/postgresql/16/main/pg_hba.conf <<EOF",
-      "local       all                postgres                     peer",
+      "local       all                postgres                     trust",
       "",
       "# TYPE      DATABASE           USER         ADDRESS         METHOD",
       "",
@@ -113,8 +113,8 @@ build {
       "sudo systemctl restart postgresql",
       "sudo cat /etc/postgresql/16/main/pg_hba.conf",
 
-      # Switch to the PostgreSQL user and create the database and user
-      "sudo -i -u postgres bash -c \"psql -c \\\"CREATE USER $DB_USER WITH LOGIN PASSWORD '$DB_PASSWORD' SUPERUSER;\\\"\"",
+      # Create the new user and database
+      "sudo -i -u postgres bash -c \"psql -c \\\"CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';\\\"\"",
       "sudo -i -u postgres bash -c \"psql -c \\\"CREATE DATABASE $DB_DATABASE;\\\"\"",
       "sudo -i -u postgres bash -c \"psql -c \\\"GRANT ALL PRIVILEGES ON DATABASE $DB_DATABASE TO $DB_USER;\\\"\"",
       "sudo -i -u postgres bash -c \"psql -c \\\"ALTER USER $DB_USER WITH SUPERUSER;\\\"\"",
@@ -122,7 +122,7 @@ build {
       # Restart PostgreSQL to apply changes
       "sudo systemctl restart postgresql",
       # Switch to the newly created user and login
-      "PGPASSWORD='$DB_PASSWORD' psql -U $DB_USER -d $DB_DATABASE -h localhost -U $DB_USER",
+      "PGPASSWORD='$DB_PASSWORD' psql -U $DB_USER -d $DB_DATABASE -h 127.0.0.1 -U $DB_USER",
       "echo 'PostgreSQL, user creation, and login configuration completed successfully.'"
     ]
 
