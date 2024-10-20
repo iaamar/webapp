@@ -97,13 +97,9 @@ build {
     # Restart PostgreSQL service
     "sudo systemctl restart postgresql",
 
-    # Print the current PostgreSQL user
-    "echo 'Current PostgreSQL user:'",
-    "sudo -u postgres psql -c 'SELECT CURRENT_USER;'",
+  # Switch to created user and database
+    "sudo -u postgres psql -d $DB_DATABASE -c 'SET ROLE \"$DB_USER\"; SELECT CURRENT_USER;'",
 
-    "echo 'Switching to $DB_USER and accessing $DB_DATABASE...'",
-    "sudo -u $DB_USER psql -d $DB_DATABASE -c 'SELECT CURRENT_USER;'",
-    
     # Grant schema privileges to the user
     "sudo -u postgres psql -d $DB_DATABASE -c 'GRANT ALL ON SCHEMA public TO $DB_USER;'",
     "sudo -u postgres psql -d $DB_DATABASE -c 'ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO $DB_USER;'",
