@@ -123,7 +123,7 @@ build {
       "sudo systemctl restart postgresql",
       "sudo systemctl reload postgresql",
       # Switch to the newly created user and login
-      "PGPASSWORD='$DB_PASSWORD' psql -U $DB_USER -d $DB_DATABASE -h 127.0.0.1 -p 5432"
+      "PGPASSWORD='$DB_PASSWORD' psql -U $DB_USER -d $DB_DATABASE -h 127.0.0.1 -p 5432",
       "echo 'PostgreSQL, user creation, and login configuration completed successfully.'"
     ]
 
