@@ -93,6 +93,9 @@ build {
     "sudo -u postgres psql -c \"CREATE DATABASE $DB_DATABASE WITH OWNER $DB_USER;\"",
     "sudo -u postgres psql -c \"GRANT ALL PRIVILEGES ON DATABASE $DB_DATABASE TO $DB_USER;\"",
     "sudo -u postgres psql -c \"ALTER USER $DB_USER WITH SUPERUSER;\"",
+    
+    # Grant role membership to allow role switching
+    "sudo -u postgres psql -c \"GRANT $DB_USER TO postgres;\"",
 
     # Restart PostgreSQL service
     "sudo systemctl restart postgresql",
