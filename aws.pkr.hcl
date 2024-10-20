@@ -122,8 +122,7 @@ build {
       # Restart PostgreSQL to apply changes
       "sudo systemctl restart postgresql",
       # Switch to the newly created user and login
-      "sudo -i -u $DB_USER bash -c \\\"psql -d $DB_DATABASE\\\"",
-      "sudo -i -u postgres bash -c \"psql -c \\\"SELECT $DB_USER FROM pg_user;\\\"\"",
+      "sudo -i -u $DB_USER bash -c \"export PGPASSWORD='$DB_PASSWORD'; psql -d $DB_DATABASE -U $DB_USER\"",
 
 
       "echo 'PostgreSQL, user creation, and login configuration completed successfully.'"
