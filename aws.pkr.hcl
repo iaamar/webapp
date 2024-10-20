@@ -64,7 +64,9 @@ build {
     inline = [
       "set -e",
 
-      "sudo apt-get install -y unzip",
+  # Install unzip utility
+  "sudo apt-get update",
+  "sudo apt-get install -y unzip",
 
       # Install AWS CLI
       "curl 'https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip' -o 'awscliv2.zip'",
@@ -83,30 +85,36 @@ build {
       "curl -fsSL https://deb.nodesource.com/setup_21.x | sudo -E bash -",
       "sudo apt-get install -y nodejs",
 
-
       # Install PostgreSQL
       "sudo apt-get install -y postgresql postgresql-contrib",
       "sudo systemctl start postgresql",
       "sudo systemctl enable postgresql",
-     
-     # Update the pg_hba.conf file to allow md5 authentication
+
+      # Update the pg_hba.conf file to allow md5 authentication
       "echo 'host all all 127.0.0.1/32 md5' | sudo tee -a /etc/postgresql/16/main/pg_hba.conf",
       "echo 'host all all ::1/128 md5' | sudo tee -a /etc/postgresql/16/main/pg_hba.conf",
+      
+      "cat /etc/postgresql/16/main/pg_hba.conf",
 
-      # Switch to the PostgreSQL user and create the database
-      "sudo -i -u postgres psql <<EOF",
-      "CREATE USER $DB_USER WITH ENCRYPTED PASSWORD '$DB_PASSWORD';",
-      "CREATE DATABASE $DB_DATABASE;",
-      "GRANT ALL PRIVILEGES ON DATABASE $DB_DATABASE TO $DB_USER;",
-      "ALTER USER $DB_USER WITH SUPERUSER;",
-      "PGPASSWORD=\"$DB_PASSWORD\" psql -U $DB_USER -d $DB_DATABASE -h localhost -c 'SELECT version();'",
-      "EOF",
+      # Switch to the PostgreSQL user and create the database and user
+      "sudo -i -u postgres bash -c \"psql -c \\\"CREATE USER $DB_USER WITH LOGIN PASSWORD '$DB_PASSWORD' SUPERUSER;\\\"\"",
+      "sudo -i -u postgres bash -c \"psql -c \\\"CREATE DATABASE $DB_DATABASE;\\\"\"",
+      "sudo -i -u postgres bash -c \"psql -c \\\"GRANT ALL PRIVILEGES ON DATABASE $DB_DATABASE TO $DB_USER;\\\"\"",
+      "sudo -i -u postgres bash -c \"psql -c \\\"ALTER USER $DB_USER WITH SUPERUSER;\\\"\"",
 
       # Restart PostgreSQL to apply changes
       "sudo systemctl restart postgresql",
 
-      "echo 'PostgreSQL and user configuration completed successfully.'"
+      # Verify the PostgreSQL user and database creation
+      "sudo -i -u postgres bash -c \"psql -c \\\"SELECT usename FROM pg_user;\\\"\"",
+      "sudo -i -u postgres bash -c \"psql -c \\\"\\l;\\\"\"",
+
+      # Switch to the newly created user and login
+      "sudo -i -u $DB_USER bash -c \\\"psql -d $DB_DATABASE\\\"",
+
+      "echo 'PostgreSQL, user creation, and login configuration completed successfully.'"
     ]
+
   }
 
   # Execute additional scripts after environment setup
