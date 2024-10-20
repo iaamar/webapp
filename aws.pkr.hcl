@@ -92,7 +92,7 @@ build {
 
       # Write new configuration lines to /etc/postgresql/16/main/pg_hba.conf
       "sudo bash -c 'cat > /etc/postgresql/16/main/pg_hba.conf <<EOF",
-      "local       all                postgres                     md5",
+      "local       all                postgres                     peer",
       "",
       "# TYPE      DATABASE           USER         ADDRESS         METHOD",
       "",
@@ -122,9 +122,7 @@ build {
       # Restart PostgreSQL to apply changes
       "sudo systemctl restart postgresql",
       # Switch to the newly created user and login
-      "sudo -i -u $DB_USER bash -c \"export PGPASSWORD='$DB_PASSWORD'; psql -d $DB_DATABASE -U $DB_USER\"",
-
-
+      "PGPASSWORD='$DB_PASSWORD' psql -U $DB_USER -d $DB_DATABASE -h localhost -U $DB_USER",
       "echo 'PostgreSQL, user creation, and login configuration completed successfully.'"
     ]
 
