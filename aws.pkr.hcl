@@ -110,7 +110,7 @@ build {
       "EOF'",
 
       # Restart PostgreSQL to apply changes
-      "sudo systemctl restart postgresql",
+      "sudo systemctl restart postgresql.service"
       "sudo cat /etc/postgresql/16/main/pg_hba.conf",
 
       # Create the new user and database
