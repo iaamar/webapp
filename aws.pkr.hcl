@@ -82,18 +82,18 @@ build {
       # Install NodeSource PPA and Node.js
       "curl -fsSL https://deb.nodesource.com/setup_21.x | sudo -E bash -",
       "sudo apt-get install -y nodejs",
-
+    
       # Install PostgreSQL
       "sudo apt-get install -y postgresql postgresql-contrib",
       "sudo systemctl start postgresql",
       "sudo systemctl enable postgresql",
-
-    # Set up the database using environment variables
-    "sudo -u postgres psql -c \"CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';\"",
-    "sudo -u postgres psql -c \"ALTER USER $DB_USER WITH PASSWORD '$DB_PASSWORD';\"",
-    "sudo -u postgres psql -c \"CREATE DATABASE $DB_DATABASE WITH OWNER $DB_USER;\"",
-    "sudo -u postgres psql -c \"GRANT ALL PRIVILEGES ON DATABASE $DB_DATABASE TO $DB_USER;\"",
-    "echo 'PostgreSQL and user configuration completed successfully.'"
+     # Configure PostgreSQL
+      "sudo -i -u postgres psql <<EOF",
+      "CREATE DATABASE ${DB_DATABASE};",
+      "ALTER USER postgres WITH ENCRYPTED PASSWORD '${DB_PASSWORD}';",
+      "GRANT ALL PRIVILEGES ON DATABASE ${DB_DATABASE} TO postgres;",
+      "EOF",
+      "echo 'PostgreSQL and user configuration completed successfully.'"
     ]
   }
 

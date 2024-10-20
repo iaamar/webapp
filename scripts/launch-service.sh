@@ -6,6 +6,8 @@ set -e
 sudo systemctl daemon-reload
 
 sudo systemctl enable mywebapp.service
+sudo systemctl start mywebapp.service
+sudo journalctl -u mywebapp.service -f
 
 # Check if everything worked
 if [ $? -ne 0 ]; then

@@ -11,10 +11,10 @@ else
   echo "Group 'csye6225' already exists."
 fi
 
-# Create the 'csye6225' user with primary group 'csye6225' and set /usr/sbin/nologin as the shell
+# Create the 'csye6225' user with a home directory and /bin/bash shell
 if ! id "csye6225" &>/dev/null; then
-  sudo useradd -r -g csye6225 -s /usr/sbin/nologin csye6225
-  echo "User 'csye6225' created successfully with /usr/sbin/nologin as the shell."
+  sudo useradd -m -g csye6225 -s /bin/bash csye6225
+  echo "User 'csye6225' created successfully with a home directory."
 else
   echo "User 'csye6225' already exists."
 fi

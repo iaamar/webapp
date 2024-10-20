@@ -57,5 +57,9 @@ fi
 
 sudo chown csye6225:csye6225 /etc/systemd/system/mywebapp.service
 sudo chmod 644 /etc/systemd/system/mywebapp.service
+sudo chown -R csye6225:csye6225 /home/csye6225
+sudo chmod 755 /home/csye6225
+sudo -u csye6225 mkdir -p /home/csye6225/.npm
+sudo chown -R csye6225:csye6225 /home/csye6225/.npm
 
 echo "File transfer and setup completed successfully."
