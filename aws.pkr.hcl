@@ -114,16 +114,16 @@ build {
       "sudo cat /etc/postgresql/16/main/pg_hba.conf",
 
       # Create the new user and database
-      "sudo -i -u postgres bash -c \"psql -c \\\"CREATE USER $DB_USER WITH ENCRYPTED PASSWORD '$DB_PASSWORD';\\\"\"",
-      "sudo -i -u postgres bash -c \"psql -c \\\"CREATE DATABASE $DB_DATABASE;\\\"\"",
-      "sudo -i -u postgres bash -c \"psql -c \\\"GRANT ALL PRIVILEGES ON DATABASE $DB_DATABASE TO $DB_USER;\\\"\"",
-      "sudo -i -u postgres bash -c \"psql -c \\\"ALTER USER $DB_USER WITH SUPERUSER;\\\"\"",
+      "sudo -i -u postgres bash -c psql -c CREATE USER $DB_USER WITH ENCRYPTED PASSWORD '$DB_PASSWORD';",
+      "sudo -i -u postgres bash -c psql -c CREATE DATABASE $DB_DATABASE;",
+      "sudo -i -u postgres bash -c psql -c GRANT ALL PRIVILEGES ON DATABASE $DB_DATABASE TO $DB_USER;",
+      "sudo -i -u postgres bash -c psql -c ALTER USER $DB_USER WITH SUPERUSER;",
 
       # Restart PostgreSQL to apply changes
       "sudo systemctl restart postgresql",
       "sudo systemctl reload postgresql",
       # Switch to the newly created user and login
-      "PGPASSWORD='$DB_PASSWORD' psql -U $DB_USER -d $DB_DATABASE -h 127.0.0.1 -p 5432",
+      "PGPASSWORD='$DB_PASSWORD' psql -U $DB_USER -d $DB_DATABASE -h  -p 5432",
       "echo 'PostgreSQL, user creation, and login configuration completed successfully.'"
     ]
 
