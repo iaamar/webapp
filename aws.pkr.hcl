@@ -8,12 +8,12 @@ packer {
 }
 
 source "amazon-ebs" "a04-ami" {
-  ami_name             = var.ami_name
-  ami_description      = var.ami_description
-  instance_type        = var.instance_type
-  region               = var.region
-  source_ami           = var.source_ami
-  ssh_username         = var.ssh_username
+  ami_name        = var.ami_name
+  ami_description = var.ami_description
+  instance_type   = var.instance_type
+  region          = var.region
+  source_ami      = var.source_ami
+  ssh_username    = var.ssh_username
 
   launch_block_device_mappings {
     delete_on_termination = true
@@ -44,25 +44,25 @@ build {
   }
 
   # Set up environment variables and install dependencies
- provisioner "shell" {
-  environment_vars = [
-    "AWS_ACCESS_KEY_ID=${var.aws_access_key_id}",
-    "AWS_SECRET_ACCESS_KEY=${var.aws_secret_access_key}",
-    "AWS_DEFAULT_REGION=${var.aws_default_region}",
-    "DB_HOST=\"${var.db_host}\"",
-    "DB_PORT=\"${var.db_port}\"",
-    "DB_USER=\"${var.db_user}\"",
-    "DB_PASSWORD=\"${var.db_password}\"",
-    "DB_DATABASE=\"${var.db_database}\"",
-    "INSTANCE_TYPE=\"${var.instance_type}\"",
-    "REGION=\"${var.region}\"",
-    "SOURCE_AMI=\"${var.source_ami}\"",
-    "SSH_USERNAME=\"${var.ssh_username}\"",
-    "AMI_NAME=\"${var.ami_name}\"",
-    "AMI_DESCRIPTION=\"${var.ami_description}\""
-  ]
-  inline = [
-    "set -e",
+  provisioner "shell" {
+    environment_vars = [
+      "AWS_ACCESS_KEY_ID=${var.aws_access_key_id}",
+      "AWS_SECRET_ACCESS_KEY=${var.aws_secret_access_key}",
+      "AWS_DEFAULT_REGION=${var.aws_default_region}",
+      "DB_HOST=\"${var.db_host}\"",
+      "DB_PORT=\"${var.db_port}\"",
+      "DB_USER=\"${var.db_user}\"",
+      "DB_PASSWORD=\"${var.db_password}\"",
+      "DB_DATABASE=\"${var.db_database}\"",
+      "INSTANCE_TYPE=\"${var.instance_type}\"",
+      "REGION=\"${var.region}\"",
+      "SOURCE_AMI=\"${var.source_ami}\"",
+      "SSH_USERNAME=\"${var.ssh_username}\"",
+      "AMI_NAME=\"${var.ami_name}\"",
+      "AMI_DESCRIPTION=\"${var.ami_description}\""
+    ]
+    inline = [
+      "set -e",
 
       "sudo apt-get install -y unzip",
 
@@ -82,22 +82,25 @@ build {
       # Install NodeSource PPA and Node.js
       "curl -fsSL https://deb.nodesource.com/setup_21.x | sudo -E bash -",
       "sudo apt-get install -y nodejs",
-    
+
+
       # Install PostgreSQL
       "sudo apt-get install -y postgresql postgresql-contrib",
       "sudo systemctl start postgresql",
       "sudo systemctl enable postgresql",
-     # Configure PostgreSQL
+
+      # Create the PostgreSQL database and user using environment variables
       "sudo -i -u postgres psql <<EOF",
-      "CREATE DATABASE ${DB_DATABASE};",
-      "ALTER USER postgres WITH ENCRYPTED PASSWORD '${DB_PASSWORD}';",
-      "GRANT ALL PRIVILEGES ON DATABASE ${DB_DATABASE} TO postgres;",
+      "CREATE DATABASE $DB_DATABASE;",
+      "ALTER USER postgres WITH ENCRYPTED PASSWORD '$DB_PASSWORD';",
+      "GRANT ALL PRIVILEGES ON DATABASE $DB_DATABASE TO postgres;",
       "EOF",
+
       "echo 'PostgreSQL and user configuration completed successfully.'"
     ]
   }
 
-   # Execute additional scripts after environment setup
+  # Execute additional scripts after environment setup
   provisioner "shell" {
     scripts = [
       "scripts/create-user.sh",
@@ -110,77 +113,77 @@ build {
 
 
 variable "ami_name" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "ami_description" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "instance_type" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "region" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "source_ami" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "ssh_username" {
-  type = string
+  type    = string
   default = ""
 }
 
 
 variable "db_user" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "db_password" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "db_name" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "db_database" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "db_host" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "db_port" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "aws_access_key_id" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "aws_secret_access_key" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "aws_default_region" {
-  type = string
+  type    = string
   default = ""
 }
