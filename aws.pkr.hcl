@@ -94,7 +94,7 @@ build {
       "echo 'host all all 127.0.0.1/32 md5' | sudo tee -a /etc/postgresql/16/main/pg_hba.conf",
       "echo 'host all all ::1/128 md5' | sudo tee -a /etc/postgresql/16/main/pg_hba.conf",
       
-      "cat /etc/postgresql/16/main/pg_hba.conf",
+     "sudo cat /etc/postgresql/16/main/pg_hba.conf",
 
       # Switch to the PostgreSQL user and create the database and user
       "sudo -i -u postgres bash -c \"psql -c \\\"CREATE USER $DB_USER WITH LOGIN PASSWORD '$DB_PASSWORD' SUPERUSER;\\\"\"",
