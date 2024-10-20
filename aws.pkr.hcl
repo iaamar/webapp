@@ -90,11 +90,28 @@ build {
       "sudo systemctl start postgresql",
       "sudo systemctl enable postgresql",
 
-      # Update the pg_hba.conf file to allow md5 authentication
-      "echo 'host all all 127.0.0.1/32 md5' | sudo tee -a /etc/postgresql/16/main/pg_hba.conf",
-      "echo 'host all all ::1/128 md5' | sudo tee -a /etc/postgresql/16/main/pg_hba.conf",
-      
-     "sudo cat /etc/postgresql/16/main/pg_hba.conf",
+      # Write new configuration lines to /etc/postgresql/16/main/pg_hba.conf
+      "sudo bash -c 'cat > /etc/postgresql/16/main/pg_hba.conf <<EOF",
+      "local       all                postgres                     md5",
+      "",
+      "# TYPE      DATABASE           USER         ADDRESS         METHOD",
+      "",
+      "# \"local\" is for Unix domain socket connections only",
+      "local       all                all                          md5",
+      "# IPv4 local connections:",
+      "host        all                all           127.0.0.1/32   scram-sha-256",
+      "# IPv6 local connections:",
+      "host        all                all           ::1/128        scram-sha-256",
+      "# Allow replication connections from ***, by a user with the",
+      "# replication privilege.",
+      "local       replication        all                          md5",
+      "host        replication        all            127.0.0.1/32  scram-sha-256",
+      "host        replication        all            ::1/128       scram-sha-256",
+      "EOF'",
+
+      # Restart PostgreSQL to apply changes
+      "sudo systemctl restart postgresql"
+      "sudo cat /etc/postgresql/16/main/pg_hba.conf",
 
       # Switch to the PostgreSQL user and create the database and user
       "sudo -i -u postgres bash -c \"psql -c \\\"CREATE USER $DB_USER WITH LOGIN PASSWORD '$DB_PASSWORD' SUPERUSER;\\\"\"",
@@ -104,13 +121,10 @@ build {
 
       # Restart PostgreSQL to apply changes
       "sudo systemctl restart postgresql",
-
-      # Verify the PostgreSQL user and database creation
-      "sudo -i -u postgres bash -c \"psql -c \\\"SELECT usename FROM pg_user;\\\"\"",
-      "sudo -i -u postgres bash -c \"psql -c \\\"\\l;\\\"\"",
-
       # Switch to the newly created user and login
       "sudo -i -u $DB_USER bash -c \\\"psql -d $DB_DATABASE\\\"",
+      "sudo -i -u postgres bash -c \"psql -c \\\"SELECT $DB_USER FROM pg_user;\\\"\"",
+
 
       "echo 'PostgreSQL, user creation, and login configuration completed successfully.'"
     ]
