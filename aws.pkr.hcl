@@ -4,6 +4,10 @@ packer {
       version = "~> 1"
       source  = "github.com/hashicorp/amazon"
     }
+    amazon-ami-management = {
+      version = ">= 1.0.0"
+      source  = "github.com/wata727/amazon-ami-management"
+    }
   }
 }
 
@@ -46,27 +50,28 @@ build {
   # Set up environment variables and install dependencies
   provisioner "shell" {
     environment_vars = [
+      "DEBIAN_FRONTEND=noninteractive",
       "AWS_ACCESS_KEY_ID=${var.aws_access_key_id}",
       "AWS_SECRET_ACCESS_KEY=${var.aws_secret_access_key}",
       "AWS_DEFAULT_REGION=${var.aws_default_region}",
-      "DB_HOST=\"${var.db_host}\"",
-      "DB_PORT=\"${var.db_port}\"",
-      "DB_USER=\"${var.db_user}\"",
-      "DB_PASSWORD=\"${var.db_password}\"",
-      "DB_DATABASE=\"${var.db_database}\"",
-      "INSTANCE_TYPE=\"${var.instance_type}\"",
-      "REGION=\"${var.region}\"",
-      "SOURCE_AMI=\"${var.source_ami}\"",
-      "SSH_USERNAME=\"${var.ssh_username}\"",
-      "AMI_NAME=\"${var.ami_name}\"",
-      "AMI_DESCRIPTION=\"${var.ami_description}\""
+      "DB_HOST=${var.db_host}",
+      "DB_PORT=${var.db_port}",
+      "DB_USER=${var.db_user}",
+      "DB_PASSWORD=${var.db_password}",
+      "DB_DATABASE=${var.db_database}",
+      "INSTANCE_TYPE=${var.instance_type}",
+      "REGION=${var.region}",
+      "SOURCE_AMI=${var.source_ami}",
+      "SSH_USERNAME=${var.ssh_username}",
+      "AMI_NAME=${var.ami_name}",
+      "AMI_DESCRIPTION=${var.ami_description}"
     ]
     inline = [
       "set -e",
 
-  # Install unzip utility
-  "sudo apt-get update",
-  "sudo apt-get install -y unzip",
+      # Install unzip utility
+      "sudo apt-get update",
+      "sudo apt-get install -y unzip",
 
       # Install AWS CLI
       "curl 'https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip' -o 'awscliv2.zip'",
@@ -74,16 +79,28 @@ build {
       "sudo ./aws/install",
 
       # Configure AWS CLI using environment variables
-      "export AWS_PROFILE=demo",
-      "aws configure set aws_access_key_id \"$AWS_ACCESS_KEY_ID\" --profile demo",
-      "aws configure set aws_secret_access_key \"$AWS_SECRET_ACCESS_KEY\" --profile demo",
-      "aws configure set region \"$AWS_DEFAULT_REGION\" --profile demo",
-      "aws configure set output json --profile demo",
+      "export AWS_PROFILE=dev",
+      "aws configure set aws_access_key_id \"$AWS_ACCESS_KEY_ID\" --profile dev",
+      "aws configure set aws_secret_access_key \"$AWS_SECRET_ACCESS_KEY\" --profile dev",
+      "aws configure set region \"$AWS_DEFAULT_REGION\" --profile dev",
+      "aws configure set output json --profile dev",
       "aws configure list",
 
       # Install NodeSource PPA and Node.js
       "curl -fsSL https://deb.nodesource.com/setup_21.x | sudo -E bash -",
       "sudo apt-get install -y nodejs",
+
+      # Update npm to the latest version
+      "sudo npm install -g npm@latest",
+
+      # Install ts-node globally
+      "sudo npm install -g typescript ts-node",
+
+      # Verify installations
+      "node --version",
+      "npm --version",
+      "npx --version",
+      "ts-node --version",
 
       # Install PostgreSQL
       "sudo apt-get install -y postgresql postgresql-contrib",
@@ -92,41 +109,32 @@ build {
 
       # Write new configuration lines to /etc/postgresql/16/main/pg_hba.conf
       "sudo bash -c 'cat > /etc/postgresql/16/main/pg_hba.conf <<EOF",
-      "local       all                postgres                     trust",
-      "",
-      "# TYPE      DATABASE           USER          ADDRESS        METHOD",
-      "",
-      "# \"local\" is for Unix domain socket connections only",
-      "local       all                all                          md5",
-      "# IPv4 local connections:",
-      "host        all                all           0.0.0.0/0      md5",
-      "# IPv6 local connections:",
-      "host        all                all           ::1/128        md5",
-      "# Allow replication connections from ***, by a user with the",
-      "# replication privilege.",
-      "local       replication        all                          md5",
-      "host        replication        all            0.0.0.0/0     md5",
-      "host        replication        all            ::1/128       md5",
+      "local   all             postgres                                trust",
+      "local   all             all                                     md5",
+      "host    all             all             127.0.0.1/32            md5",
+      "host    all             all             ::1/128                 md5",
+      "host    all             all             0.0.0.0/0               md5",
       "EOF'",
 
       # Restart PostgreSQL to apply changes
       "sudo systemctl restart postgresql",
-      "sudo cat /etc/postgresql/16/main/pg_hba.conf",
 
       # Create the new user and database
-      "sudo -i -u postgres bash -c psql -c CREATE USER $DB_USER WITH ENCRYPTED PASSWORD '$DB_PASSWORD';",
-      "sudo -i -u postgres bash -c psql -c CREATE DATABASE $DB_DATABASE;",
-      "sudo -i -u postgres bash -c psql -c GRANT ALL PRIVILEGES ON DATABASE $DB_DATABASE TO $DB_USER;",
-      "sudo -i -u postgres bash -c psql -c ALTER USER $DB_USER WITH SUPERUSER;",
+      "sudo -u postgres psql -c \"CREATE USER $DB_USER WITH ENCRYPTED PASSWORD '$DB_PASSWORD';\" || echo 'User creation failed'",
+      "sudo -u postgres psql -c \"CREATE DATABASE $DB_DATABASE;\" || echo 'Database creation failed'",
+      "sudo -u postgres psql -c \"GRANT ALL PRIVILEGES ON DATABASE $DB_DATABASE TO $DB_USER;\" || echo 'Granting privileges failed'",
+      "sudo -u postgres psql -c \"ALTER USER $DB_USER WITH SUPERUSER;\" || echo 'Altering user failed'",
 
       # Restart PostgreSQL to apply changes
       "sudo systemctl restart postgresql",
       "sudo systemctl reload postgresql",
-      # Switch to the newly created user and login
-      "PGPASSWORD='$DB_PASSWORD' psql -U $DB_USER -d $DB_DATABASE -h  -p 5432",
-      "echo 'PostgreSQL, user creation, and login configuration completed successfully.'"
-    ]
 
+      # Test the connection
+      "echo 'Testing PostgreSQL connection...'",
+      "PGPASSWORD='$DB_PASSWORD' psql -U $DB_USER -d $DB_DATABASE -h 127.0.0.1 -p $DB_PORT -c '\\l' || echo 'Connection test failed'",
+
+      "echo 'PostgreSQL, user creation, and login configuration completed.'"
+    ]
   }
 
   # Execute additional scripts after environment setup
@@ -134,12 +142,16 @@ build {
     scripts = [
       "scripts/create-user.sh",
       "scripts/file-transfer.sh",
-      // "scripts/db-setup.sh",
       "scripts/launch-service.sh",
     ]
   }
-}
 
+  post-processor "amazon-ami-management" {
+    regions       = [var.region]
+    identifier    = var.source_ami
+    keep_releases = 2
+  }
+}
 
 variable "ami_name" {
   type    = string
@@ -171,18 +183,12 @@ variable "ssh_username" {
   default = ""
 }
 
-
 variable "db_user" {
   type    = string
   default = ""
 }
 
 variable "db_password" {
-  type    = string
-  default = ""
-}
-
-variable "db_name" {
   type    = string
   default = ""
 }
