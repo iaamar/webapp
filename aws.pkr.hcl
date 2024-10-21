@@ -4,10 +4,6 @@ packer {
       version = "~> 1"
       source  = "github.com/hashicorp/amazon"
     }
-    amazon-ami-management = {
-      version = ">= 1.0.0"
-      source  = "github.com/wata727/amazon-ami-management"
-    }
   }
 }
 
@@ -79,11 +75,11 @@ build {
       "sudo ./aws/install",
 
       # Configure AWS CLI using environment variables
-      "export AWS_PROFILE=dev",
-      "aws configure set aws_access_key_id \"$AWS_ACCESS_KEY_ID\" --profile dev",
-      "aws configure set aws_secret_access_key \"$AWS_SECRET_ACCESS_KEY\" --profile dev",
-      "aws configure set region \"$AWS_DEFAULT_REGION\" --profile dev",
-      "aws configure set output json --profile dev",
+      "export AWS_PROFILE=demo",
+      "aws configure set aws_access_key_id \"$AWS_ACCESS_KEY_ID\" --profile demo",
+      "aws configure set aws_secret_access_key \"$AWS_SECRET_ACCESS_KEY\" --profile demo",
+      "aws configure set region \"$AWS_DEFAULT_REGION\" --profile demo",
+      "aws configure set output json --profile demo",
       "aws configure list",
 
       # Install NodeSource PPA and Node.js
@@ -144,12 +140,6 @@ build {
       "scripts/file-transfer.sh",
       "scripts/launch-service.sh",
     ]
-  }
-
-  post-processor "amazon-ami-management" {
-    regions       = [var.region]
-    identifier    = var.source_ami
-    keep_releases = 2
   }
 }
 
