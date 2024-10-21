@@ -17,18 +17,20 @@ else
   echo ".env file not found. Creating a new .env file with default variables."
 
   # Create a new .env file with specified variables
-  sudo bash -c '<<EOF > /opt/webapp/.env
-    DB_HOST=localhost
-    DB_PORT=5432
-    DB_USER=amarnagargoje
-    DB_PASSWORD=user1234
-    DB_DATABASE=healthcare
-    AWS_ACCESS_KEY_ID="AKIAY6QVZHUMDQKGOLGR"
-    AWS_SECRET_ACCESS_KEY="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"
-    AWS_DEFAULT_REGION="us-east-2"
-    AWS_OUTPUT_FORMAT="json"
-    EOF'
+sudo bash -c 'cat <<EOF > /opt/webapp/.env
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=amarnagargoje
+DB_PASSWORD=user1234
+DB_DATABASE=healthcare
+AWS_ACCESS_KEY_ID="AKIAY6QVZHUMDQKGOLGR"
+AWS_SECRET_ACCESS_KEY="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"
+AWS_DEFAULT_REGION="us-east-2"
+AWS_OUTPUT_FORMAT="json"
+EOF'
   echo ".env file created successfully."
+  echo ".env file contents:"
+  cat .env  # Display the contents of the .env file
 fi
 
 # Set permissions for .env and systemd service files
