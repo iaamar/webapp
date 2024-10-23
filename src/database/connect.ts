@@ -4,11 +4,12 @@ require('dotenv').config(); // Load environment variables from .env
 
 const { Sequelize } = require('sequelize');
 
-// Construct the database URI using environment variables
-const DB_URI = `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`;
-
 // Initialize the Sequelize instance
-const sequelize = new Sequelize(DB_URI);
+const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD,{
+  host: process.env.DB_HOST,
+  dialect: 'postgres',
+  port: process.env.DB_PORT,
+});
 
 // Function to bootstrap the database
 export const bootstrapDatabase = async (): Promise<void> => {

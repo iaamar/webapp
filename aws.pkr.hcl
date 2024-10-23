@@ -97,39 +97,7 @@ build {
       "npm --version",
       "npx --version",
       "ts-node --version",
-
-      # Install PostgreSQL
-      "sudo apt-get install -y postgresql postgresql-contrib",
-      "sudo systemctl start postgresql",
-      "sudo systemctl enable postgresql",
-
-      # Write new configuration lines to /etc/postgresql/16/main/pg_hba.conf
-      "sudo bash -c 'cat > /etc/postgresql/16/main/pg_hba.conf <<EOF",
-      "local   all             postgres                                trust",
-      "local   all             all                                     md5",
-      "host    all             all             127.0.0.1/32            md5",
-      "host    all             all             ::1/128                 md5",
-      "host    all             all             0.0.0.0/0               md5",
-      "EOF'",
-
-      # Restart PostgreSQL to apply changes
-      "sudo systemctl restart postgresql",
-
-      # Create the new user and database
-      "sudo -u postgres psql -c \"CREATE USER $DB_USER WITH ENCRYPTED PASSWORD '$DB_PASSWORD';\" || echo 'User creation failed'",
-      "sudo -u postgres psql -c \"CREATE DATABASE $DB_DATABASE;\" || echo 'Database creation failed'",
-      "sudo -u postgres psql -c \"GRANT ALL PRIVILEGES ON DATABASE $DB_DATABASE TO $DB_USER;\" || echo 'Granting privileges failed'",
-      "sudo -u postgres psql -c \"ALTER USER $DB_USER WITH SUPERUSER;\" || echo 'Altering user failed'",
-
-      # Restart PostgreSQL to apply changes
-      "sudo systemctl restart postgresql",
-      "sudo systemctl reload postgresql",
-
-      # Test the connection
-      "echo 'Testing PostgreSQL connection...'",
-      "PGPASSWORD='$DB_PASSWORD' psql -U $DB_USER -d $DB_DATABASE -h 127.0.0.1 -p $DB_PORT -c '\\l' || echo 'Connection test failed'",
-
-      "echo 'PostgreSQL, user creation, and login configuration completed.'"
+      "echo 'Configuration completed.'"
     ]
   }
 
