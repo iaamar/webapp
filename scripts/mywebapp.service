@@ -10,7 +10,6 @@ User=csye6225
 Group=csye6225
 Environment=PATH=/usr/bin:/usr/local/bin
 WorkingDirectory=/opt/webapp
-EnvironmentFile=/opt/webapp/.env
 
 [Install]
 WantedBy=multi-user.target
