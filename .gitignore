@@ -3,3 +3,4 @@ node_modules
 package-lock.json
 .DS_Store
 aws.auto.pkrvars.hcl
+src/.DS_Store
