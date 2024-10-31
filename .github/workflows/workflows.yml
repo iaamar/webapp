@@ -1,101 +1,3 @@
-# name: Integration Test Workflow
-
-# on:
-#   pull_request:
-#     branches:
-#       - main
-
-
-# jobs:
-#   build:
-#     name: Integration Test Check
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - name: Checkout our code
-#         uses: actions/checkout@v3
-
-#       # Uninstall PostgreSQL completely and remove all related files
-#       - name: Uninstall PostgreSQL and clean up
-#         run: |
-#           # Stop the PostgreSQL service
-#           sudo systemctl stop postgresql
-
-#           # Uninstall PostgreSQL and related packages
-#           sudo apt-get --purge remove postgresql postgresql-client postgresql-client-common postgresql-common -y
-#           sudo apt-get autoremove -y
-#           sudo apt-get autoclean -y
-
-#           # Remove PostgreSQL data directories and configuration files
-#           sudo rm -rf /var/lib/postgresql/
-#           sudo rm -rf /etc/postgresql/
-#           sudo rm -rf /etc/postgresql-common/
-#           sudo rm -rf /var/log/postgresql/
-#           sudo rm -rf /usr/lib/postgresql/
-#           sudo rm -rf /usr/share/postgresql/
-#           sudo rm -rf /run/postgresql/
-
-#           # Remove the 'postgres' user and group (if it exists)
-#           sudo deluser postgres || true
-#           sudo delgroup postgres || true
-
-#           # Clean up any lingering systemd services related to PostgreSQL
-#           sudo systemctl daemon-reload
-
-#       # Reinstall PostgreSQL
-#       - name: Reinstall PostgreSQL
-#         run: |
-#           sudo apt-get update -y
-#           sudo apt-get install postgresql postgresql-contrib -y
-#           sudo systemctl start postgresql
-#           sudo systemctl enable postgresql
-#           sudo psql --version
-
-#       # Recreate PostgreSQL environment (create user, DB, and configure)
-#       - name: Setup PostgreSQL Database
-#         run: |
-#           sudo -u postgres psql -c "DROP DATABASE IF EXISTS ${{ secrets.DB_DATABASE }};"
-#           sudo -u postgres psql -c "DROP ROLE IF EXISTS ${{ secrets.DB_USER }};"
-#           sudo -u postgres psql -c "CREATE ROLE ${{ secrets.DB_USER }} WITH LOGIN PASSWORD '${{ secrets.DB_PASSWORD }}';"
-#           sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.DB_DATABASE }};"
-#           sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.DB_DATABASE }} TO ${{ secrets.DB_USER }};"
-#           sudo -u postgres psql -c "ALTER ROLE ${{ secrets.DB_USER }} WITH SUPERUSER;"
-
-#       # Restart PostgreSQL to apply changes
-#       - name: Restart PostgreSQL service
-#         run: sudo systemctl restart postgresql
-
-#       # Setup Node.js environment
-#       - name: Setup Node.js
-#         uses: actions/setup-node@v3
-#         with:
-#           node-version: "21.x"
-
-#       # Install Node.js dependencies
-#       - name: Install Dependencies
-#         run: npm install
-      
-#       - name: Reset PostgreSQL Schema
-#         run: |
-#           sudo -u postgres psql -c "DROP SCHEMA public CASCADE;"
-#           sudo -u postgres psql -c "CREATE SCHEMA public;"
-#           sudo -u postgres psql -c "DROP TYPE IF EXISTS images CASCADE;""
-#           sudo -u postgres psql -c "DROP TABLE IF EXISTS images CASCADE;
-
-      
-#       # Run Tests
-#       - name: Run Tests
-#         env:
-#           DB_HOST: localhost
-#           DB_USER: ${{ secrets.DB_USER }}
-#           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-#           DB_DATABASE: ${{ secrets.DB_DATABASE }}
-#           DB_PORT: 5432
-#           PORT: 9001
-#         run: npm test
-
-
-
 name: Integration Test Workflow
 
 on:
@@ -110,11 +12,11 @@ jobs:
 
     services:
       postgres:
-        image: postgres:14  # Specify your required PostgreSQL version
+        image: postgres:14
         env:
-          POSTGRES_DB: amarnagargoje
-          POSTGRES_USER: csye6225
-          POSTGRES_PASSWORD: user1234
+          POSTGRES_DB: ${{ secrets.DB_DATABASE }}
+          POSTGRES_USER: ${{ secrets.DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
         ports:
           - 5432:5432
         options: >-
@@ -146,7 +48,7 @@ jobs:
         env:
           DB_HOST: localhost
           DB_PORT: 5432
-          DB_DATABASE: amarnagargoje
-          DB_USER: csye6225
-          DB_PASSWORD: user1234
+          DB_DATABASE: ${{ secrets.DB_DATABASE }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: npm test
