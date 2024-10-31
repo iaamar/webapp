@@ -23,3 +23,5 @@ sudo chmod 644 /etc/systemd/system/mywebapp.service
 # Install dependencies
 cd /opt/webapp
 sudo -u csye6225 npm install
+
+echo 'File transfer completed'

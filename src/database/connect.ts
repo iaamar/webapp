@@ -1,4 +1,5 @@
 import logger from "../../utils/logger";
+import { initImageModel } from "../models/Image";
 import { initUserModel } from "../models/User";
 
 require('dotenv').config(); // Load environment variables from .env
@@ -20,8 +21,8 @@ export const bootstrapDatabase = async (): Promise<void> => {
     logger.info("Connection has been established successfully.");
 
     // Initialize models
-    //initAccountModel(sequelize);
     initUserModel(sequelize);
+    initImageModel(sequelize);
 
     // Sync models with the database (creates tables if they don't exist)
     await sequelize.sync({ force: true });  // `alter: true` updates the schema without dropping tables

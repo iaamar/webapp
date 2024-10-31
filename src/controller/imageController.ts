@@ -4,7 +4,6 @@ import AWS from "aws-sdk";
 import logger from "../../utils/logger";
 import client from "../../utils/statsd";
 import multer from "multer";
-import { UUIDV4 } from "sequelize";
 import { handleError } from "../helper/handleError";
 
 const s3 = new AWS.S3();
@@ -78,9 +77,15 @@ export const uploadProfilePic = async (
   logger.info("Upload Profile Pic : /v1/user/self/pic::POST");
   try {
     const authUserId = req.authUser?.id;
-    if (!bucketName) {
-      logger.error("S3 bucket name is not configured");
-      throw new Error("S3 bucket name is not configured");
+    if (!authUserId) {
+      logger.error(
+        "Unauthorized: Authenticated user not found in request:: /v1/user/self/pic::POST"
+      );
+      res.status(401).json({
+        error: "Unauthorized",
+        message: "Authenticated user not found",
+      });
+      return;
     }
     // Check if a profile picture already exists for this user
     const existingImage = await Image.findOne({
@@ -91,6 +96,7 @@ export const uploadProfilePic = async (
       res.status(400).json({ error: "Profile picture already exists" });
       return;
     }
+
     const file = req.file;
     if (!file) {
       logger.error("No file uploaded: /v1/user/self/pic::POST");
@@ -105,6 +111,10 @@ export const uploadProfilePic = async (
       return;
     }
 
+    if (!bucketName) {
+      logger.error("S3 bucket name is not configured");
+      throw new Error("S3 bucket name is not configured");
+    }
     const s3Params = {
       Bucket: bucketName,
       Key: `profile-pics/${bucketName}/${authUserId}/${file.originalname}`,
@@ -124,7 +134,6 @@ export const uploadProfilePic = async (
     // Save metadata to the database
     const newImage = await Image.create({
       user_id: authUserId,
-      id: UUIDV4(),
       file_name: file.originalname,
       url: formattedUrl,
       upload_date: new Date(),
