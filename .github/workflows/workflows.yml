@@ -79,8 +79,8 @@ jobs:
         run: |
           sudo -u postgres psql -c "DROP SCHEMA public CASCADE;"
           sudo -u postgres psql -c "CREATE SCHEMA public;"
-          DROP TYPE IF EXISTS images CASCADE;
-          DROP TABLE IF EXISTS images CASCADE;
+          sudo -u postgres psql -c "DROP TYPE IF EXISTS images CASCADE;"
+          sudo -u postgres psql -c "DROP TABLE IF EXISTS images CASCADE;"
 
       
       # Run Tests
