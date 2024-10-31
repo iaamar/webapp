@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import { User } from "../models/User";
 import bcrypt from "bcrypt";
-import client from "../../utils/statsd";
+import { increment } from "../../utils/statsd";
 import logger from "../../utils/logger";
 
 export const getUser = async (req: Request, res: Response) => {
   try {
-    client.increment("getUser");
+    increment("user.get");
     logger.info("Get User Information: /v1/user/self::GET");
     const authHeader = req.headers["authorization"];
     const base64Credentials = authHeader?.split(" ")[1] || "";
@@ -52,6 +52,7 @@ export const getUser = async (req: Request, res: Response) => {
       account_updated: user.account_updated,
     });
     logger.info("User information fetched successfully: /v1/user/self::GET");
+    increment("user.get.success");
   } catch (error) {
     logger.error("Internal server error: /v1/user/self::GET");
     res.status(500).json({
@@ -64,7 +65,7 @@ export const getUser = async (req: Request, res: Response) => {
 // POST /v1/user - Create User
 export const createUser = async (req: Request, res: Response) => {
   try {
-    client.increment("createUser");
+    increment("user.post");
     logger.info("Create User : /v1/user::POST");
     const { email, password, first_name, last_name } = req.body;
 
@@ -125,6 +126,7 @@ export const createUser = async (req: Request, res: Response) => {
       account_updated: newUser.account_updated,
     });
     logger.info("User information fetched successfully: /v1/user::POST");
+    increment("user.post.success");
   } catch (error) {
     logger.error("Internal server error: /v1/user::POST");
     res.status(500).json({
@@ -137,7 +139,7 @@ export const createUser = async (req: Request, res: Response) => {
 // PUT /v1/user - Update User
 export const updateUser = async (req: Request, res: Response) => {
   try {
-    client.increment("updateUser");
+    increment("user.put");
     logger.info("Update User Information : /v1/user/self::PUT");
     const { first_name, last_name, password } = req.body;
 
@@ -194,6 +196,7 @@ export const updateUser = async (req: Request, res: Response) => {
 
     res.status(204).send(); // No content on successful update
     logger.info("User information updated successfully: /v1/user/self::PUT");
+    increment("user.put.success");
   } catch (error) {
     logger.error("Internal server error: /v1/user/self::PUT: "+ error);
     res.status(500).json({

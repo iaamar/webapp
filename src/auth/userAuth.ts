@@ -12,7 +12,7 @@ declare global {
 import bcrypt from "bcrypt";
 import sequelize from "../database/connect";
 import logger from "../../utils/logger";
-import client from "../../utils/statsd";
+import { increment } from "../../utils/statsd";
 
 export const basicAuth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   logger.info("Basic Auth Middleware: Start");
@@ -20,6 +20,7 @@ export const basicAuth = async (req: Request, res: Response, next: NextFunction)
   
     if (!authHeader || !authHeader.startsWith('Basic ')) {
       logger.error("Unauthorized: No authorization header provided:: Basic Auth Middleware");
+      increment("basicAuth.noAuthHeader");
       res.status(401).json({
         error: "Unauthorized",
         message: "No authorization header provided",
@@ -36,6 +37,7 @@ export const basicAuth = async (req: Request, res: Response, next: NextFunction)
   
     if (!username || !password) {
       logger.error("Bad request: Missing username or password:: Basic Auth Middleware");
+      increment("basicAuth.missingUsername or password");
       res.status(400).json({
         error: "Bad request",
         message: "Missing username or password",
@@ -50,6 +52,7 @@ export const basicAuth = async (req: Request, res: Response, next: NextFunction)
       req.authUser = user || undefined;
       if (!user) {
         logger.error("User not found: Basic Auth Middleware");
+        increment("basicAuth.userNotFound");
         res.status(404).json({
           error: "Not Found",
           message: "User not found",
@@ -62,6 +65,7 @@ export const basicAuth = async (req: Request, res: Response, next: NextFunction)
   
       if (!isPasswordValid) {
         logger.error("Forbidden: Invalid credentials:: Basic Auth Middleware");
+        increment("basicAuth.invalidCredentials");
         res.status(403).json({
           error: "Forbidden",
           message: "Invalid credentials",
@@ -69,11 +73,13 @@ export const basicAuth = async (req: Request, res: Response, next: NextFunction)
         return;
       }
       console.log("authUSer: "+req.authUser);
+      logger.info("Basic Auth Middleware: Password is valid");
       
       // Password is valid, proceed with the request
       next();
     } catch (error) {
       logger.error("Internal server error: Error during authentication:: Basic Auth Middleware::"+error);
+      increment("basicAuth.internalServerError");
       res.status(500).json({
         error: "Internal server error",
         message: "An error occurred during authentication",
@@ -85,11 +91,14 @@ export const basicAuth = async (req: Request, res: Response, next: NextFunction)
  export const checkDatabaseConnection = async (req: Request, res: Response, next: NextFunction) => {
     try {
       logger.info("Checking database connection:: checkDatabaseConnection");
-      client.increment("checkDatabaseConnection");
+      increment("checkDatabaseConnection");
       await sequelize.authenticate();
+      logger.info("Database connection is available:: checkDatabaseConnection");
+      increment("checkDatabaseConnection.success");
       next();  // Proceed with the request
     } catch (error) {
       logger.error("Service Unavailable: Database connection is not available:: checkDatabaseConnection::"+error);
+      increment("checkDatabaseConnection.error");
       res.status(503).json({
         error: "Service Unavailable",
         message: "Database connection is not available",
