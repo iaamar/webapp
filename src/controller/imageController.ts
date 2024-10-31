@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { Image } from "../models/Image";
 import AWS from "aws-sdk";
 import logger from "../../utils/logger";
-import { increment } from "../../utils/statsd";
+import statsdClient, { increment } from "../../utils/statsd";
 import multer from "multer";
 import { handleError } from "../helper/handleError";
 
@@ -41,7 +41,7 @@ export const getProfilePic = async (
 ): Promise<void> => {
   increment("profilePic.get");
   logger.info("Get Profile Pic : /v1/user/self/pic::GET");
-
+  const apiStart = Date.now();
   try {
     const authUserId = req.authUser?.id;
     if (!authUserId) {
@@ -72,6 +72,8 @@ export const getProfilePic = async (
     increment("getProfilePic.success");
   } catch (error) {
     handleError(res, 500, "Failed to fetch profile pic", error);
+  } finally {
+    statsdClient.timing("api.profilePic.get", Date.now() - apiStart);
   }
 };
 
@@ -83,6 +85,7 @@ export const uploadProfilePic = async (
   req: Request,
   res: Response
 ): Promise<void> => {
+  const apiStart = Date.now();
   increment("profilePic.upload");
   logger.info("Upload Profile Pic : /v1/user/self/pic::POST");
   try {
@@ -168,6 +171,8 @@ export const uploadProfilePic = async (
   } catch (error) {
     logger.error(`Failed to upload profile pic: ${error}`);
     handleError(res, 500, "", error);
+  } finally {
+    statsdClient.timing("api.profilePic.post", Date.now() - apiStart);
   }
 };
 
@@ -175,6 +180,7 @@ export const deleteProfilePic = async (
   req: Request,
   res: Response
 ): Promise<void> => {
+  const apiStart = Date.now();
   increment("profilePic.delete");
   logger.info("Delete Profile Pic:: /v1/user/self/pic::DELETE");
 
@@ -227,5 +233,7 @@ export const deleteProfilePic = async (
   } catch (error) {
     logger.error(`/v1/user/self/pic::DELETE ${error}`);
     handleError(res, 500, "Failed to delete profile pic", error);
+  } finally {
+    statsdClient.timing("api.profilePic.delete", Date.now() - apiStart);
   }
 };
