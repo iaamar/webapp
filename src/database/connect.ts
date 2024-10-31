@@ -31,7 +31,7 @@ export const bootstrapDatabase = async (): Promise<void> => {
     logger.info("Connecting to the database...");
     await sequelize.authenticate();
     logger.info("Connection has been established successfully.");
-
+    await sequelize.drop(); // Drop all tables
     // Initialize models
     initUserModel(sequelize);
     initImageModel(sequelize);
