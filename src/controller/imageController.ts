@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { Image } from "../models/Image";
 import AWS from "aws-sdk";
 import logger from "../../utils/logger";
-import client from "../../utils/statsd";
+import statsdClient, { increment, timing } from "../../utils/statsd";
 import multer from "multer";
 import { handleError } from "../helper/handleError";
 
@@ -21,7 +21,7 @@ export const imageValidation = (
   res: Response,
   next: NextFunction
 ) => {
-  client.increment("imageValidation");
+  increment("imageValidation");
   logger.info("Image validation initiated: /v1/user/self/pic::POST");
 
   // Check if the file is present in the request
@@ -39,16 +39,25 @@ export const getProfilePic = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  client.increment("getProfilePic");
+  increment("profilePic.get");
   logger.info("Get Profile Pic : /v1/user/self/pic::GET");
-
+  const apiStart = Date.now();
   try {
-    const userId = req.body.user_id;
-    const image = await Image.findOne({ where: { user_id: userId } });
-
+    const authUserId = req.authUser?.id;
+    if (!authUserId) {
+      logger.error(
+        "Unauthorized: Authenticated user not found in request:: /v1/user/self/pic::DELETE"
+      );
+      res.status(401).json({
+        error: "Unauthorized",
+        message: "Authenticated user not found:: /v1/user/self/pic::DELETE",
+      });
+      return;
+    }
+    const image = await Image.findOne({ where: { user_id: authUserId } });
     if (!image) {
       logger.error("Profile pic not found: /v1/user/self/pic::GET");
-      res.status(404).send();
+      handleError(res, 404, "Profile picture not found", null);
       return;
     }
 
@@ -60,8 +69,11 @@ export const getProfilePic = async (
       user_id: image.user_id,
     });
     logger.info("Profile pic fetched successfully: /v1/user/self/pic::GET");
+    increment("getProfilePic.success");
   } catch (error) {
     handleError(res, 500, "Failed to fetch profile pic", error);
+  } finally {
+    timing("api.profilePic.get", Date.now() - apiStart);
   }
 };
 
@@ -73,7 +85,8 @@ export const uploadProfilePic = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  client.increment("uploadProfilePic");
+  const apiStart = Date.now();
+  increment("profilePic.upload");
   logger.info("Upload Profile Pic : /v1/user/self/pic::POST");
   try {
     const authUserId = req.authUser?.id;
@@ -83,7 +96,7 @@ export const uploadProfilePic = async (
       );
       res.status(401).json({
         error: "Unauthorized",
-        message: "Authenticated user not found",
+        message: "Authenticated user not found:: /v1/user/self/pic::POST",
       });
       return;
     }
@@ -93,26 +106,29 @@ export const uploadProfilePic = async (
     });
 
     if (existingImage) {
+      logger.error("Profile picture already exists:: /v1/user/self/pic::POST");
       res.status(400).json({ error: "Profile picture already exists" });
       return;
     }
 
     const file = req.file;
     if (!file) {
-      logger.error("No file uploaded: /v1/user/self/pic::POST");
+      logger.error("No file uploaded:: /v1/user/self/pic::POST");
       res.status(400).send();
       return;
     }
 
     // Check if the file is an image
     if (!allowedImageTypes.includes(file.mimetype)) {
-      logger.error("Invalid file type: /v1/user/self/pic::POST");
+      logger.error("Invalid file type:: /v1/user/self/pic::POST");
       res.status(400).send();
       return;
     }
 
     if (!bucketName) {
-      logger.error("S3 bucket name is not configured");
+      logger.error(
+        "S3 bucket name is not configured:: /v1/user/self/pic::POST"
+      );
       throw new Error("S3 bucket name is not configured");
     }
     const s3Params = {
@@ -138,8 +154,10 @@ export const uploadProfilePic = async (
       url: formattedUrl,
       upload_date: new Date(),
     });
-    logger.info("Profile pic metadata saved to DB", newImage);
-
+    logger.info(
+      "Profile pic metadata saved to DB:: /v1/user/self/pic::POST",
+      newImage
+    );
     // Return success response
     res.status(201).json({
       file_name: newImage.file_name,
@@ -148,10 +166,13 @@ export const uploadProfilePic = async (
       upload_date: newImage.upload_date,
       user_id: newImage.user_id,
     });
-    logger.info("Profile pic uploaded successfully: /v1/user/self/pic::POST");
+    logger.info("Profile pic uploaded successfully:: /v1/user/self/pic::POST");
+    increment("profilePic.upload.db.success");
   } catch (error) {
     logger.error(`Failed to upload profile pic: ${error}`);
-    res.status(500).send();
+    handleError(res, 500, "", error);
+  } finally {
+    timing("api.profilePic.post", Date.now() - apiStart);
   }
 };
 
@@ -159,23 +180,38 @@ export const deleteProfilePic = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  client.increment("deleteProfilePic");
-  logger.info("Delete Profile Pic : /v1/user/self/pic::DELETE");
+  const apiStart = Date.now();
+  increment("profilePic.delete");
+  logger.info("Delete Profile Pic:: /v1/user/self/pic::DELETE");
 
   try {
-    const authUserId = req.body.user_id;
+    const authUserId = req.authUser?.id;
+    if (!authUserId) {
+      logger.error(
+        "Unauthorized: Authenticated user not found in request:: /v1/user/self/pic::DELETE"
+      );
+      res.status(401).json({
+        error: "Unauthorized",
+        message: "Authenticated user not found:: /v1/user/self/pic::DELETE",
+      });
+      return;
+    }
     const image = await Image.findOne({ where: { user_id: authUserId } });
 
     if (!image) {
-      logger.error("Profile pic not found: /v1/user/self/pic::DELETE");
+      logger.error("Profile pic not found:: /v1/user/self/pic::DELETE");
       res.status(404).json({ error: "Profile picture not found" });
       return;
     }
 
     // Delete from S3 bucket
     if (!bucketName) {
-      logger.error("S3 bucket name is not configured");
-      throw new Error("S3 bucket name is not configured");
+      logger.error(
+        "S3 bucket name is not configured:: /v1/user/self/pic::DELETE"
+      );
+      throw new Error(
+        "S3 bucket name is not configured:: /v1/user/self/pic::DELETE"
+      );
     }
 
     const s3Params = {
@@ -184,15 +220,20 @@ export const deleteProfilePic = async (
     };
 
     await s3.deleteObject(s3Params).promise();
-    logger.info("Profile pic deleted from S3");
-
+    logger.info("Profile pic deleted from S3:: /v1/user/self/pic::DELETE");
+    increment("profilePic.delete.aws.success");
     // Delete from database
     await image.destroy();
-    logger.info("Profile pic metadata deleted from DB");
-
-    res.status(204).send(); // No content on successful deletion
-    logger.info("Profile pic deleted successfully: /v1/user/self/pic::DELETE");
+    logger.info(
+      "Profile pic metadata deleted from DB:: /v1/user/self/pic::DELETE"
+    );
+    res.status(204).send();
+    logger.info("Profile pic deleted successfully:: /v1/user/self/pic::DELETE");
+    increment("profilePic.delete.aws.success");
   } catch (error) {
+    logger.error(`/v1/user/self/pic::DELETE ${error}`);
     handleError(res, 500, "Failed to delete profile pic", error);
+  } finally {
+    timing("api.profilePic.delete", Date.now() - apiStart);
   }
 };

@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
 import { User } from "../models/User";
 import bcrypt from "bcrypt";
-import client from "../../utils/statsd";
+import statsdClient, { increment, timing } from "../../utils/statsd";
 import logger from "../../utils/logger";
 
 export const getUser = async (req: Request, res: Response) => {
+  const apiStart = Date.now();
   try {
-    client.increment("getUser");
+    increment("user.get");
     logger.info("Get User Information: /v1/user/self::GET");
     const authHeader = req.headers["authorization"];
     const base64Credentials = authHeader?.split(" ")[1] || "";
@@ -17,7 +18,9 @@ export const getUser = async (req: Request, res: Response) => {
 
     // Reject any query parameters
     if (Object.keys(req.query).length > 0) {
-      logger.error("Query parameters are not allowed for this route: /v1/user/self::GET");
+      logger.error(
+        "Query parameters are not allowed for this route: /v1/user/self::GET"
+      );
       return res.status(400).json({
         error: "Bad Request",
         message: "Query parameters are not allowed for this route",
@@ -25,7 +28,9 @@ export const getUser = async (req: Request, res: Response) => {
     }
     // reject any body parameters
     if (Object.keys(req.body).length > 0) {
-      logger.error("Body parameters are not allowed for this route: /v1/user/self::GET");
+      logger.error(
+        "Body parameters are not allowed for this route: /v1/user/self::GET"
+      );
       return res.status(400).json({
         error: "Bad Request",
         message: "Body parameters are not allowed for this route",
@@ -52,19 +57,23 @@ export const getUser = async (req: Request, res: Response) => {
       account_updated: user.account_updated,
     });
     logger.info("User information fetched successfully: /v1/user/self::GET");
+    increment("user.get.success");
   } catch (error) {
     logger.error("Internal server error: /v1/user/self::GET");
     res.status(500).json({
       error: "Internal server error",
       message: "An error occurred while fetching user information",
     });
+  } finally {
+    timing("api.user.get", Date.now() - apiStart);
   }
 };
 
 // POST /v1/user - Create User
 export const createUser = async (req: Request, res: Response) => {
+  const apiStart = Date.now();
   try {
-    client.increment("createUser");
+    increment("user.post");
     logger.info("Create User : /v1/user::POST");
     const { email, password, first_name, last_name } = req.body;
 
@@ -125,19 +134,23 @@ export const createUser = async (req: Request, res: Response) => {
       account_updated: newUser.account_updated,
     });
     logger.info("User information fetched successfully: /v1/user::POST");
+    increment("user.post.success");
   } catch (error) {
     logger.error("Internal server error: /v1/user::POST");
     res.status(500).json({
       error: "Internal server error",
       message: "An error occurred while creating the user",
     });
+  } finally {
+    timing("api.user.post", Date.now() - apiStart);
   }
 };
 
 // PUT /v1/user - Update User
 export const updateUser = async (req: Request, res: Response) => {
+  const apiStart = Date.now();
   try {
-    client.increment("updateUser");
+    increment("user.put");
     logger.info("Update User Information : /v1/user/self::PUT");
     const { first_name, last_name, password } = req.body;
 
@@ -160,7 +173,9 @@ export const updateUser = async (req: Request, res: Response) => {
 
     // Validate input: make sure at least one field is provided
     if (!first_name && !last_name && !password) {
-      logger.error("Bad Request: make sure at least one field is provided : /v1/user/self::PUT");
+      logger.error(
+        "Bad Request: make sure at least one field is provided : /v1/user/self::PUT"
+      );
       res.status(400).json({
         error: "Bad Request",
         message:
@@ -194,11 +209,14 @@ export const updateUser = async (req: Request, res: Response) => {
 
     res.status(204).send(); // No content on successful update
     logger.info("User information updated successfully: /v1/user/self::PUT");
+    increment("user.put.success");
   } catch (error) {
-    logger.error("Internal server error: /v1/user/self::PUT: "+ error);
+    logger.error("Internal server error: /v1/user/self::PUT: " + error);
     res.status(500).json({
       error: "Internal server error",
       message: "An error occurred while updating user information",
     });
+  } finally {
+    timing("api.user.put", Date.now() - apiStart);
   }
 };
