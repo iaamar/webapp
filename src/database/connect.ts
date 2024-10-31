@@ -25,7 +25,7 @@ export const bootstrapDatabase = async (): Promise<void> => {
     initImageModel(sequelize);
 
     // Sync models with the database (creates tables if they don't exist)
-    await sequelize.sync({ force: true });  // `alter: true` updates the schema without dropping tables
+    await sequelize.sync({ alter: true });  // `alter: true` updates the schema without dropping tables
 
     logger.info("Database bootstrapped and synchronized.");
   } catch (error) {
