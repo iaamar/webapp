@@ -1,4 +1,4 @@
-import StatsD from "statsd-client";
+import StatsD from "statsd-client"
 import moment from "moment-timezone";
 
 // Initialize StatsD client
