@@ -77,7 +77,7 @@ export const uploadProfilePic = async (
   client.increment("uploadProfilePic");
   logger.info("Upload Profile Pic : /v1/user/self/pic::POST");
   try {
-    const authUserId = req.authUser.id;
+    const authUserId = req.authUser?.id;
     if (!bucketName) {
       logger.error("S3 bucket name is not configured");
       throw new Error("S3 bucket name is not configured");
