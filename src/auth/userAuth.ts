@@ -12,7 +12,7 @@ declare global {
 import bcrypt from "bcrypt";
 import sequelize from "../database/connect";
 import logger from "../../utils/logger";
-import statsdClient, { increment } from "../../utils/statsd";
+import statsdClient, { increment, timing } from "../../utils/statsd";
 
 export const basicAuth = async (
   req: Request,
@@ -99,7 +99,7 @@ export const basicAuth = async (
       message: "An error occurred during authentication",
     });
   } finally {
-    statsdClient.timing("api.basicAuth", Date.now() - apiStart);
+    timing("api.basicAuth", Date.now() - apiStart);
   }
 };
 
@@ -128,6 +128,6 @@ export const checkDatabaseConnection = async (
       message: "Database connection is not available",
     });
   } finally {
-    statsdClient.timing("api.checkDatabaseConnection", Date.now() - apiStart);
+    timing("api.checkDatabaseConnection", Date.now() - apiStart);
   }
 };

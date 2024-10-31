@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { User } from "../models/User";
 import bcrypt from "bcrypt";
-import statsdClient, { increment } from "../../utils/statsd";
+import statsdClient, { increment, timing } from "../../utils/statsd";
 import logger from "../../utils/logger";
 
 export const getUser = async (req: Request, res: Response) => {
@@ -65,7 +65,7 @@ export const getUser = async (req: Request, res: Response) => {
       message: "An error occurred while fetching user information",
     });
   } finally {
-    statsdClient.timing("api.user.get", Date.now() - apiStart);
+    timing("api.user.get", Date.now() - apiStart);
   }
 };
 
@@ -142,7 +142,7 @@ export const createUser = async (req: Request, res: Response) => {
       message: "An error occurred while creating the user",
     });
   } finally {
-    statsdClient.timing("api.user.post", Date.now() - apiStart);
+    timing("api.user.post", Date.now() - apiStart);
   }
 };
 
@@ -217,6 +217,6 @@ export const updateUser = async (req: Request, res: Response) => {
       message: "An error occurred while updating user information",
     });
   } finally {
-    statsdClient.timing("api.user.put", Date.now() - apiStart);
+    timing("api.user.put", Date.now() - apiStart);
   }
 };

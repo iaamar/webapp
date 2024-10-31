@@ -3,3 +3,36 @@
 {"timestamp":"2024-10-31 13:27:32","level":"info","message":"Connection has been established successfully."}
 {"timestamp":"2024-10-31 13:27:32","level":"info","message":"Database bootstrapped and synchronized."}
 {"timestamp":"2024-10-31 13:27:32","level":"info","message":"Server is running on port 9001"}
+{"timestamp":"2024-10-31 13:49:15","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-10-31 13:49:15","level":"info","message":"Connecting to the database..."}
+{"timestamp":"2024-10-31 13:49:15","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-10-31 13:49:15","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-10-31 13:49:15","level":"info","message":"Server is running on port 9001"}
+{"timestamp":"2024-10-31 13:49:28","level":"info","message":"Checking database connection:: checkDatabaseConnection"}
+{"timestamp":"2024-10-31 13:49:29","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-10-31 13:49:29","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-10-31 13:49:32","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-10-31 13:49:32","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-10-31 13:49:32","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-10-31 13:49:35","level":"info","message":"Basic Auth Middleware: Start"}
+{"timestamp":"2024-10-31 13:49:35","level":"info","message":"Basic Auth Middleware: Password is valid"}
+{"timestamp":"2024-10-31 13:49:35","level":"info","message":"Checking database connection:: checkDatabaseConnection"}
+{"timestamp":"2024-10-31 13:49:35","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-10-31 13:49:35","level":"info","message":"Get User Information: /v1/user/self::GET"}
+{"timestamp":"2024-10-31 13:49:35","level":"info","message":"User information fetched successfully: /v1/user/self::GET"}
+{"timestamp":"2024-10-31 13:55:41","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-10-31 13:55:41","level":"info","message":"Connecting to the database..."}
+{"timestamp":"2024-10-31 13:55:41","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-10-31 13:55:41","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-10-31 13:55:41","level":"info","message":"Server is running on port 9001"}
+{"timestamp":"2024-10-31 13:55:50","level":"info","message":"Basic Auth Middleware: Start"}
+{"timestamp":"2024-10-31 13:55:50","level":"error","message":"User not found: Basic Auth Middleware"}
+{"timestamp":"2024-10-31 13:55:54","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-10-31 13:55:54","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-10-31 13:55:54","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-10-31 13:55:58","level":"info","message":"Basic Auth Middleware: Start"}
+{"timestamp":"2024-10-31 13:55:58","level":"info","message":"Basic Auth Middleware: Password is valid"}
+{"timestamp":"2024-10-31 13:55:58","level":"info","message":"Checking database connection:: checkDatabaseConnection"}
+{"timestamp":"2024-10-31 13:55:58","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-10-31 13:55:58","level":"info","message":"Get User Information: /v1/user/self::GET"}
+{"timestamp":"2024-10-31 13:55:58","level":"info","message":"User information fetched successfully: /v1/user/self::GET"}

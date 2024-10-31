@@ -1,5 +1,5 @@
 import logger from "../../utils/logger";
-import statsdClient, { increment } from "../../utils/statsd";
+import statsdClient, { increment, timing } from "../../utils/statsd";
 import { initImageModel } from "../models/Image";
 import { initUserModel } from "../models/User";
 
@@ -46,7 +46,7 @@ export const bootstrapDatabase = async (): Promise<void> => {
     increment("db.bootstrap.error");
     throw error; // Throw the error to stop the server from starting
   } finally {
-    statsdClient.timing("api.db.bootstrap", Date.now() - apiStart);
+    timing("api.db.bootstrap", Date.now() - apiStart);
   }
 };
 

@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { Image } from "../models/Image";
 import AWS from "aws-sdk";
 import logger from "../../utils/logger";
-import statsdClient, { increment } from "../../utils/statsd";
+import statsdClient, { increment, timing } from "../../utils/statsd";
 import multer from "multer";
 import { handleError } from "../helper/handleError";
 
@@ -73,7 +73,7 @@ export const getProfilePic = async (
   } catch (error) {
     handleError(res, 500, "Failed to fetch profile pic", error);
   } finally {
-    statsdClient.timing("api.profilePic.get", Date.now() - apiStart);
+    timing("api.profilePic.get", Date.now() - apiStart);
   }
 };
 
@@ -172,7 +172,7 @@ export const uploadProfilePic = async (
     logger.error(`Failed to upload profile pic: ${error}`);
     handleError(res, 500, "", error);
   } finally {
-    statsdClient.timing("api.profilePic.post", Date.now() - apiStart);
+    timing("api.profilePic.post", Date.now() - apiStart);
   }
 };
 
@@ -234,6 +234,6 @@ export const deleteProfilePic = async (
     logger.error(`/v1/user/self/pic::DELETE ${error}`);
     handleError(res, 500, "Failed to delete profile pic", error);
   } finally {
-    statsdClient.timing("api.profilePic.delete", Date.now() - apiStart);
+    timing("api.profilePic.delete", Date.now() - apiStart);
   }
 };
