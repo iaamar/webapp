@@ -20,7 +20,7 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd="pg_isready -U csye6225"
+          --health-cmd="pg_isready -U ${{ secrets.DB_USER }}"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
@@ -32,7 +32,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '21'
+          node-version: '21.7.3'
 
       - name: Install dependencies
         run: npm install
@@ -44,7 +44,13 @@ jobs:
             sleep 1
           done
           sleep 5  # Additional delay to ensure readiness
-      
+
+      - name: Verify Database Connection
+        run: |
+          PGPASSWORD="${{ secrets.DB_PASSWORD }}" psql -h localhost -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_DATABASE }} -c "SELECT 1"
+        env:
+          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+
       - name: Run Tests
         env:
           DB_HOST: localhost
