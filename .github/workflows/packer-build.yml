@@ -16,20 +16,7 @@ jobs:
     
     - name: Zip folder
       run: zip -r webapp.zip . -x "*.git*" "node_modules/*" "aws.auto.pkrvars.hcl"
-    
-    - name: Update AWS CLI to the latest version
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y curl unzip
-        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-        unzip awscliv2.zip
-        sudo ./aws/install --update   # Add the --update flag to update the existing CLI
-        aws --version  # Check the updated version
-        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} --profile demo
-        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} --profile demo
-        aws configure set region ${{ secrets.REGION }} --profile demo
-        aws configure set output json --profile demo
-        aws configure list --profile demo
+
     
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1

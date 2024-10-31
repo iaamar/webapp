@@ -7,7 +7,7 @@ packer {
   }
 }
 
-source "amazon-ebs" "a04-ami" {
+source "amazon-ebs" "a06-ami" {
   ami_name        = var.ami_name
   ami_description = var.ami_description
   instance_type   = var.instance_type
@@ -30,7 +30,7 @@ source "amazon-ebs" "a04-ami" {
 }
 
 build {
-  sources = ["source.amazon-ebs.a04-ami"]
+  sources = ["source.amazon-ebs.a06-ami"]
 
   # Upload files to a temporary directory
   provisioner "file" {
@@ -75,11 +75,11 @@ build {
       "sudo ./aws/install",
 
       # Configure AWS CLI using environment variables
-      "export AWS_PROFILE=demo",
-      "aws configure set aws_access_key_id \"$AWS_ACCESS_KEY_ID\" --profile demo",
-      "aws configure set aws_secret_access_key \"$AWS_SECRET_ACCESS_KEY\" --profile demo",
-      "aws configure set region \"$AWS_DEFAULT_REGION\" --profile demo",
-      "aws configure set output json --profile demo",
+      "export AWS_PROFILE=dev",
+      "aws configure set aws_access_key_id \"$AWS_ACCESS_KEY_ID\" --profile dev",
+      "aws configure set aws_secret_access_key \"$AWS_SECRET_ACCESS_KEY\" --profile dev",
+      "aws configure set region \"$AWS_DEFAULT_REGION\" --profile dev",
+      "aws configure set output json --profile dev",
       "aws configure list",
 
       # Install NodeSource PPA and Node.js
@@ -104,6 +104,7 @@ build {
   # Execute additional scripts after environment setup
   provisioner "shell" {
     scripts = [
+      "scripts/cloud-watch.sh",
       "scripts/create-user.sh",
       "scripts/file-transfer.sh",
       "scripts/launch-service.sh",
