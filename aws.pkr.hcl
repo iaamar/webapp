@@ -32,7 +32,6 @@ source "amazon-ebs" "a06-ami" {
 build {
   sources = ["source.amazon-ebs.a06-ami"]
 
-  # Upload files to a temporary directory
   provisioner "file" {
     source      = "webapp.zip"
     destination = "/tmp/webapp.zip"
@@ -43,67 +42,9 @@ build {
     destination = "/tmp/mywebapp.service"
   }
 
-  # Set up environment variables and install dependencies
-  provisioner "shell" {
-    environment_vars = [
-      "DEBIAN_FRONTEND=noninteractive",
-      "AWS_ACCESS_KEY_ID=${var.aws_access_key_id}",
-      "AWS_SECRET_ACCESS_KEY=${var.aws_secret_access_key}",
-      "AWS_DEFAULT_REGION=${var.aws_default_region}",
-      "DB_HOST=${var.db_host}",
-      "DB_PORT=${var.db_port}",
-      "DB_USER=${var.db_user}",
-      "DB_PASSWORD=${var.db_password}",
-      "DB_DATABASE=${var.db_database}",
-      "INSTANCE_TYPE=${var.instance_type}",
-      "REGION=${var.region}",
-      "SOURCE_AMI=${var.source_ami}",
-      "SSH_USERNAME=${var.ssh_username}",
-      "AMI_NAME=${var.ami_name}",
-      "AMI_DESCRIPTION=${var.ami_description}"
-    ]
-    inline = [
-      "set -e",
-
-      # Install unzip utility
-      "sudo apt-get update",
-      "sudo apt-get install -y unzip",
-
-      # Install AWS CLI
-      "curl 'https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip' -o 'awscliv2.zip'",
-      "unzip awscliv2.zip",
-      "sudo ./aws/install",
-
-      # Configure AWS CLI using environment variables
-      "export AWS_PROFILE=dev",
-      "aws configure set aws_access_key_id \"$AWS_ACCESS_KEY_ID\" --profile dev",
-      "aws configure set aws_secret_access_key \"$AWS_SECRET_ACCESS_KEY\" --profile dev",
-      "aws configure set region \"$AWS_DEFAULT_REGION\" --profile dev",
-      "aws configure set output json --profile dev",
-      "aws configure list",
-
-      # Install NodeSource PPA and Node.js
-      "curl -fsSL https://deb.nodesource.com/setup_21.x | sudo -E bash -",
-      "sudo apt-get install -y nodejs",
-
-      # Update npm to the latest version
-      "sudo npm install -g npm@latest",
-
-      # Install ts-node globally
-      "sudo npm install -g typescript ts-node",
-
-      # Verify installations
-      "node --version",
-      "npm --version",
-      "npx --version",
-      "ts-node --version",
-      "echo 'Configuration completed.'"
-    ]
-  }
-
-  # Execute additional scripts after environment setup
   provisioner "shell" {
     scripts = [
+      "scripts/dependencies.sh",
       "scripts/cloud-watch.sh",
       "scripts/create-user.sh",
       "scripts/file-transfer.sh",

@@ -5,88 +5,57 @@ on:
     branches:
       - main
 
-
 jobs:
-  build:
+  test:
     name: Integration Test Check
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_DB: ${{ secrets.DB_DATABASE }}
+          POSTGRES_USER: ${{ secrets.DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U csye6225"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
-      - name: Checkout our code
-        uses: actions/checkout@v3
+      - name: Check out code
+        uses: actions/checkout@v2
 
-      # Uninstall PostgreSQL completely and remove all related files
-      - name: Uninstall PostgreSQL and clean up
-        run: |
-          # Stop the PostgreSQL service
-          sudo systemctl stop postgresql
-
-          # Uninstall PostgreSQL and related packages
-          sudo apt-get --purge remove postgresql postgresql-client postgresql-client-common postgresql-common -y
-          sudo apt-get autoremove -y
-          sudo apt-get autoclean -y
-
-          # Remove PostgreSQL data directories and configuration files
-          sudo rm -rf /var/lib/postgresql/
-          sudo rm -rf /etc/postgresql/
-          sudo rm -rf /etc/postgresql-common/
-          sudo rm -rf /var/log/postgresql/
-          sudo rm -rf /usr/lib/postgresql/
-          sudo rm -rf /usr/share/postgresql/
-          sudo rm -rf /run/postgresql/
-
-          # Remove the 'postgres' user and group (if it exists)
-          sudo deluser postgres || true
-          sudo delgroup postgres || true
-
-          # Clean up any lingering systemd services related to PostgreSQL
-          sudo systemctl daemon-reload
-
-      # Reinstall PostgreSQL
-      - name: Reinstall PostgreSQL
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install postgresql postgresql-contrib -y
-          sudo systemctl start postgresql
-          sudo systemctl enable postgresql
-          sudo psql --version
-
-      # Recreate PostgreSQL environment (create user, DB, and configure)
-      - name: Setup PostgreSQL Database
-        run: |
-          sudo -u postgres psql -c "DROP DATABASE IF EXISTS ${{ secrets.DB_DATABASE }};"
-          sudo -u postgres psql -c "DROP ROLE IF EXISTS ${{ secrets.DB_USER }};"
-          sudo -u postgres psql -c "CREATE ROLE ${{ secrets.DB_USER }} WITH LOGIN PASSWORD '${{ secrets.DB_PASSWORD }}';"
-          sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.DB_DATABASE }};"
-          sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.DB_DATABASE }} TO ${{ secrets.DB_USER }};"
-          sudo -u postgres psql -c "ALTER ROLE ${{ secrets.DB_USER }} WITH SUPERUSER;"
-
-      # Restart PostgreSQL to apply changes
-      - name: Restart PostgreSQL service
-        run: sudo systemctl restart postgresql
-
-      # Setup Node.js environment
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
-          node-version: "21.x"
+          node-version: '21.7.3'
 
-      # Install Node.js dependencies
-      - name: Install Dependencies
+      - name: Install dependencies
         run: npm install
-      
-      - name: Reset PostgreSQL Schema
+
+      - name: Wait for PostgreSQL
         run: |
-          sudo -u postgres psql -c "DROP SCHEMA public CASCADE;"
-          sudo -u postgres psql -c "CREATE SCHEMA public;"
-      
-      # Run Tests
+          until pg_isready -h localhost -p 5432 -U ${{ secrets.DB_USER }}; do
+            echo "Waiting for PostgreSQL to be ready..."
+            sleep 1
+          done
+          sleep 5  # Additional delay to ensure readiness
+
+      - name: Verify Database Connection
+        run: |
+          PGPASSWORD="${{ secrets.DB_PASSWORD }}" psql -h localhost -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_DATABASE }} -c "SELECT 1"
+        env:
+          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+
       - name: Run Tests
         env:
           DB_HOST: localhost
+          DB_PORT: 5432
+          DB_DATABASE: ${{ secrets.DB_DATABASE }}
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_DATABASE: ${{ secrets.DB_DATABASE }}
-          DB_PORT: 5432
-          PORT: 9001
         run: npm test

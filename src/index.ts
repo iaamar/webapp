@@ -52,11 +52,11 @@ app.all("/v1/user/self", otherUserRoutes);
 // Profile Picture Routes
 
 // POST /v1/user/self/pic - Upload Profile Picture
-app.post("/v1/user/self/pic", auth, upload.single("file"), imageValidation, uploadProfilePic);
+app.post("/v1/user/self/pic", basicAuth, upload.single("file"), imageValidation, uploadProfilePic);
 // GET /v1/user/self/pic - Get Profile Picture
-app.get("/v1/user/self/pic", auth, getProfilePic);
+app.get("/v1/user/self/pic", authAndDbCheck, getProfilePic);
 // Delete /v1/user/self/pic - Delete Profile Picture
-app.delete("/v1/user/self/pic", auth, deleteProfilePic);
+app.delete("/v1/user/self/pic", authAndDbCheck, deleteProfilePic);
 // Unsupported /v1/user/self/pic 
 app.head("/v1/user/self/pic", picMethodNotAllowed);
 app.options("/v1/user/self/pic", picMethodNotAllowed);

@@ -2,9 +2,11 @@ import { NextFunction, Request, Response } from "express";
 import { User } from "../models/User";
 
 // Extend the Request interface to include authUser
-declare module 'express-serve-static-core' {
-  interface Request {
-    authUser?: User;
+declare global {
+  namespace Express {
+    interface Request {
+      authUser?: User;
+    }
   }
 }
 import bcrypt from "bcrypt";
@@ -44,6 +46,7 @@ export const basicAuth = async (req: Request, res: Response, next: NextFunction)
     try {
       // Find the user by username (email in this case)
       const user = await User.findOne({ where: { email: username } });
+      console.log("user: "+user);
       req.authUser = user || undefined;
       if (!user) {
         logger.error("User not found: Basic Auth Middleware");
@@ -65,7 +68,8 @@ export const basicAuth = async (req: Request, res: Response, next: NextFunction)
         });
         return;
       }
-  
+      console.log("authUSer: "+req.authUser);
+      
       // Password is valid, proceed with the request
       next();
     } catch (error) {
