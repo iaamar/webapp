@@ -9,23 +9,23 @@ const statsdClient = new StatsD({
   host: "localhost",
 });
 
-// Helper function to get timestamp in EST
-const getEstTimestamp = () =>
-  moment().tz("America/New_York").format("YYYY-MM-DD HH:mm:ss");
+// Helper function to get timestamp in UTC
+const getUtcTimestamp = () =>
+  moment.utc().format("YYYY-MM-DD HH:mm:ss");
 
 // Wrapper for StatsD increment with timestamped logging
 const incrementWithTimestamp = (key: string) => {
-  const estTimestamp = getEstTimestamp();
-  console.log(`[${estTimestamp}] Incrementing metric: ${key}`); // Log in EST
+  const utcTimestamp = getUtcTimestamp();
+  console.log(`[${utcTimestamp} UTC] Incrementing metric: ${key}`); // Log in UTC
   statsdClient.increment(key);
 };
 
 // Wrapper for StatsD timing with timestamped logging
 const timingWithTimestamp = (key: string, duration: number) => {
-  const estTimestamp = getEstTimestamp();
+  const utcTimestamp = getUtcTimestamp();
   console.log(
-    `[${estTimestamp}] Timing metric: ${key}, Duration: ${duration} ms`
-  ); // Log in EST
+    `[${utcTimestamp} UTC] Timing metric: ${key}, Duration: ${duration} ms`
+  ); // Log in UTC
   timing(key, duration);
 };
 

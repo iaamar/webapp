@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { User } from "../models/User";
 import bcrypt from "bcrypt";
-import statsdClient, { increment, timing } from "../../utils/statsd";
+import { increment, timing } from "../../utils/statsd";
 import logger from "../../utils/logger";
 
 export const getUser = async (req: Request, res: Response) => {

@@ -1,5 +1,5 @@
 import logger from "../../utils/logger";
-import statsdClient, { increment, timing } from "../../utils/statsd";
+import { increment, timing } from "../../utils/statsd";
 import { initImageModel } from "../models/Image";
 import { initUserModel } from "../models/User";
 
@@ -16,9 +16,8 @@ const sequelize = new Sequelize(
     host: process.env.DB_HOST,
     dialect: "postgres",
     port: process.env.DB_PORT,
-    timezone: "-05:00",
     dialectOptions: {
-      useUTC: false,
+      useUTC: true,
     },
     logging: false,
   }
@@ -28,7 +27,6 @@ const sequelize = new Sequelize(
 export const bootstrapDatabase = async (): Promise<void> => {
   const apiStart = Date.now();
   try {
-    logger.info("Connecting to the database...");
     await sequelize.authenticate();
     logger.info("Connection has been established successfully.");
     await sequelize.drop(); // Drop all tables

@@ -1,7 +1,7 @@
 // healthzController.ts
 import { Request, Response } from "express";
 import logger from "../../utils/logger";
-import statsdClient, { increment, timing } from "../../utils/statsd";
+import { increment, timing } from "../../utils/statsd";
 import { handleError } from "../helper/handleError";
 
 // Health check GET route handler
