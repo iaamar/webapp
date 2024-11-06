@@ -20,7 +20,7 @@ source "amazon-ebs" "main" {
     device_name           = "/dev/sda1"
     volume_size           = 10
     volume_type           = "gp2"
-    encrypt_boot          = false
+    encrypted             = false
   }
 
   aws_polling {
