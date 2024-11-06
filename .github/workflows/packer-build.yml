@@ -48,3 +48,8 @@ jobs:
             -var 'source_ami=${{ secrets.SOURCE_AMI }}' \
             -var 'ssh_username=${{secrets.SSH_USERNAME}}'\
              aws.pkr.hcl
+
+    - name: Share AMI with Demo Account
+      run: |
+          AMI_ID=$(aws ec2 describe-images --owners self --query 'Images[?Name==`'"${{ secrets.AMI_NAME }}"'`].ImageId' --output text)
+          aws ec2 modify-image-attribute --image-id $AMI_ID --launch-permission "Add=[{UserId=${{ secrets.DEMO_ACCOUNT_ID }}]"
