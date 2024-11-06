@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { Image } from "../models/Image";
 import AWS from "aws-sdk";
 import logger from "../../utils/logger";
-import statsdClient, { increment, timing } from "../../utils/statsd";
+import { increment, timing } from "../../utils/statsd";
 import multer from "multer";
 import { handleError } from "../helper/handleError";
 

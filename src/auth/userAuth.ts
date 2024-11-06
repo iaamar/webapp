@@ -12,7 +12,7 @@ declare global {
 import bcrypt from "bcrypt";
 import sequelize from "../database/connect";
 import logger from "../../utils/logger";
-import statsdClient, { increment, timing } from "../../utils/statsd";
+import { increment, timing } from "../../utils/statsd";
 
 export const basicAuth = async (
   req: Request,
@@ -111,8 +111,6 @@ export const checkDatabaseConnection = async (
 ) => {
   const apiStart = Date.now();
   try {
-    logger.info("Checking database connection:: checkDatabaseConnection");
-    increment("checkDatabaseConnection");
     await sequelize.authenticate();
     logger.info("Database connection is available:: checkDatabaseConnection");
     increment("checkDatabaseConnection.success");
