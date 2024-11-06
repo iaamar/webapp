@@ -7,7 +7,7 @@ packer {
   }
 }
 
-source "amazon-ebs" "a06-ami" {
+source "amazon-ebs" "main" {
   ami_name        = var.ami_name
   ami_description = var.ami_description
   instance_type   = var.instance_type
@@ -30,7 +30,7 @@ source "amazon-ebs" "a06-ami" {
 }
 
 build {
-  sources = ["source.amazon-ebs.a06-ami"]
+  sources = ["source.amazon-ebs.main"]
 
   provisioner "file" {
     source      = "webapp.zip"
