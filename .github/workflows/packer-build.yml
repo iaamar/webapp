@@ -32,7 +32,6 @@ jobs:
 
     - name: Build Packer Image
       run: |
-          TIMESTAMP=$(date +"%Y%m%d%H%M%S")
           packer build \
             -var 'aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}' \
             -var 'aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}' \
@@ -43,7 +42,7 @@ jobs:
             -var 'db_password=${{ secrets.DB_PASSWORD }}' \
             -var 'db_database=${{ secrets.DB_DATABASE }}' \
             -var 'instance_type=${{ secrets.INSTANCE_TYPE }}' \
-            -var 'ami_name=${{ secrets.AMI_NAME }}-${TIMESTAMP}' \
+            -var 'ami_name=${{ secrets.AMI_NAME }}-${GITHUB_RUN_ID}' \
             -var 'ami_description=${{ secrets.AMI_DESCRIPTION }}' \
             -var 'region=${{ secrets.REGION }}' \
             -var 'source_ami=${{ secrets.SOURCE_AMI }}' \
