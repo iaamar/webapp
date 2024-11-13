@@ -14,6 +14,7 @@ source "amazon-ebs" "main" {
   region          = var.region
   source_ami      = var.source_ami
   ssh_username    = var.ssh_username
+  ami_users       = var.ami_users
 
   launch_block_device_mappings {
     delete_on_termination = true
@@ -121,4 +122,9 @@ variable "aws_secret_access_key" {
 variable "aws_default_region" {
   type    = string
   default = ""
+}
+
+variable "ami_users" {
+  type    = list(string)
+  default = []
 }

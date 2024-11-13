@@ -1,12 +1,15 @@
 import request from "supertest";
-import { app, startServer } from "../src/index";
+import { app } from "../src/index";
 import { bootstrapDatabase } from "../src/database/connect";
+import sequelize from "../src/database/connect";
 
 
 let server: any;
 let port;
 
 beforeAll(async () => {
+  await sequelize.drop();
+  await sequelize.sync({ force: true });
   await bootstrapDatabase(); // Initialize the database once before the tests
 });
 

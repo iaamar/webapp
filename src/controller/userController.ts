@@ -1,8 +1,12 @@
-import { Request, Response } from "express";
+import e, { Request, Response } from "express";
 import { User } from "../models/User";
 import bcrypt from "bcrypt";
 import { increment, timing } from "../../utils/statsd";
 import logger from "../../utils/logger";
+import AWS from "aws-sdk";
+
+// Initialize SNS
+const sns = new AWS.SNS({ region: process.env.AWS_REGION });
 
 export const getUser = async (req: Request, res: Response) => {
   const apiStart = Date.now();
@@ -59,7 +63,7 @@ export const getUser = async (req: Request, res: Response) => {
     logger.info("User information fetched successfully: /v1/user/self::GET");
     increment("user.get.success");
   } catch (error) {
-    logger.error("Internal server error: /v1/user/self::GET");
+    logger.error("Internal server error: /v1/user/self::GET", error);
     res.status(500).json({
       error: "Internal server error",
       message: "An error occurred while fetching user information",
@@ -79,7 +83,7 @@ export const createUser = async (req: Request, res: Response) => {
 
     // Validate input
     if (!email || !password || !first_name || !last_name) {
-      logger.error("Bad Request: /v1/user::POST");
+      logger.error("Bad Request: Invalid Inpit email, password, firstname, lastname: /v1/user::POST");
       res.status(400).json({
         error: "Bad Request",
         message:
@@ -135,8 +139,33 @@ export const createUser = async (req: Request, res: Response) => {
     });
     logger.info("User information fetched successfully: /v1/user::POST");
     increment("user.post.success");
+    
+    try {
+      // After successfully creating the user in the database
+      const user_id = newUser.id;
+      const user_email = newUser.email;
+      // Publish message to SNS
+      if (process.env.SNS_TOPIC_ARN) {
+        const params = {
+          Message: JSON.stringify({ user_email: user_email, user_id: user_id }),
+          TopicArn: process.env.SNS_TOPIC_ARN,
+        };
+
+      sns.publish(params, (error, data) => {
+        if (error) {
+          logger.error("Error publishing to SNS", error);
+        } else {
+          logger.info("SNS message sent", params.Message);
+        }
+      });
+      logger.info(`SNS message published for user ${user_email}`);
+      increment("user.post.sns");
+    }
+    } catch (error) {
+      logger.error("Failed to publish SNS message:", error);
+    }
   } catch (error) {
-    logger.error("Internal server error: /v1/user::POST");
+    logger.error("Internal server error: /v1/user::POST", error);
     res.status(500).json({
       error: "Internal server error",
       message: "An error occurred while creating the user",
@@ -218,5 +247,64 @@ export const updateUser = async (req: Request, res: Response) => {
     });
   } finally {
     timing("api.user.put", Date.now() - apiStart);
+  }
+};
+
+// GET /v1/user/verify - Verify User Email
+export const verifyUser = async (req: Request, res: Response) => {
+  const apiStart = Date.now();
+  try {
+    logger.info("Verify User: /v1/user/self/verify::GET");
+
+    // Extract token and expiration time from query parameters
+    const { token } = req.query;
+    // Look up user by user_id (token)
+    const user = await User.findOne({ where: { id: token } });
+
+    if (!user) {
+      logger.error("User not found: /v1/user/self/verify::GET");
+      return res.status(404).json({
+        error: "Not Found",
+        message: "User not found",
+      });
+    }
+
+    // calucalte expiration time (2 mins) from user created time, make sure user is not null
+    const expires = user ? Math.floor(user.account_created.getTime() / 1000) + 120 : 0;
+
+    // Validate required query parameters, make sure token and expires are not null
+    if (!token || !expires || expires === 0) {
+      logger.error("Missing or invalid token or expires parameter: /v1/user/self/verify::GET", { token, expires });
+      return res.status(400).json({
+        error: "Bad Request",
+        message: "Token and expires parameters are required",
+      });
+    }
+
+    // now check if expiration time is greater than current time
+    if (expires < Math.floor(Date.now() / 1000)) {
+      logger.error("Token expired: /v1/user/self/verify::GET", { token, expires });
+      return res.status(400).json({
+        error: "Bad Request",
+        message: "Token has expired",
+      });
+    }
+    // Mark the user's email as verified
+    user.email_verified = true;
+    user.account_updated = new Date();
+    await user.save();
+
+    logger.info("User verified successfully: /v1/user/self/verify::GET", { user });
+    res.status(200).json({
+      message: "Your email has been successfully verified.",
+    });
+  } catch (error) {
+    logger.error("Internal server error: /v1/user/self/verify::GET", error);
+    res.status(500).json({
+      error: "Internal server error",
+      message: "An error occurred during verification",
+    });
+  } finally {
+    timing("api.user.verify", Date.now() - apiStart);
   }
 };

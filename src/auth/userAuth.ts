@@ -129,3 +129,39 @@ export const checkDatabaseConnection = async (
     timing("api.checkDatabaseConnection", Date.now() - apiStart);
   }
 };
+
+export const checkVerifiedUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const authHeader = req.headers["authorization"];
+    const base64Credentials = authHeader?.split(" ")[1] || "";
+    const credentials = Buffer.from(base64Credentials, "base64").toString(
+      "ascii"
+    );
+    const [username, password] = credentials.split(":");
+
+    // Find user in the database
+    const user = await User.findOne({ where: { email: username } });
+
+    if (!user || !user.email_verified) {
+      logger.error("Access denied: User not verified.", { username });
+      return res.status(403).json({
+        error: "Forbidden",
+        message: "You must verify your email to access this resource.",
+      });
+    } else {
+      logger.info("User is verified.");
+    }
+
+    next();
+  } catch (error) {
+    logger.error("Verification check failed:", error);
+    return res.status(500).json({
+      error: "Internal server error",
+      message: "An error occurred while checking user verification status",
+    });
+  }
+};

@@ -7,6 +7,7 @@ export class User extends Model {
   public last_name!: string;
   public password!: string;
   public email!: string;
+  public email_verified!: boolean;
   public account_created!: Date;
   public account_updated!: Date;
 }
@@ -35,6 +36,11 @@ export const initUserModel = (sequelize: Sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
+      },
+      email_verified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
       },
       account_created: {
         type: DataTypes.DATE,
