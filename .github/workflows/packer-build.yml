@@ -32,6 +32,7 @@ jobs:
 
     - name: Build Packer Image
       run: |
+          TIMESTAMP=$(date +"%Y%m%d%H%M%S")
           packer build \
             -var 'aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}' \
             -var 'aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}' \
@@ -42,12 +43,12 @@ jobs:
             -var 'db_password=${{ secrets.DB_PASSWORD }}' \
             -var 'db_database=${{ secrets.DB_DATABASE }}' \
             -var 'instance_type=${{ secrets.INSTANCE_TYPE }}' \
-            -var 'ami_name=${{ secrets.AMI_NAME }}' \
+            -var 'ami_name=${{ secrets.AMI_NAME }}-${TIMESTAMP}' \
             -var 'ami_description=${{ secrets.AMI_DESCRIPTION }}' \
             -var 'region=${{ secrets.REGION }}' \
             -var 'source_ami=${{ secrets.SOURCE_AMI }}' \
-            -var 'ssh_username=${{secrets.SSH_USERNAME}}'\
-             aws.pkr.hcl
+            -var 'ssh_username=${{ secrets.SSH_USERNAME }}' \
+            aws.pkr.hcl
     
     - name: Install AWS CLI
       run: sudo apt-get install -y awscli
@@ -55,7 +56,10 @@ jobs:
     - name: Create New Launch Template Version
       id: create_launch_template_version
       run: |
-        AMI_ID=$(aws ec2 describe-images --owners self --query 'Images[?Name==`'"${{ secrets.AMI_NAME }}"'`].ImageId' --output text)
+        AMI_ID=$(aws ec2 describe-images --owners self \
+        --filters "Name=name,Values=${{ secrets.AMI_NAME }}*" \
+        --query 'Images | sort_by(@, &CreationDate)[-1].ImageId' --output text)
+
         LAUNCH_TEMPLATE_VERSION=$(aws ec2 create-launch-template-version \
         --launch-template-id ${{ secrets.LAUNCH_TEMPLATE_ID }} \
         --launch-template-data "{\"ImageId\":\"$AMI_ID\"}" \
