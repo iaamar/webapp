@@ -111,7 +111,6 @@ on:
       environment:
         description: "Select deployment environment"
         required: true
-        default: dev
         type: choice
         options:
           - dev
@@ -144,7 +143,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
       - name: Step 4 - Setup Packer
         uses: hashicorp/setup-packer@v2
@@ -156,7 +155,7 @@ jobs:
 
       - name: Step 6 - Packer Validate
         id: validate
-        run: "packer validate --var-file=aws.pkrvars.hcl ./aws.pkr.hcl"
+        run: "packer validate ."
 
       - name: Step 7 - Packer Build
         id: build
@@ -198,7 +197,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
       - name: Step 1 - Configure AWS Credentials for Prod
         if: ${{ env.DEPLOY_ENVIRONMENT == 'prod' }}
@@ -206,13 +205,13 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_PROD }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_PROD }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
       - name: Step 2 - Update Launch Template with the Latest AMI ID
         id: configuring
         run: |
           aws ec2 create-launch-template-version \
-            --launch-template-id ${{ vars.LAUNCH_TEMPLATE_ID }} \
+            --launch-template-id ${{ secrets.LAUNCH_TEMPLATE_ID }} \
             --launch-template-data '{"ImageId":"${{ needs.packer_build_ami.outputs.ami_id }}"}' \
             --source-version 1 \
             --no-cli-pager
@@ -221,5 +220,5 @@ jobs:
         id: refreshing
         run: |
           aws autoscaling start-instance-refresh \
-            --auto-scaling-group-name ${{ vars.AUTO_SCALING_GROUP_NAME }} \
+            --auto-scaling-group-name csye6225-asg \
             --no-cli-pager
