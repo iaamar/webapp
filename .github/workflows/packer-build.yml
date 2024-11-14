@@ -103,7 +103,6 @@
 #           ((RETRY_COUNT++))
 #           sleep 30
 #         done
-
 name: Packer Build Image Workflow 
 
 on:
@@ -126,7 +125,6 @@ env:
   DEPLOY_ENVIRONMENT: ${{ github.event.inputs.environment }}
 
 jobs:
-
   # First job for building the AMI with Packer
   packer_build_ami:
     runs-on: ubuntu-latest
