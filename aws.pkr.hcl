@@ -8,7 +8,7 @@ packer {
 }
 
 source "amazon-ebs" "main" {
-  ami_name        = var.ami_name
+  ami_name        = "csye6225_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
   ami_description = var.ami_description
   instance_type   = var.instance_type
   region          = var.region
@@ -54,10 +54,6 @@ build {
   }
 }
 
-variable "ami_name" {
-  type    = string
-  default = ""
-}
 
 variable "ami_description" {
   type    = string
