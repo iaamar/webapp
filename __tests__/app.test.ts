@@ -1,6 +1,5 @@
 import request from "supertest";
 import { app } from "../src/index";
-import { bootstrapDatabase } from "../src/database/connect";
 import sequelize from "../src/database/connect";
 
 
@@ -8,8 +7,19 @@ let server: any;
 let port;
 
 beforeAll(async () => {
-  await sequelize.drop();
-  await sequelize.sync({ force: true });
+  await sequelize.drop(); // Drop all tables to ensure a clean start
+  await sequelize.sync(); // Sync database, creating all tables
+});
+
+beforeEach(() => {
+  server = app.listen(0); // Start the server for each test
+});
+
+afterAll(async () => {
+  if (server) {
+    await server.close(); // Close the server after all tests
+  }
+  await sequelize.close(); // Close the Sequelize connection after all tests
 });
 
 afterEach(async () => {
