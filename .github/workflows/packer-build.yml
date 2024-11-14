@@ -153,10 +153,6 @@ jobs:
         id: init
         run: "packer init ."
 
-      - name: Step 6 - Packer Validate
-        id: validate
-        run: "packer validate ."
-
       - name: Step 7 - Packer Build
         id: build
         run: |
