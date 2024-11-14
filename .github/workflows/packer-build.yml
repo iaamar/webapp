@@ -146,7 +146,7 @@ jobs:
       - name: Step 7 - Packer Build
         id: build
         run: |
-          packer build -machine-readable -manifest \
+          packer build \
             -var "aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}" \
             -var "aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
             -var "aws_default_region=${{ secrets.AWS_DEFAULT_REGION }}" \
