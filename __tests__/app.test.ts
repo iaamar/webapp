@@ -8,8 +8,8 @@ let port;
 
 beforeAll(async () => {
   await bootstrapDatabase(); // Bootstrap the database
-  await sequelize.drop(); // Drop all tables to ensure a clean start
-  await sequelize.sync(); // Sync database, creating all tables
+  await sequelize.drop({force: true}); // Drop all tables to ensure a clean start
+  await sequelize.sync({force: true}); // Sync database, creating all tables
 });
 
 beforeEach(() => {

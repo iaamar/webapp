@@ -45,6 +45,13 @@ jobs:
           done
           sleep 5  # Additional delay to ensure readiness
 
+      - name: Drop and Recreate Database Tables
+        env:
+          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          echo "Dropping and recreating tables..."
+          psql -h localhost -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_DATABASE }} -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+
       - name: Verify Database Connection
         run: |
           PGPASSWORD="${{ secrets.DB_PASSWORD }}" psql -h localhost -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_DATABASE }} -c "SELECT 1"
