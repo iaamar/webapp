@@ -146,7 +146,7 @@ jobs:
       - name: Step 7 - Packer Build
         id: build
         run: |
-          packer build \
+          packer build -machine-readable -manifest=manifest.json \
             -var "aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}" \
             -var "aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
             -var "aws_default_region=${{ secrets.AWS_DEFAULT_REGION }}" \
@@ -162,15 +162,25 @@ jobs:
             -var "ssh_username=${{ secrets.SSH_USERNAME }}" \
             aws.pkr.hcl
 
-      - name: Step 8 - Update Launch Template with latest AMI ID
+      - name: Step 8 - Retrieve AMI ID and Update Workflow Outputs
         id: updating 
         run: | 
-          echo "Deploying Packer Build"
-          AMI_ID=$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2)
-          echo "$AMI_ID"
-          echo "ami=$AMI_ID" >> "$GITHUB_OUTPUT"
+          echo "Retrieving AMI ID from manifest.json"
+          if [ -f manifest.json ]; then
+            AMI_ID=$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2)
+            if [ -n "$AMI_ID" ]; then
+              echo "AMI ID retrieved: $AMI_ID"
+              echo "ami=$AMI_ID" >> "$GITHUB_OUTPUT"
+            else
+              echo "Failed to retrieve AMI ID."
+              exit 1
+            fi
+          else
+            echo "manifest.json not found."
+            exit 1
+          fi
 
-  # Second job for updating launch template and starting an instance refresh
+  # Second job to update launch template and start instance refresh
   autoscaling_refresh:
     needs: packer_build_ami
     runs-on: ubuntu-latest
