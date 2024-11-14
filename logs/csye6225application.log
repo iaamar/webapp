@@ -161,3 +161,23 @@
 {"timestamp":"2024-11-13 21:28:44","level":"info","message":"Create User : /v1/user::POST"}
 {"timestamp":"2024-11-13 21:28:44","level":"info","message":"User created successfully: /v1/user::POST"}
 {"timestamp":"2024-11-13 21:28:44","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-14 01:38:45","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-14 01:38:45","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-14 01:38:45","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-14 01:38:45","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-14 01:38:45","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-14 01:38:45","level":"error","message":"Internal server error: /v1/user::POST relation \"users\" does not exist"}
+{"timestamp":"2024-11-14 01:39:55","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-14 01:39:55","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-14 01:39:55","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-14 01:40:12","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-14 01:40:12","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-14 01:40:12","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-14 01:40:12","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-14 01:40:12","level":"info","message":"Server is running on port 9001"}
+{"timestamp":"2024-11-14 01:40:12","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-14 01:40:12","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-14 01:40:12","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-14 01:40:12","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-14 01:40:13","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-14 01:40:13","level":"info","message":"User information fetched successfully: /v1/user::POST"}
