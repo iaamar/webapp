@@ -106,22 +106,12 @@
 name: Packer Build Image Workflow 
 
 on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: "Select deployment environment"
-        required: true
-        type: choice
-        options:
-          - dev
-          - prod
-
   pull_request:
     branches:
       - main
 
 env:
-  DEPLOY_ENVIRONMENT: ${{ github.event.inputs.environment }}
+  DEPLOY_ENVIRONMENT: ${{ secrets.DEPLOY_ENVIRONMENT }}
 
 jobs:
   # First job for building the AMI with Packer

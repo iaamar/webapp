@@ -10,7 +10,6 @@ let port;
 beforeAll(async () => {
   await sequelize.drop();
   await sequelize.sync({ force: true });
-  await bootstrapDatabase(); // Initialize the database once before the tests
 });
 
 afterEach(async () => {
