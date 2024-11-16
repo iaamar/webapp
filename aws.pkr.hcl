@@ -5,12 +5,6 @@ packer {
       source  = "github.com/hashicorp/amazon"
     }
   }
-  
-  post-processors {
-    manifest {
-      output = "manifest.json"
-    }
-  }
 }
 
 source "amazon-ebs" "main" {
@@ -60,6 +54,11 @@ build {
   }
 }
 
+
+post-processor "manifest" {
+  output = "manifest.json"
+  type   = "manifest"
+}
 
 variable "ami_description" {
   type    = string
