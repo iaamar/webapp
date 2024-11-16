@@ -5,6 +5,12 @@ packer {
       source  = "github.com/hashicorp/amazon"
     }
   }
+  
+  post-processors {
+    manifest {
+      output = "manifest.json"
+    }
+  }
 }
 
 source "amazon-ebs" "main" {
