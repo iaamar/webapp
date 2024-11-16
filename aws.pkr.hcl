@@ -52,13 +52,15 @@ build {
       "scripts/launch-service.sh",
     ]
   }
+  post-processor "manifest" {
+        output = "manifest.json"
+        strip_path = true
+        custom_data = {
+          my_custom_data = "example"
+        }
+    }
 }
 
-
-post-processor "manifest" {
-  output = "manifest.json"
-  type   = "manifest"
-}
 
 variable "ami_description" {
   type    = string
