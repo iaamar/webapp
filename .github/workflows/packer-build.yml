@@ -47,7 +47,7 @@ jobs:
         id: init
         run: "packer init ."
 
-      - name: Step 7 - Packer Build
+      - name: Step 6 - Packer Build
         id: build
         run: |
           packer build \
@@ -65,7 +65,16 @@ jobs:
             -var "source_ami=${{ secrets.SOURCE_AMI }}" \
             -var "ssh_username=${{ secrets.SSH_USERNAME }}" \
             aws.pkr.hcl
-
+      
+      - name: Step 7 - Share AMI with other AWS accounts
+        id: share_ami
+        run: |
+          echo "Sharing AMI with other AWS accounts..."
+          aws ec2 modify-image-attribute \
+            --image-id $(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2) \
+            --launch-permission "{\"Add\": [{\"UserId\":\"${{ secrets.DEMO_AWS_ACCOUNT_ID }}\"}]}" \
+            --region ${{ secrets.AWS_DEFAULT_REGION }}
+      
       - name: Step 8 - Retrieve AMI ID and Update Workflow Outputs
         id: updating 
         run: | 
