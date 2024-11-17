@@ -1,19 +1,13 @@
 import request from "supertest";
-import { app, startServer } from "../src/index";
-import { bootstrapDatabase } from "../src/database/connect";
+import { app } from "../src/index";
+import sequelize, { bootstrapDatabase } from "../src/database/connect";
 
 
 let server: any;
 let port;
 
 beforeAll(async () => {
-  await bootstrapDatabase(); // Initialize the database once before the tests
-});
-
-afterEach(async () => {
-  if (server) {
-    await server.close(); // Close the server after each test to free the port
-  }
+  await bootstrapDatabase(); // Bootstrap the database
 });
 
 

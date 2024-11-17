@@ -1,56 +1,151 @@
-name: Packer Build Image Workflow
+name: Packer Build Image Workflow 
 
 on:
-  push:
+  pull_request:
     branches:
       - main
 
+env:
+  DEPLOY_ENVIRONMENT: ${{ secrets.DEPLOY_ENVIRONMENT }}
+
 jobs:
-  build:
-    name: Packer Build Image
+  # First job for building the AMI with Packer
+  packer_build_ami:
     runs-on: ubuntu-latest
+    name: Building Packer - AMI
+    outputs:
+      ami_id: ${{ steps.updating.outputs.ami }} 
+    steps: 
+      - name: Step 1 - Checkout code from branch
+        uses: actions/checkout@v2
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    
-    - name: Zip folder
-      run: zip -r webapp.zip . -x "*.git*" "node_modules/*" ".DS_Store" "src/.DS_Store" ".env"
-    
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.REGION }}
+      - name: Step 2 - Zip webapp 
+        run: |
+          zip -r webapp.zip . -x "*.git*"
 
-    - name: Set up Packer
-      uses: hashicorp/setup-packer@v2
+      - name: Step 3 - Configure AWS Credentials for Dev
+        if: ${{ env.DEPLOY_ENVIRONMENT == 'dev' }}
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+  
+      - name: Step 3 - Configure AWS Credentials for Prod
+        if: ${{ env.DEPLOY_ENVIRONMENT == 'prod' }}
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_PROD }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_PROD }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
-    - name: Initialize Packer
-      run: packer init .
+      - name: Step 4 - Setup Packer
+        uses: hashicorp/setup-packer@v2
+        id: setup
+          
+      - name: Step 5 - Packer Init
+        id: init
+        run: "packer init ."
 
-    - name: Build Packer Image
-      run: |
+      - name: Step 7 - Packer Build
+        id: build
+        run: |
           packer build \
-            -var 'aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}' \
-            -var 'aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}' \
-            -var 'aws_default_region=${{ secrets.AWS_DEFAULT_REGION }}' \
-            -var 'db_host=${{ secrets.DB_HOST }}' \
-            -var 'db_port=${{ secrets.DB_PORT }}' \
-            -var 'db_user=${{ secrets.DB_USER }}' \
-            -var 'db_password=${{ secrets.DB_PASSWORD }}' \
-            -var 'db_database=${{ secrets.DB_DATABASE }}' \
-            -var 'instance_type=${{ secrets.INSTANCE_TYPE }}' \
-            -var 'ami_name=${{ secrets.AMI_NAME }}' \
-            -var 'ami_description=${{ secrets.AMI_DESCRIPTION }}' \
-            -var 'region=${{ secrets.REGION }}' \
-            -var 'source_ami=${{ secrets.SOURCE_AMI }}' \
-            -var 'ssh_username=${{secrets.SSH_USERNAME}}'\
-             aws.pkr.hcl
+            -var "aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}" \
+            -var "aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
+            -var "aws_default_region=${{ secrets.AWS_DEFAULT_REGION }}" \
+            -var "db_host=${{ secrets.DB_HOST }}" \
+            -var "db_port=${{ secrets.DB_PORT }}" \
+            -var "db_user=${{ secrets.DB_USER }}" \
+            -var "db_password=${{ secrets.DB_PASSWORD }}" \
+            -var "db_database=${{ secrets.DB_DATABASE }}" \
+            -var "instance_type=${{ secrets.INSTANCE_TYPE }}" \
+            -var "ami_description=${{ secrets.AMI_DESCRIPTION }}" \
+            -var "region=${{ secrets.REGION }}" \
+            -var "source_ami=${{ secrets.SOURCE_AMI }}" \
+            -var "ssh_username=${{ secrets.SSH_USERNAME }}" \
+            aws.pkr.hcl
 
-    - name: Share AMI with Demo Account
-      run: |
-          AMI_ID=$(aws ec2 describe-images --owners self --query 'Images[?Name==`'"${{ secrets.AMI_NAME }}"'`].ImageId' --output text)
-          aws ec2 modify-image-attribute --image-id $AMI_ID --launch-permission "Add=[{UserId=${{ secrets.DEMO_ACCOUNT_ID }}}]"
+      - name: Step 8 - Retrieve AMI ID and Update Workflow Outputs
+        id: updating 
+        run: | 
+          echo "Retrieving AMI ID from manifest.json"
+          if [ -f manifest.json ]; then
+            AMI_ID=$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2)
+            if [ -n "$AMI_ID" ]; then
+              echo "AMI ID retrieved: $AMI_ID"
+              echo "ami=$AMI_ID" >> "$GITHUB_OUTPUT"
+            else
+              echo "Failed to retrieve AMI ID."
+              exit 1
+            fi
+          else
+            echo "manifest.json not found."
+            exit 1
+          fi
 
+  # Second job to update launch template and start instance refresh
+  autoscaling_refresh:
+    needs: packer_build_ami
+    runs-on: ubuntu-latest
+    name: Auto scaling group launch template & instance refresh
+    
+    steps: 
+      - name: Step 1 - Configure AWS Credentials for Dev
+        if: ${{ env.DEPLOY_ENVIRONMENT == 'dev' }}
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Step 1 - Configure AWS Credentials for Prod
+        if: ${{ env.DEPLOY_ENVIRONMENT == 'prod' }}
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_PROD }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_PROD }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Step 2 - Update Launch Template with the Latest AMI ID
+        id: configuring
+        run: |
+          aws ec2 create-launch-template-version \
+            --launch-template-id ${{ secrets.LAUNCH_TEMPLATE_ID }} \
+            --launch-template-data '{"ImageId":"${{ needs.packer_build_ami.outputs.ami_id }}"}' \
+            --source-version 1 \
+            --no-cli-pager
+
+      - name: Step 3 - Start Instance Refresh
+        id: start_refresh
+        run: |
+          REFRESH_ID=$(aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name csye6225-asg \
+            --query 'InstanceRefreshId' --output text)
+          echo "REFRESH_ID=${REFRESH_ID}" >> $GITHUB_ENV
+    
+      - name: Step 4 - Wait for Instance Refresh Completion
+        run: |
+          echo "Waiting for instance refresh to complete..."
+          MAX_RETRIES=60
+          RETRY_COUNT=0
+          while true; do
+            STATUS=$(aws autoscaling describe-instance-refreshes \
+              --auto-scaling-group-name csye6225-asg \
+              --instance-refresh-ids ${{ env.REFRESH_ID }} \
+              --query 'InstanceRefreshes[0].Status' --output text)
+            echo "Current Instance Refresh Status: $STATUS"
+            if [ "$STATUS" == "Successful" ]; then
+              echo "Instance refresh completed successfully."
+              break
+            elif [ "$STATUS" == "Failed" ]; then
+              echo "Instance refresh failed."
+              exit 1
+            fi
+            if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
+              echo "Instance refresh did not complete within the maximum retry count."
+              exit 1
+            fi
+            RETRY_COUNT=$((RETRY_COUNT + 1))
+            sleep 30
+          done

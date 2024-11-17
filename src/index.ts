@@ -5,8 +5,9 @@ import {
   createUser,
   getUser,
   updateUser,
+  verifyUser,
 } from "./controller/userController";
-import { basicAuth, checkDatabaseConnection } from "./auth/userAuth";
+import { basicAuth, checkDatabaseConnection, checkVerifiedUser } from "./auth/userAuth";
 import {
   deleteProfilePic,
   getProfilePic,
@@ -27,36 +28,37 @@ const port = process.env.PORT || 9001;
 app.use(express.json());
 
 // Middleware stack for both Basic Auth and DB Connection
-const authAndDbCheck = [basicAuth, checkDatabaseConnection];
-const auth = [checkDatabaseConnection];
+const auth = [basicAuth];
+const dbCheck = [checkDatabaseConnection];
 
 // Healthz Routes
 
 // Health check GET route
-app.get("/healthz", auth, healthCheck);
+app.get("/healthz", dbCheck, healthCheck);
 // Respond with 405 Method Not Allowed for unsupported methods on /healthz
 app.all("/healthz", methodNotAllowed);
 
 // User Routes
 
 // GET /v1/user/self - Get User Information excluding password
-app.get("/v1/user/self", authAndDbCheck, getUser);
+app.get("/v1/user/self", [...auth, checkVerifiedUser], getUser);
 // POST /v1/user - Create User
 app.post("/v1/user", createUser);
 // PUT /v1/user/self - Update User Information
-app.put("/v1/user/self", auth, updateUser);
+app.put("/v1/user/self", [...auth, checkVerifiedUser], updateUser);
 // Respond with 405 Method Not Allowed for unsupported methods on /v1/user/self
 app.all("/v1/user/self", otherUserRoutes);
-
+// GET /v1/user/verify - Verify User Email
+app.get("/v1/user/self/verify", verifyUser);
 
 // Profile Picture Routes
 
 // POST /v1/user/self/pic - Upload Profile Picture
-app.post("/v1/user/self/pic", basicAuth, upload.single("file"), imageValidation, uploadProfilePic);
+app.post("/v1/user/self/pic", [...auth, checkVerifiedUser], upload.single("file"), imageValidation, uploadProfilePic);
 // GET /v1/user/self/pic - Get Profile Picture
-app.get("/v1/user/self/pic", authAndDbCheck, getProfilePic);
+app.get("/v1/user/self/pic", [...auth, checkVerifiedUser], getProfilePic);
 // Delete /v1/user/self/pic - Delete Profile Picture
-app.delete("/v1/user/self/pic", authAndDbCheck, deleteProfilePic);
+app.delete("/v1/user/self/pic", [...auth, checkVerifiedUser], deleteProfilePic);
 // Unsupported /v1/user/self/pic 
 app.head("/v1/user/self/pic", picMethodNotAllowed);
 app.options("/v1/user/self/pic", picMethodNotAllowed);

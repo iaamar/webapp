@@ -8,12 +8,13 @@ packer {
 }
 
 source "amazon-ebs" "main" {
-  ami_name        = var.ami_name
+  ami_name        = "csye6225_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
   ami_description = var.ami_description
   instance_type   = var.instance_type
   region          = var.region
   source_ami      = var.source_ami
   ssh_username    = var.ssh_username
+  ami_users       = var.ami_users
 
   launch_block_device_mappings {
     delete_on_termination = true
@@ -51,12 +52,15 @@ build {
       "scripts/launch-service.sh",
     ]
   }
+  post-processor "manifest" {
+        output = "manifest.json"
+        strip_path = true
+        custom_data = {
+          my_custom_data = "example"
+        }
+    }
 }
 
-variable "ami_name" {
-  type    = string
-  default = ""
-}
 
 variable "ami_description" {
   type    = string
@@ -121,4 +125,9 @@ variable "aws_secret_access_key" {
 variable "aws_default_region" {
   type    = string
   default = ""
+}
+
+variable "ami_users" {
+  type    = list(string)
+  default = []
 }

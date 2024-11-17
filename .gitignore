@@ -4,3 +4,6 @@ package-lock.json
 .DS_Store
 aws.auto.pkrvars.hcl
 src/.DS_Store
+webapp.zip
+logs/csye6225application.log
+.vscode/settings.json
