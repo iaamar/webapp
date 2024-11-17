@@ -8,12 +8,6 @@ let port;
 
 beforeAll(async () => {
   await bootstrapDatabase(); // Bootstrap the database
-  await sequelize.drop({force: true}); // Drop all tables to ensure a clean start
-  await sequelize.sync({force: true}); // Sync database, creating all tables
-});
-
-beforeEach(() => {
-  server = app.listen(0); // Start the server for each test
 });
 
 

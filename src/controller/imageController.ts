@@ -20,14 +20,15 @@ export const imageValidation = (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): void => {
   increment("imageValidation");
   logger.info("Image validation initiated: /v1/user/self/pic::POST");
 
   // Check if the file is present in the request
   if (!req.file) {
     logger.error("No file uploaded: /v1/user/self/pic::POST");
-    return res.status(400).send();
+    res.status(400).send();
+    return;
   }
 
   // If file exists, proceed to the next middleware/controller

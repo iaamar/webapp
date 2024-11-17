@@ -1,4 +1,4 @@
-import e, { Request, Response } from "express";
+import { Request, Response } from "express";
 import { User } from "../models/User";
 import bcrypt from "bcrypt";
 import { increment, timing } from "../../utils/statsd";
@@ -8,7 +8,7 @@ import AWS from "aws-sdk";
 // Initialize SNS
 const sns = new AWS.SNS({ region: process.env.AWS_REGION });
 
-export const getUser = async (req: Request, res: Response) => {
+export const getUser = async (req: Request, res: Response): Promise<void> => {
   const apiStart = Date.now();
   try {
     increment("user.get");
@@ -25,30 +25,33 @@ export const getUser = async (req: Request, res: Response) => {
       logger.error(
         "Query parameters are not allowed for this route: /v1/user/self::GET"
       );
-      return res.status(400).json({
+      res.status(400).json({
         error: "Bad Request",
         message: "Query parameters are not allowed for this route",
       });
+      return;
     }
     // reject any body parameters
     if (Object.keys(req.body).length > 0) {
       logger.error(
         "Body parameters are not allowed for this route: /v1/user/self::GET"
       );
-      return res.status(400).json({
+      res.status(400).json({
         error: "Bad Request",
         message: "Body parameters are not allowed for this route",
       });
+      return;
     }
 
     const user = await User.findOne({ where: { email: authenticatedEmail } });
 
     if (!user) {
       logger.error("User not found: /v1/user/self::GET");
-      return res.status(404).json({
+      res.status(404).json({
         error: "Not Found",
         message: "User not found",
       });
+      return;
     }
 
     // Return user information (excluding password)
@@ -83,7 +86,9 @@ export const createUser = async (req: Request, res: Response) => {
 
     // Validate input
     if (!email || !password || !first_name || !last_name) {
-      logger.error("Bad Request: Invalid Inpit email, password, firstname, lastname: /v1/user::POST");
+      logger.error(
+        "Bad Request: Invalid Inpit email, password, firstname, lastname: /v1/user::POST"
+      );
       res.status(400).json({
         error: "Bad Request",
         message:
@@ -139,7 +144,7 @@ export const createUser = async (req: Request, res: Response) => {
     });
     logger.info("User information fetched successfully: /v1/user::POST");
     increment("user.post.success");
-    
+
     try {
       // After successfully creating the user in the database
       const user_id = newUser.id;
@@ -151,16 +156,16 @@ export const createUser = async (req: Request, res: Response) => {
           TopicArn: process.env.SNS_TOPIC_ARN,
         };
 
-      sns.publish(params, (error, data) => {
-        if (error) {
-          logger.error("Error publishing to SNS", error);
-        } else {
-          logger.info("SNS message sent", params.Message);
-        }
-      });
-      logger.info(`SNS message published for user ${user_email}`);
-      increment("user.post.sns");
-    }
+        sns.publish(params, (error, data) => {
+          if (error) {
+            logger.error("Error publishing to SNS", error);
+          } else {
+            logger.info("SNS message sent", params.Message);
+          }
+        });
+        logger.info(`SNS message published for user ${user_email}`);
+        increment("user.post.sns");
+      }
     } catch (error) {
       logger.error("Failed to publish SNS message:", error);
     }
@@ -251,7 +256,10 @@ export const updateUser = async (req: Request, res: Response) => {
 };
 
 // GET /v1/user/verify - Verify User Email
-export const verifyUser = async (req: Request, res: Response) => {
+export const verifyUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const apiStart = Date.now();
   try {
     logger.info("Verify User: /v1/user/self/verify::GET");
@@ -263,38 +271,51 @@ export const verifyUser = async (req: Request, res: Response) => {
 
     if (!user) {
       logger.error("User not found: /v1/user/self/verify::GET");
-      return res.status(404).json({
+      res.status(404).json({
         error: "Not Found",
         message: "User not found",
       });
+      return;
     }
 
     // calucalte expiration time (2 mins) from user created time, make sure user is not null
-    const expires = user ? Math.floor(user.account_created.getTime() / 1000) + 120 : 0;
+    const expires = user
+      ? Math.floor(user.account_created.getTime() / 1000) + 120
+      : 0;
 
     // Validate required query parameters, make sure token and expires are not null
     if (!token || !expires || expires === 0) {
-      logger.error("Missing or invalid token or expires parameter: /v1/user/self/verify::GET", { token, expires });
-      return res.status(400).json({
+      logger.error(
+        "Missing or invalid token or expires parameter: /v1/user/self/verify::GET",
+        { token, expires }
+      );
+      res.status(400).json({
         error: "Bad Request",
         message: "Token and expires parameters are required",
       });
+      return;
     }
 
     // now check if expiration time is greater than current time
     if (expires < Math.floor(Date.now() / 1000)) {
-      logger.error("Token expired: /v1/user/self/verify::GET", { token, expires });
-      return res.status(400).json({
+      logger.error("Token expired: /v1/user/self/verify::GET", {
+        token,
+        expires,
+      });
+      res.status(400).json({
         error: "Bad Request",
         message: "Token has expired",
       });
+      return;
     }
     // Mark the user's email as verified
     user.email_verified = true;
     user.account_updated = new Date();
     await user.save();
 
-    logger.info("User verified successfully: /v1/user/self/verify::GET", { user });
+    logger.info("User verified successfully: /v1/user/self/verify::GET", {
+      user,
+    });
     res.status(200).json({
       message: "Your email has been successfully verified.",
     });
