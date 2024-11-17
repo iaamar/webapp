@@ -1,108 +1,3 @@
-# name: Packer Build Image Workflow
-
-# on:
-#   pull_request:
-#     branches:
-#       - main
-
-# jobs:
-#   build:
-#     name: Packer Build Image
-#     runs-on: ubuntu-latest
-
-#     steps:
-#     - name: Checkout code
-#       uses: actions/checkout@v2
-    
-#     - name: Zip folder
-#       run: zip -r webapp.zip . -x "*.git*" "node_modules/*" ".DS_Store" "src/.DS_Store" ".env"
-    
-#     - name: Configure AWS Credentials
-#       uses: aws-actions/configure-aws-credentials@v1
-#       with:
-#         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#         aws-region: ${{ secrets.REGION }}
-
-    # - name: Set up Packer
-    #   uses: hashicorp/setup-packer@v2
-
-    # - name: Initialize Packer
-    #   run: packer init .
-
-#     - name: Build Packer Image
-#       run: |
-#           packer build \
-#             -var 'aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}' \
-#             -var 'aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}' \
-#             -var 'aws_default_region=${{ secrets.AWS_DEFAULT_REGION }}' \
-#             -var 'db_host=${{ secrets.DB_HOST }}' \
-#             -var 'db_port=${{ secrets.DB_PORT }}' \
-#             -var 'db_user=${{ secrets.DB_USER }}' \
-#             -var 'db_password=${{ secrets.DB_PASSWORD }}' \
-#             -var 'db_database=${{ secrets.DB_DATABASE }}' \
-#             -var 'instance_type=${{ secrets.INSTANCE_TYPE }}' \
-#             -var 'ami_name=${{ secrets.AMI_NAME }}-${GITHUB_RUN_ID}' \
-#             -var 'ami_description=${{ secrets.AMI_DESCRIPTION }}' \
-#             -var 'region=${{ secrets.REGION }}' \
-#             -var 'source_ami=${{ secrets.SOURCE_AMI }}' \
-#             -var 'ssh_username=${{ secrets.SSH_USERNAME }}' \
-#             aws.pkr.hcl
-    
-#     - name: Install AWS CLI
-#       run: sudo apt-get install -y awscli
-
-#     - name: Create New Launch Template Version
-#       id: create_launch_template_version
-#       run: |
-#         AMI_ID=$(aws ec2 describe-images --owners self \
-#         --filters "Name=name,Values=${{ secrets.AMI_NAME }}*" \
-#         --query 'Images | sort_by(@, &CreationDate)[-1].ImageId' --output text)
-
-#         LAUNCH_TEMPLATE_VERSION=$(aws ec2 create-launch-template-version \
-#         --launch-template-id ${{ secrets.LAUNCH_TEMPLATE_ID }} \
-#         --launch-template-data "{\"ImageId\":\"$AMI_ID\"}" \
-#         --query 'LaunchTemplateVersion.VersionNumber' \
-#         --output text)
-#         echo "LAUNCH_TEMPLATE_VERSION=$LAUNCH_TEMPLATE_VERSION" >> $GITHUB_ENV
-     
-#     - name: Update Auto Scaling Group
-#       run: |
-#         aws autoscaling update-auto-scaling-group \
-#           --auto-scaling-group-name csye6225-asg \
-#           --launch-template "LaunchTemplateId=${{ secrets.LAUNCH_TEMPLATE_ID }},Version=${{ env.LAUNCH_TEMPLATE_VERSION }}"
-
-#     - name: Start Instance Refresh
-#       id: instance_refresh
-#       run: |
-#         REFRESH_ID=$(aws autoscaling start-instance-refresh \
-#           --auto-scaling-group-name csye6225-asg \
-#           --query 'InstanceRefreshId' --output text)
-#         echo "REFRESH_ID=$REFRESH_ID" >> $GITHUB_ENV
-
-#     - name: Wait for Instance Refresh to Complete
-#       run: |
-#         MAX_RETRIES=60
-#         RETRY_COUNT=0
-#         while true; do
-#           STATUS=$(aws autoscaling describe-instance-refreshes \
-#             --auto-scaling-group-name csye6225-asg \
-#             --instance-refresh-ids $REFRESH_ID \
-#             --query 'InstanceRefreshes[0].Status' --output text)
-#           echo "Current Instance Refresh Status: $STATUS"
-#           if [[ "$STATUS" == "Successful" ]]; then
-#             exit 0
-#           elif [[ "$STATUS" == "Failed" ]]; then
-#             echo "Instance refresh failed."
-#             exit 1
-#           fi
-#           if [[ $RETRY_COUNT -ge $MAX_RETRIES ]]; then
-#             echo "Instance refresh did not complete within the maximum retry count."
-#             exit 1
-#           fi
-#           ((RETRY_COUNT++))
-#           sleep 30
-#         done
 name: Packer Build Image Workflow 
 
 on:
@@ -221,9 +116,36 @@ jobs:
             --source-version 1 \
             --no-cli-pager
 
-      - name: Step 3 - Start Instance Refresh with Latest AMI ID 
-        id: refreshing
+      - name: Step 3 - Start Instance Refresh
+        id: start_refresh
         run: |
-          aws autoscaling start-instance-refresh \
+          REFRESH_ID=$(aws autoscaling start-instance-refresh \
             --auto-scaling-group-name csye6225-asg \
-            --no-cli-pager
+            --query 'InstanceRefreshId' --output text)
+          echo "REFRESH_ID=${REFRESH_ID}" >> $GITHUB_ENV
+    
+      - name: Step 4 - Wait for Instance Refresh Completion
+        run: |
+          echo "Waiting for instance refresh to complete..."
+          MAX_RETRIES=60
+          RETRY_COUNT=0
+          while true; do
+            STATUS=$(aws autoscaling describe-instance-refreshes \
+              --auto-scaling-group-name csye6225-asg \
+              --instance-refresh-ids ${{ env.REFRESH_ID }} \
+              --query 'InstanceRefreshes[0].Status' --output text)
+            echo "Current Instance Refresh Status: $STATUS"
+            if [ "$STATUS" == "Successful" ]; then
+              echo "Instance refresh completed successfully."
+              break
+            elif [ "$STATUS" == "Failed" ]; then
+              echo "Instance refresh failed."
+              exit 1
+            fi
+            if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
+              echo "Instance refresh did not complete within the maximum retry count."
+              exit 1
+            fi
+            RETRY_COUNT=$((RETRY_COUNT + 1))
+            sleep 30
+          done
