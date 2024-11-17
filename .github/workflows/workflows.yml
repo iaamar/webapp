@@ -49,8 +49,8 @@ jobs:
         env:
           PGPASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          echo "Dropping and recreating tables..."
-          psql -h localhost -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_DATABASE }} -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+          echo "Dropping and recreating schema..."
+          psql -h localhost -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_DATABASE }} -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO ${{ secrets.DB_USER }}; GRANT ALL ON SCHEMA public TO public;"
 
       - name: Verify Database Connection
         run: |
@@ -65,4 +65,4 @@ jobs:
           DB_DATABASE: ${{ secrets.DB_DATABASE }}
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        run: npm test
+        run: npm test -- --runInBand --no-cache
