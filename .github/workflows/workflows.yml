@@ -36,28 +36,31 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+      
+      - name: Set Test Schema
+        run: echo "TEST_SCHEMA=test_${{ github.run_id }}" >> $GITHUB_ENV
 
-      - name: Wait for PostgreSQL
+      - name: Ensure Database Readiness
         run: |
+          RETRIES=10
           until pg_isready -h localhost -p 5432 -U ${{ secrets.DB_USER }}; do
             echo "Waiting for PostgreSQL to be ready..."
-            sleep 1
+            RETRIES=$((RETRIES-1))
+            if [ $RETRIES -le 0 ]; then
+              echo "PostgreSQL did not become ready in time."
+              exit 1
+            fi
+            sleep 5
           done
-          sleep 5  # Additional delay to ensure readiness
 
-      - name: Drop and Recreate Database Tables
+      - name: Initialize Database
         env:
           PGPASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          echo "Dropping and recreating schema..."
-          psql -h localhost -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_DATABASE }} -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO ${{ secrets.DB_USER }}; GRANT ALL ON SCHEMA public TO public;"
-
-      - name: Verify Database Connection
-        run: |
-          PGPASSWORD="${{ secrets.DB_PASSWORD }}" psql -h localhost -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_DATABASE }} -c "SELECT 1"
-        env:
-          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
-
+          echo "Setting up test schema..."
+          psql -h localhost -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_DATABASE }} -c \
+          "CREATE SCHEMA IF NOT EXISTS test_${{ github.run_id }}; SET search_path TO test_${{ github.run_id }};"
+  
       - name: Run Tests
         env:
           DB_HOST: localhost
@@ -65,4 +68,5 @@ jobs:
           DB_DATABASE: ${{ secrets.DB_DATABASE }}
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          TEST_SCHEMA: test_${{ github.run_id }}
         run: npm test -- --runInBand --no-cache
