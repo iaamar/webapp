@@ -69,4 +69,4 @@ jobs:
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           TEST_SCHEMA: test_${{ github.run_id }}
-        run: npm test -- --runInBand --no-cache
+        run: npm test -- --runInBand --no-cache 
