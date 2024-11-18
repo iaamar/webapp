@@ -1,7 +1,7 @@
 name: Packer Build Image Workflow 
 
 on:
-  pull_request:
+  push:
     branches:
       - main
 
@@ -66,16 +66,7 @@ jobs:
             -var "ssh_username=${{ secrets.SSH_USERNAME }}" \
             aws.pkr.hcl
       
-      - name: Step 7 - Share AMI with other AWS accounts
-        id: share_ami
-        run: |
-          echo "Sharing AMI with other AWS accounts..."
-          aws ec2 modify-image-attribute \
-            --image-id $(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2) \
-            --launch-permission "{\"Add\": [{\"UserId\":\"${{ secrets.DEMO_AWS_ACCOUNT_ID }}\"}]}" \
-            --region ${{ secrets.AWS_DEFAULT_REGION }}
-      
-      - name: Step 8 - Retrieve AMI ID and Update Workflow Outputs
+      - name: Step 7 - Retrieve AMI ID and Update Workflow Outputs
         id: updating 
         run: | 
           echo "Retrieving AMI ID from manifest.json"
@@ -115,17 +106,33 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_PROD }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_PROD }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
-
-      - name: Step 2 - Update Launch Template with the Latest AMI ID
+      
+      - name: Step 2 - Retrieve Launch Template ID
+        id: fetch_launch_template
+        run: |
+          echo "Fetching Launch Template ID for auto-scaling group..."
+          LAUNCH_TEMPLATE_ID=$(aws autoscaling describe-auto-scaling-groups \
+            --auto-scaling-group-name csye6225-asg \
+            --query "AutoScalingGroups[0].LaunchTemplate.LaunchTemplateId" --output text)
+          
+          if [ "$LAUNCH_TEMPLATE_ID" == "None" ]; then
+            echo "Failed to fetch Launch Template ID. Ensure the auto-scaling group exists."
+            exit 1
+          fi
+      
+          echo "Launch Template ID fetched: $LAUNCH_TEMPLATE_ID"
+          echo "LAUNCH_TEMPLATE_ID=$LAUNCH_TEMPLATE_ID" >> $GITHUB_ENV
+      
+      - name: Step 3 - Update Launch Template with the Latest AMI ID
         id: configuring
         run: |
           aws ec2 create-launch-template-version \
-            --launch-template-id ${{ secrets.LAUNCH_TEMPLATE_ID }} \
+            --launch-template-id ${{ env.LAUNCH_TEMPLATE_ID }} \
             --launch-template-data '{"ImageId":"${{ needs.packer_build_ami.outputs.ami_id }}"}' \
-            --source-version 1 \
+            --source-version '$Latest' \
             --no-cli-pager
 
-      - name: Step 3 - Start Instance Refresh
+      - name: Step 4 - Start Instance Refresh
         id: start_refresh
         run: |
           REFRESH_ID=$(aws autoscaling start-instance-refresh \
@@ -133,7 +140,7 @@ jobs:
             --query 'InstanceRefreshId' --output text)
           echo "REFRESH_ID=${REFRESH_ID}" >> $GITHUB_ENV
     
-      - name: Step 4 - Wait for Instance Refresh Completion
+      - name: Step 5 - Wait for Instance Refresh Completion
         run: |
           echo "Waiting for instance refresh to complete..."
           MAX_RETRIES=60
