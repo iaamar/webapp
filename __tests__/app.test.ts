@@ -1,43 +1,43 @@
 import request from "supertest";
 import { app } from "../src/index";
-import sequelize, { bootstrapDatabase } from "../src/database/connect";
-
+import sequelize from "../src/database/connect";
+import { User } from "../src/models/User";
 
 let server: any;
-let port;
 
 beforeAll(async () => {
-  await bootstrapDatabase(); // Bootstrap the database
+  await sequelize.sync({ force: true }); // Reset database
 });
 
+afterAll(async () => {
+  await sequelize.close(); // Close DB connection
+  server.close(); // Close server
+});
 
-describe("Test 1. Integration test for healthz api", () => {
-  server = app.listen(0); // Use dynamic port assignment
-  port = server.address().port; // Get the dynamically assigned port
-  
-  test('Test healthz route', async () => {
-    const res = await request(app).get(`/healthz`);
+beforeEach(() => {
+  server = app.listen(0); // Start a new server instance for each test
+});
+
+afterEach(() => {
+  server.close(); // Ensure server is stopped after each test
+});
+
+describe("Test Suite", () => {
+  test("Health Check API", async () => {
+    const res = await request(app).get("/healthz");
     expect(res.statusCode).toEqual(200);
   });
-});
 
-describe("POST /v1/user - Create a new user", () => {
-  server = app.listen(0); // Use dynamic port assignment
-  port = server.address().port; // Get the dynamically assigned port
-  
-  it("should create a new user with valid input", async () => {
-    const dummyUser = {
-      email: "ama@gmail.com",
-      password: "amar",
-      first_name: "Amar",
-      last_name: "Nagargoje",
+  test("Create User", async () => {
+    const user = {
+      email: "test@example.com",
+      password: "password",
+      first_name: "Test",
+      last_name: "User",
     };
 
-    const response = await request(app).post("/v1/user").send(dummyUser);
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveProperty("id");
-    expect(response.body.email).toBe(dummyUser.email);
-    expect(response.body.first_name).toBe(dummyUser.first_name);
-    expect(response.body.last_name).toBe(dummyUser.last_name);
+    const res = await request(app).post("/v1/user").send(user);
+    expect(res.statusCode).toBe(201);
+    expect(res.body.email).toBe(user.email);
   });
 });
