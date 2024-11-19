@@ -48,8 +48,8 @@ app.post("/v1/user", createUser);
 app.put("/v1/user/self", [...auth, checkVerifiedUser], updateUser);
 // Respond with 405 Method Not Allowed for unsupported methods on /v1/user/self
 app.all("/v1/user/self", otherUserRoutes);
-// GET /v1/user/verify - Verify User Email
-app.get("/v1/user/self/verify", verifyUser);
+// GET /user/verify - Verify User Email
+app.get("/user/verify", verifyUser);
 
 // Profile Picture Routes
 
