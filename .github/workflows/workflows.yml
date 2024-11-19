@@ -32,35 +32,11 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '21.7.3'
+          node-version: '18'
 
       - name: Install dependencies
         run: npm install
-      
-      - name: Set Test Schema
-        run: echo "TEST_SCHEMA=test_${{ github.run_id }}" >> $GITHUB_ENV
-
-      - name: Ensure Database Readiness
-        run: |
-          RETRIES=10
-          until pg_isready -h localhost -p 5432 -U ${{ secrets.DB_USER }}; do
-            echo "Waiting for PostgreSQL to be ready..."
-            RETRIES=$((RETRIES-1))
-            if [ $RETRIES -le 0 ]; then
-              echo "PostgreSQL did not become ready in time."
-              exit 1
-            fi
-            sleep 5
-          done
-
-      - name: Initialize Database
-        env:
-          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
-        run: |
-          echo "Setting up test schema..."
-          psql -h localhost -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_DATABASE }} -c \
-          "CREATE SCHEMA IF NOT EXISTS test_${{ github.run_id }}; SET search_path TO test_${{ github.run_id }};"
-  
+     
       - name: Run Tests
         env:
           DB_HOST: localhost
@@ -69,4 +45,4 @@ jobs:
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           TEST_SCHEMA: test_${{ github.run_id }}
-        run: npm test --DetectOpenHandles --forceExit
+        run: npm test -- --detectOpenHandles --forceExit

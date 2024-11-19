@@ -7,23 +7,31 @@ import {
   updateUser,
   verifyUser,
 } from "./controller/userController";
-import { basicAuth, checkDatabaseConnection, checkVerifiedUser } from "./auth/userAuth";
+import {
+  basicAuth,
+  checkDatabaseConnection,
+  checkVerifiedUser,
+} from "./auth/userAuth";
 import {
   deleteProfilePic,
   getProfilePic,
   imageValidation,
   upload,
-  uploadProfilePic
+  uploadProfilePic,
 } from "./controller/imageController";
 import { healthCheck } from "./controller/healthzController";
-import { methodNotAllowed, otherUserRoutes, picMethodNotAllowed } from "./helper/handleError";
+import {
+  methodNotAllowed,
+  otherUserRoutes,
+  picMethodNotAllowed,
+} from "./helper/handleError";
 import logger from "../utils/logger";
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 9001;
-
+let server: any = null;
 // Middleware to parse JSON bodies
 app.use(express.json());
 
@@ -54,12 +62,18 @@ app.get("/user/verify", verifyUser);
 // Profile Picture Routes
 
 // POST /v1/user/self/pic - Upload Profile Picture
-app.post("/v1/user/self/pic", [...auth, checkVerifiedUser], upload.single("file"), imageValidation, uploadProfilePic);
+app.post(
+  "/v1/user/self/pic",
+  [...auth, checkVerifiedUser],
+  upload.single("file"),
+  imageValidation,
+  uploadProfilePic
+);
 // GET /v1/user/self/pic - Get Profile Picture
 app.get("/v1/user/self/pic", [...auth, checkVerifiedUser], getProfilePic);
 // Delete /v1/user/self/pic - Delete Profile Picture
 app.delete("/v1/user/self/pic", [...auth, checkVerifiedUser], deleteProfilePic);
-// Unsupported /v1/user/self/pic 
+// Unsupported /v1/user/self/pic
 app.head("/v1/user/self/pic", picMethodNotAllowed);
 app.options("/v1/user/self/pic", picMethodNotAllowed);
 app.patch("/v1/user/self/pic", picMethodNotAllowed);
@@ -70,16 +84,12 @@ const startServer = async () => {
   try {
     logger.info("Starting the server...");
     await bootstrapDatabase(); // Bootstrap the database before starting the server
-    app.listen(port, () => {
+    server = app.listen(port, () => {
       logger.info(`Server is running on port ${port}`);
-      console.log(`Server is running on port ${port}`);
     });
+    return server; // Return server instance
   } catch (error) {
     logger.error(
-      "Error bootstrapping the database or starting the server:",
-      error
-    );
-    console.error(
       "Error bootstrapping the database or starting the server:",
       error
     );
@@ -90,4 +100,4 @@ const startServer = async () => {
 // Initialize the server
 startServer();
 
-export { app, startServer };
+export { app, server };

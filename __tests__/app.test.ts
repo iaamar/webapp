@@ -2,12 +2,15 @@ import request from "supertest";
 import { app } from "../src/index";
 import sequelize, { bootstrapDatabase } from "../src/database/connect";
 
-
 let server: any;
 let port;
 
 beforeAll(async () => {
   await bootstrapDatabase(); // Bootstrap the database
+});
+
+afterEach(async () => {
+  await sequelize.sync({ force: true }); // Clear the database after each test
 });
 
 afterAll(async () => {
@@ -20,8 +23,8 @@ afterAll(async () => {
 describe("Test 1. Integration test for healthz api", () => {
   server = app.listen(0); // Use dynamic port assignment
   port = server.address().port; // Get the dynamically assigned port
-  
-  test('Test healthz route', async () => {
+
+  test("Test healthz route", async () => {
     const res = await request(app).get(`/healthz`);
     expect(res.statusCode).toEqual(200);
   });
@@ -30,8 +33,8 @@ describe("Test 1. Integration test for healthz api", () => {
 describe("POST /v1/user - Create a new user", () => {
   server = app.listen(0); // Use dynamic port assignment
   port = server.address().port; // Get the dynamically assigned port
-  
-  it("should create a new user with valid input", async () => {
+
+  test("should create a new user with valid input", async () => {
     const dummyUser = {
       email: "ama@gmail.com",
       password: "amar",
