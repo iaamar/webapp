@@ -1,12 +1,12 @@
 import request from "supertest";
 import { app } from "../src/index";
-import sequelize from "../src/database/connect";
+import sequelize, { bootstrapDatabase } from "../src/database/connect";
 import { User } from "../src/models/User";
 
 let server: any;
 
 beforeAll(async () => {
-  await sequelize.sync({ force: true }); // Reset database
+  await bootstrapDatabase(); // Bootstrap the database
 });
 
 afterAll(async () => {
