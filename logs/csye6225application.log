@@ -244,3 +244,365 @@
 {"timestamp":"2024-11-17 05:03:10","level":"info","message":"Create User : /v1/user::POST"}
 {"timestamp":"2024-11-17 05:03:11","level":"info","message":"User created successfully: /v1/user::POST"}
 {"timestamp":"2024-11-17 05:03:11","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 02:49:47","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 02:49:47","level":"error","message":"Error bootstrapping the database or starting the server:"}
+{"timestamp":"2024-11-19 03:17:33","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:17:33","level":"error","message":"Error bootstrapping the database or starting the server:"}
+{"timestamp":"2024-11-19 03:17:59","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:19:44","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:19:44","level":"error","message":"Error bootstrapping the database or starting the server:"}
+{"timestamp":"2024-11-19 03:20:02","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:20:02","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:20:02","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:20:02","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:20:02","level":"info","message":"Server is running on port 9001"}
+{"timestamp":"2024-11-19 03:20:16","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:20:16","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:20:16","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:20:51","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:20:51","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:20:51","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:20:51","level":"info","message":"Server is running on port 9001"}
+{"timestamp":"2024-11-19 03:21:00","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:21:00","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:21:00","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:21:00","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:21:00","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:21:00","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 03:21:00","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 03:21:00","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 03:21:00","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 03:21:00","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 03:22:37","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:22:37","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:22:37","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 03:22:37","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 03:22:38","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 03:22:38","level":"error","message":"Internal server error: /v1/user::POST relation \"users\" does not exist"}
+{"timestamp":"2024-11-19 03:22:38","level":"error","message":"Error bootstrapping the database or starting the server: ConnectionManager.getConnection was called after the connection manager was closed!"}
+{"timestamp":"2024-11-19 03:25:01","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:25:01","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:25:01","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 03:25:01","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 03:25:01","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 03:25:01","level":"error","message":"Internal server error: /v1/user::POST relation \"users\" does not exist"}
+{"timestamp":"2024-11-19 03:25:01","level":"error","message":"Error bootstrapping the database or starting the server: ConnectionManager.getConnection was called after the connection manager was closed!"}
+{"timestamp":"2024-11-19 03:25:19","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:25:19","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:25:19","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:25:19","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:25:40","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:25:40","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:25:40","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:25:40","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:25:40","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:25:40","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 03:25:40","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 03:25:40","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 03:25:40","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 03:25:40","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 03:25:53","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:25:53","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:25:53","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:25:53","level":"error","message":"Error bootstrapping the database or starting the server: Validation error"}
+{"timestamp":"2024-11-19 03:26:06","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:26:06","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:26:06","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:26:06","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:26:06","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:26:06","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 03:26:06","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 03:26:06","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 03:26:06","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 03:26:06","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 03:26:44","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:26:44","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:26:44","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:26:44","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:26:44","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:26:44","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 03:26:44","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 03:26:44","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 03:26:44","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 03:26:44","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 03:27:17","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:27:17","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:27:17","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:27:18","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:27:18","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:27:18","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 03:27:18","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 03:27:18","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 03:27:18","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 03:27:18","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 03:28:26","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:28:26","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:28:26","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:28:26","level":"error","message":"Error bootstrapping the database or starting the server: could not open relation with OID 43789"}
+{"timestamp":"2024-11-19 03:28:46","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:28:46","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:28:46","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:28:46","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:28:46","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:28:46","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 03:28:46","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 03:28:46","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 03:28:47","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 03:28:47","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 03:28:54","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:28:54","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:28:55","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:28:55","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:28:55","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:28:55","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 03:28:55","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 03:28:55","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 03:28:55","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 03:28:55","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 03:32:49","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:32:49","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:32:49","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:32:49","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:32:49","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:32:49","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:32:49","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 03:32:49","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 03:32:49","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 03:32:49","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 03:32:49","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 03:43:42","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:43:42","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:43:42","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:43:42","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:43:42","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:43:42","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 03:43:42","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 03:43:42","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 03:43:43","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 03:43:43","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 03:45:48","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:45:48","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:45:48","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:45:48","level":"error","message":"Error bootstrapping the database or starting the server: could not open relation with OID 43934"}
+{"timestamp":"2024-11-19 03:46:08","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:46:08","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:46:08","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:46:08","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:46:08","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:46:08","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 03:46:08","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 03:46:08","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 03:46:08","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 03:46:08","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 03:46:27","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:46:27","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:46:27","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:46:28","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:46:40","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:46:40","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:46:40","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:46:40","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:46:40","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:46:40","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 03:46:40","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 03:46:40","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 03:46:40","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 03:46:40","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 03:47:15","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:47:16","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:47:16","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:47:16","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:47:16","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:47:16","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 03:47:16","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 03:47:16","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 03:47:16","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 03:47:16","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 03:49:08","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:49:08","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:49:08","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:49:08","level":"error","message":"Error bootstrapping the database or starting the server: could not open relation with OID 44066"}
+{"timestamp":"2024-11-19 03:49:19","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 03:49:19","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:49:19","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 03:49:19","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:49:19","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 03:49:19","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 03:49:19","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 03:49:19","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 03:49:19","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 03:49:19","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 04:06:36","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:06:36","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:06:36","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 04:06:36","level":"info","message":"Server is running on port 9001"}
+{"timestamp":"2024-11-19 04:07:07","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:07:07","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:07:07","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:07:08","level":"error","message":"Error bootstrapping the database or starting the server: could not open relation with OID 44148"}
+{"timestamp":"2024-11-19 04:07:40","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:07:41","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:07:41","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:07:41","level":"error","message":"Error bootstrapping the database or starting the server: could not open relation with OID 44165"}
+{"timestamp":"2024-11-19 04:07:58","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:07:58","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:07:58","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 04:07:58","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 04:07:58","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 04:07:58","level":"error","message":"Internal server error: /v1/user::POST relation \"users\" does not exist"}
+{"timestamp":"2024-11-19 04:07:58","level":"error","message":"Error bootstrapping the database or starting the server: ConnectionManager.getConnection was called after the connection manager was closed!"}
+{"timestamp":"2024-11-19 04:08:33","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:08:33","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:08:33","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 04:08:33","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 04:08:33","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 04:08:33","level":"error","message":"Internal server error: /v1/user::POST relation \"users\" does not exist"}
+{"timestamp":"2024-11-19 04:08:33","level":"error","message":"Error bootstrapping the database or starting the server: ConnectionManager.getConnection was called after the connection manager was closed!"}
+{"timestamp":"2024-11-19 04:16:17","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:16:17","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:16:17","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 04:16:17","level":"info","message":"Server is running on port 9001"}
+{"timestamp":"2024-11-19 04:34:35","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:34:35","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 04:34:35","level":"error","message":"Internal server error: /v1/user::POST Cannot read properties of undefined (reading 'constructor')"}
+{"timestamp":"2024-11-19 04:34:35","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 04:34:35","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 04:34:35","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:34:36","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 04:34:36","level":"info","message":"Server is running on port 9001"}
+{"timestamp":"2024-11-19 04:35:22","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:35:22","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:35:22","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:35:22","level":"error","message":"Error bootstrapping the database or starting the server: could not open relation with OID 44289"}
+{"timestamp":"2024-11-19 04:35:35","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:35:35","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:35:35","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:35:35","level":"error","message":"Error bootstrapping the database or starting the server: could not open relation with OID 44296"}
+{"timestamp":"2024-11-19 04:35:56","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:35:56","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:35:56","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:35:56","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 04:35:56","level":"info","message":"Server is running on port 9001"}
+{"timestamp":"2024-11-19 04:35:56","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 04:35:56","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 04:35:56","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 04:35:56","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 04:35:56","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 04:35:56","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 04:40:11","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:40:11","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:40:11","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:40:11","level":"error","message":"Error bootstrapping the database or starting the server: could not open relation with OID 44341"}
+{"timestamp":"2024-11-19 04:40:22","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:40:22","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:40:22","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:40:22","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 04:40:22","level":"info","message":"Server is running on port 9001"}
+{"timestamp":"2024-11-19 04:40:22","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 04:40:22","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 04:40:22","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 04:40:22","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 04:40:22","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 04:40:22","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 04:40:31","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:40:31","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:40:31","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:40:31","level":"error","message":"Error bootstrapping the database or starting the server: could not open relation with OID 44385"}
+{"timestamp":"2024-11-19 04:40:38","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:40:38","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:40:38","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:40:38","level":"error","message":"Error bootstrapping the database or starting the server: ConnectionManager.getConnection was called after the connection manager was closed!"}
+{"timestamp":"2024-11-19 04:40:44","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:40:45","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:40:45","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:40:45","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 04:40:45","level":"info","message":"Server is running on port 9001"}
+{"timestamp":"2024-11-19 04:40:45","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 04:40:45","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 04:40:45","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 04:40:45","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 04:40:45","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 04:40:45","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 04:42:04","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:42:04","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:42:04","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:42:04","level":"error","message":"Error bootstrapping the database or starting the server: could not open relation with OID 44443"}
+{"timestamp":"2024-11-19 04:42:14","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:42:14","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:42:14","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:42:14","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 04:42:14","level":"info","message":"Server is running on port 9001"}
+{"timestamp":"2024-11-19 04:42:14","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 04:42:14","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 04:42:14","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 04:42:14","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 04:42:14","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 04:42:14","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 04:42:44","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:42:44","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:42:44","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:42:44","level":"error","message":"Error bootstrapping the database or starting the server: could not open relation with OID 44521"}
+{"timestamp":"2024-11-19 04:43:11","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:43:11","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:43:11","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:43:11","level":"error","message":"Error bootstrapping the database or starting the server: could not open relation with OID 44532"}
+{"timestamp":"2024-11-19 04:43:19","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:43:19","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:43:19","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:43:19","level":"error","message":"Error bootstrapping the database or starting the server: ConnectionManager.getConnection was called after the connection manager was closed!"}
+{"timestamp":"2024-11-19 04:43:37","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:43:38","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:43:38","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:43:38","level":"error","message":"Error bootstrapping the database or starting the server: could not open relation with OID 44565"}
+{"timestamp":"2024-11-19 04:43:49","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:43:49","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:43:49","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:43:49","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 04:43:49","level":"info","message":"Server is running on port 9001"}
+{"timestamp":"2024-11-19 04:43:49","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 04:43:49","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 04:43:49","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 04:43:50","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 04:43:50","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 04:43:50","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 04:44:10","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:44:10","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:44:10","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:44:10","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 04:44:10","level":"info","message":"Server is running on port 9001"}
+{"timestamp":"2024-11-19 04:44:10","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 04:44:10","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 04:44:10","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 04:44:10","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 04:44:10","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 04:44:10","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 04:47:26","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:47:44","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:47:44","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:48:06","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:48:06","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:48:06","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:48:06","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 04:48:06","level":"info","message":"Server is running on port 9001"}
+{"timestamp":"2024-11-19 04:50:13","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:50:14","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:50:14","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:50:14","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 04:50:14","level":"info","message":"Server is running on port 9001"}
+{"timestamp":"2024-11-19 04:50:14","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 04:50:14","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 04:50:14","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 04:50:14","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 04:50:14","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 04:50:14","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 04:50:54","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-19 04:50:54","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:50:54","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-19 04:50:54","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 04:50:54","level":"info","message":"Server is running on port 9001"}
+{"timestamp":"2024-11-19 04:50:54","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-19 04:50:54","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-19 04:50:54","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-19 04:50:54","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-19 04:50:54","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-19 04:50:54","level":"info","message":"User information fetched successfully: /v1/user::POST"}

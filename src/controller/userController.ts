@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import { increment, timing } from "../../utils/statsd";
 import logger from "../../utils/logger";
 import AWS from "aws-sdk";
+import crypto from "crypto";
 
 // Initialize SNS
 const sns = new AWS.SNS({ region: process.env.AWS_REGION });
@@ -121,13 +122,15 @@ export const createUser = async (req: Request, res: Response) => {
 
     // Hash the password using bcrypt
     const hashedPassword = await bcrypt.hash(password, 10);
-
+    // Generate a random token
+    const token = crypto.randomBytes(16).toString("hex");
     // Create the user
     const newUser = await User.create({
-      email,
-      first_name,
-      last_name,
+      email: email,
+      first_name: first_name,
+      last_name: last_name,
       password: hashedPassword, // Store the hashed password
+      token: token,
       account_created: new Date(),
       account_updated: new Date(),
     });
@@ -139,6 +142,7 @@ export const createUser = async (req: Request, res: Response) => {
       first_name: newUser.first_name,
       last_name: newUser.last_name,
       email: newUser.email,
+      token: newUser.token,
       account_created: newUser.account_created,
       account_updated: newUser.account_updated,
     });
@@ -146,13 +150,10 @@ export const createUser = async (req: Request, res: Response) => {
     increment("user.post.success");
 
     try {
-      // After successfully creating the user in the database
-      const user_id = newUser.id;
-      const user_email = newUser.email;
       // Publish message to SNS
       if (process.env.SNS_TOPIC_ARN) {
         const params = {
-          Message: JSON.stringify({ user_email: user_email, user_id: user_id }),
+          Message: JSON.stringify({ user_email: newUser.email, token: newUser.token, endpoint: "/user/verify" }),
           TopicArn: process.env.SNS_TOPIC_ARN,
         };
 
@@ -163,7 +164,7 @@ export const createUser = async (req: Request, res: Response) => {
             logger.info("SNS message sent", params.Message);
           }
         });
-        logger.info(`SNS message published for user ${user_email}`);
+        logger.info(`SNS message published for user ${newUser.email}`);
         increment("user.post.sns");
       }
     } catch (error) {
@@ -267,13 +268,13 @@ export const verifyUser = async (
     // Extract token and expiration time from query parameters
     const { token } = req.query;
     // Look up user by user_id (token)
-    const user = await User.findOne({ where: { id: token } });
+    const user = await User.findOne({ where: { token: token } });
 
     if (!user) {
-      logger.error("User not found: /v1/user/self/verify::GET");
+      logger.error("User not found or invalid token: /v1/user/self/verify::GET");
       res.status(404).json({
         error: "Not Found",
-        message: "User not found",
+        message: "User not found or invalid token",
       });
       return;
     }
@@ -286,7 +287,7 @@ export const verifyUser = async (
     // Validate required query parameters, make sure token and expires are not null
     if (!token || !expires || expires === 0) {
       logger.error(
-        "Missing or invalid token or expires parameter: /v1/user/self/verify::GET",
+        "Missing token or null expired parameter: /v1/user/self/verify::GET",
         { token, expires }
       );
       res.status(400).json({
@@ -311,6 +312,7 @@ export const verifyUser = async (
     // Mark the user's email as verified
     user.email_verified = true;
     user.account_updated = new Date();
+    user.token = ""; // Clear the token after verification
     await user.save();
 
     logger.info("User verified successfully: /v1/user/self/verify::GET", {

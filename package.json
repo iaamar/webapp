@@ -6,7 +6,7 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "build": "tsc",
-    "test": "jest --forceExit"
+    "test": "jest"
   },
   "keywords": [
     "webapp",
@@ -38,6 +38,7 @@
     "app-root-path": "^3.1.0",
     "aws-sdk": "^2.1692.0",
     "bcrypt": "^5.1.1",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "multer": "^1.4.5-lts.1",

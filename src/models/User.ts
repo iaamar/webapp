@@ -8,6 +8,7 @@ export class User extends Model {
   public password!: string;
   public email!: string;
   public email_verified!: boolean;
+  public token!: string;
   public account_created!: Date;
   public account_updated!: Date;
 }
@@ -41,6 +42,10 @@ export const initUserModel = (sequelize: Sequelize) => {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
         allowNull: false,
+      },
+      token: {
+        type: DataTypes.STRING,
+        allowNull: true,
       },
       account_created: {
         type: DataTypes.DATE,
