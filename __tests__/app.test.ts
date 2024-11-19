@@ -4,22 +4,9 @@ import sequelize, { bootstrapDatabase } from "../src/database/connect";
 import { User } from "../src/models/User";
 
 let server: any;
-
 beforeAll(async () => {
-  await bootstrapDatabase(); // Bootstrap the database
-});
-
-afterAll(async () => {
-  await sequelize.close(); // Close DB connection
-  server.close(); // Close server
-});
-
-beforeEach(() => {
-  server = app.listen(0); // Start a new server instance for each test
-});
-
-afterEach(() => {
-  server.close(); // Ensure server is stopped after each test
+  await bootstrapDatabase();
+  server = app.listen(9001);
 });
 
 describe("Test Suite", () => {
