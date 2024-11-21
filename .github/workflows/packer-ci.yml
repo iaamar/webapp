@@ -4,20 +4,6 @@ on:
   pull_request:
     branches:
       - main
-env:
-  PKR_VAR_ami_name: ${{ secrets.AMI_NAME }}
-  PKR_VAR_ami_regions: ${{ secrets.AMI_REGIONS }}
-  PKR_VAR_ami_description: ${{ secrets.AMI_DESCRIPTION }}
-  PKR_VAR_source_ami: ${{ secrets.SOURCE_AMI }}
-  PKR_VAR_instance_type: ${{ secrets.INSTANCE_TYPE }}
-  PKR_VAR_ssh_username: ${{ secrets.SSH_USERNAME }}
-  PKR_VAR_region: ${{ secrets.REGION }}
-  PKR_VAR_db_user: ${{ secrets.DB_USER }}
-  PKR_VAR_db_password: ${{ secrets.DB_PASSWORD }}
-  PKR_VAR_db_name: ${{ secrets.DB_DATABASE }}
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  AWS_DEFAULT_REGION: ${{ secrets.REGION }}
         
 jobs:
   build:
@@ -36,7 +22,7 @@ jobs:
     
     - name: Create webapp.zip
       run: |
-        zip -r webapp.zip . -x "*.git*" "node_modules/*" "packer/aws.auto.pkrvars.hcl"
+        zip -r webapp.zip . -x "*.git*" "node_modules/*"
   
     - name: Install plugins
       run: packer init .
