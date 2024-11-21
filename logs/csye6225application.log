@@ -606,3 +606,88 @@
 {"timestamp":"2024-11-19 04:50:54","level":"info","message":"Create User : /v1/user::POST"}
 {"timestamp":"2024-11-19 04:50:54","level":"info","message":"User created successfully: /v1/user::POST"}
 {"timestamp":"2024-11-19 04:50:54","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-21 06:30:09","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-21 06:30:09","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-21 06:30:09","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-21 06:30:09","level":"info","message":"Server is running on port 9001"}
+{"timestamp":"2024-11-21 06:30:23","level":"info","message":"Database connection is available:: checkDatabaseConnection"}
+{"timestamp":"2024-11-21 06:30:23","level":"info","message":"Health check point :/healthz"}
+{"timestamp":"2024-11-21 06:30:37","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-21 06:30:37","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-21 06:30:37","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-21 06:30:42","level":"info","message":"Basic Auth Middleware: Start"}
+{"timestamp":"2024-11-21 06:30:42","level":"info","message":"Basic Auth Middleware: Password is valid"}
+{"timestamp":"2024-11-21 06:30:42","level":"error","message":"Access denied: User not verified."}
+{"timestamp":"2024-11-21 06:30:52","level":"info","message":"Basic Auth Middleware: Start"}
+{"timestamp":"2024-11-21 06:30:53","level":"info","message":"Basic Auth Middleware: Password is valid"}
+{"timestamp":"2024-11-21 06:30:53","level":"error","message":"Access denied: User not verified."}
+{"timestamp":"2024-11-21 06:31:09","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-21 06:31:09","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-21 06:31:09","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-21 06:31:18","level":"info","message":"Basic Auth Middleware: Start"}
+{"timestamp":"2024-11-21 06:31:19","level":"info","message":"Basic Auth Middleware: Password is valid"}
+{"timestamp":"2024-11-21 06:31:19","level":"error","message":"Access denied: User not verified."}
+{"timestamp":"2024-11-21 06:33:01","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-21 06:33:01","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-21 06:33:01","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-21 06:33:01","level":"info","message":"Server is running on port 9001"}
+{"timestamp":"2024-11-21 06:33:07","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-21 06:33:07","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-21 06:33:07","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-21 06:33:14","level":"info","message":"Basic Auth Middleware: Start"}
+{"timestamp":"2024-11-21 06:33:14","level":"error","message":"User not found: Basic Auth Middleware"}
+{"timestamp":"2024-11-21 06:33:20","level":"info","message":"Basic Auth Middleware: Start"}
+{"timestamp":"2024-11-21 06:33:20","level":"info","message":"Basic Auth Middleware: Password is valid"}
+{"timestamp":"2024-11-21 06:33:20","level":"info","message":"Get Profile Pic : /v1/user/self/pic::GET"}
+{"timestamp":"2024-11-21 06:33:20","level":"error","message":"Profile pic not found: /v1/user/self/pic::GET"}
+{"timestamp":"2024-11-21 07:09:33","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-21 07:09:33","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-21 07:09:33","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-21 07:09:33","level":"info","message":"Server is running on port 9001"}
+{"timestamp":"2024-11-21 07:09:51","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-21 07:09:52","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-21 07:09:52","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-21 07:09:59","level":"info","message":"Basic Auth Middleware: Start"}
+{"timestamp":"2024-11-21 07:09:59","level":"info","message":"Basic Auth Middleware: Password is valid"}
+{"timestamp":"2024-11-21 07:09:59","level":"error","message":"Access denied: User not verified."}
+{"timestamp":"2024-11-21 07:13:23","level":"info","message":"Basic Auth Middleware: Start"}
+{"timestamp":"2024-11-21 07:13:24","level":"info","message":"Basic Auth Middleware: Password is valid"}
+{"timestamp":"2024-11-21 07:13:24","level":"error","message":"Access denied: User not verified."}
+{"timestamp":"2024-11-21 07:13:44","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-21 07:13:44","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-21 07:13:44","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-21 07:13:44","level":"info","message":"Server is running on port 9001"}
+{"timestamp":"2024-11-21 07:13:49","level":"info","message":"Basic Auth Middleware: Start"}
+{"timestamp":"2024-11-21 07:13:49","level":"error","message":"User not found: Basic Auth Middleware"}
+{"timestamp":"2024-11-21 07:13:55","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-21 07:13:55","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-21 07:13:55","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-21 07:13:59","level":"info","message":"Basic Auth Middleware: Start"}
+{"timestamp":"2024-11-21 07:13:59","level":"info","message":"Basic Auth Middleware: Password is valid"}
+{"timestamp":"2024-11-21 07:13:59","level":"error","message":"Access denied: User not verified!"}
+{"timestamp":"2024-11-21 07:16:40","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-21 07:16:40","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-21 07:16:40","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-21 07:16:40","level":"info","message":"Server is running on port 9001"}
+{"timestamp":"2024-11-21 07:16:42","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-21 07:16:42","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-21 07:16:42","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-21 07:16:47","level":"info","message":"Basic Auth Middleware: Start"}
+{"timestamp":"2024-11-21 07:16:47","level":"info","message":"Basic Auth Middleware: Password is valid"}
+{"timestamp":"2024-11-21 07:16:47","level":"info","message":"Get Profile Pic : /v1/user/self/pic::GET"}
+{"timestamp":"2024-11-21 07:16:47","level":"error","message":"Profile pic not found: /v1/user/self/pic::GET"}
+{"timestamp":"2024-11-21 07:29:06","level":"info","message":"Starting the server..."}
+{"timestamp":"2024-11-21 07:29:06","level":"info","message":"Connection has been established successfully."}
+{"timestamp":"2024-11-21 07:29:06","level":"info","message":"Database bootstrapped and synchronized."}
+{"timestamp":"2024-11-21 07:29:06","level":"info","message":"Server is running on port 9001"}
+{"timestamp":"2024-11-21 07:29:20","level":"info","message":"Create User : /v1/user::POST"}
+{"timestamp":"2024-11-21 07:29:20","level":"info","message":"User created successfully: /v1/user::POST"}
+{"timestamp":"2024-11-21 07:29:20","level":"info","message":"User information fetched successfully: /v1/user::POST"}
+{"timestamp":"2024-11-21 07:29:37","level":"info","message":"Basic Auth Middleware: Start"}
+{"timestamp":"2024-11-21 07:29:37","level":"info","message":"Basic Auth Middleware: Password is valid"}
+{"timestamp":"2024-11-21 07:29:37","level":"error","message":"Access denied: User not verified."}
+{"timestamp":"2024-11-21 07:29:45","level":"info","message":"Basic Auth Middleware: Start"}
+{"timestamp":"2024-11-21 07:29:45","level":"info","message":"Basic Auth Middleware: Password is valid"}
+{"timestamp":"2024-11-21 07:29:45","level":"info","message":"User is verified."}
+{"timestamp":"2024-11-21 07:29:45","level":"info","message":"Get Profile Pic : /v1/user/self/pic::GET"}
+{"timestamp":"2024-11-21 07:29:45","level":"error","message":"Profile pic not found: /v1/user/self/pic::GET"}

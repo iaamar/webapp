@@ -19,10 +19,9 @@ export const handleError = (
   message: string,
   error: any
 ) => {
-  res.status(statusCode).send().json({
-    error: error,
-    message: message,
-    });
+    if (!res.headersSent) {
+      res.status(statusCode).json({ error: message, details: error });
+    }
 };
 
 export const otherUserRoutes = async (req: Request, res: Response) => {
