@@ -15,6 +15,7 @@ source "amazon-ebs" "main" {
   source_ami      = var.source_ami
   ssh_username    = var.ssh_username
   ami_users       = var.ami_users
+  ami_regions     = [var.region]
 
   launch_block_device_mappings {
     delete_on_termination = true
@@ -53,12 +54,12 @@ build {
     ]
   }
   post-processor "manifest" {
-        output = "manifest.json"
-        strip_path = true
-        custom_data = {
-          my_custom_data = "example"
-        }
+    output     = "manifest.json"
+    strip_path = true
+    custom_data = {
+      my_custom_data = "example"
     }
+  }
 }
 
 
@@ -83,46 +84,6 @@ variable "source_ami" {
 }
 
 variable "ssh_username" {
-  type    = string
-  default = ""
-}
-
-variable "db_user" {
-  type    = string
-  default = ""
-}
-
-variable "db_password" {
-  type    = string
-  default = ""
-}
-
-variable "db_database" {
-  type    = string
-  default = ""
-}
-
-variable "db_host" {
-  type    = string
-  default = ""
-}
-
-variable "db_port" {
-  type    = string
-  default = ""
-}
-
-variable "aws_access_key_id" {
-  type    = string
-  default = ""
-}
-
-variable "aws_secret_access_key" {
-  type    = string
-  default = ""
-}
-
-variable "aws_default_region" {
   type    = string
   default = ""
 }
