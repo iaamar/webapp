@@ -312,7 +312,6 @@ export const verifyUser = async (
     // Mark the user's email as verified
     user.email_verified = true;
     user.account_updated = new Date();
-    user.token = ""; // Clear the token after verification
     await user.save();
 
     logger.info("User verified successfully: /v1/user/self/verify::GET", {

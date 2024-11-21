@@ -5,6 +5,7 @@ import logger from "../../utils/logger";
 import { increment, timing } from "../../utils/statsd";
 import multer from "multer";
 import { handleError } from "../helper/handleError";
+import { User } from "../models/User";
 
 const s3 = new AWS.S3();
 const bucketName = process.env.S3_BUCKET_NAME;
@@ -44,18 +45,43 @@ export const getProfilePic = async (
   logger.info("Get Profile Pic : /v1/user/self/pic::GET");
   const apiStart = Date.now();
   try {
-    const authUserId = req.authUser?.id;
-    if (!authUserId) {
+    const authHeader = req.headers["authorization"];
+    const base64Credentials = authHeader?.split(" ")[1] || "";
+    const credentials = Buffer.from(base64Credentials, "base64").toString(
+      "ascii"
+    );
+    const [authenticatedEmail] = credentials.split(":");
+
+    // Reject any query parameters
+    if (Object.keys(req.query).length > 0) {
       logger.error(
-        "Unauthorized: Authenticated user not found in request:: /v1/user/self/pic::DELETE"
+        "Query parameters are not allowed for this route: /v1/user/self::GET"
       );
-      res.status(401).json({
-        error: "Unauthorized",
-        message: "Authenticated user not found:: /v1/user/self/pic::DELETE",
+      res.status(400).json({
+        error: "Bad Request",
+        message: "Query parameters are not allowed for this route",
       });
       return;
     }
-    const image = await Image.findOne({ where: { user_id: authUserId } });
+    // reject any body parameters
+    if (Object.keys(req.body).length > 0) {
+      logger.error(
+        "Body parameters are not allowed for this route: /v1/user/self::GET"
+      );
+      res.status(400).json({
+        error: "Bad Request",
+        message: "Body parameters are not allowed for this route",
+      });
+      return;
+    }
+    const user = await User.findOne({ where: { email: authenticatedEmail } });
+    if (!user) {
+      logger.error("User not found: /v1/user/self/pic::GET");
+      handleError(res, 404, "User not found", null);
+      return;
+    }
+
+    const image = await Image.findOne({ where: { user_id: user.id } });
     if (!image) {
       logger.error("Profile pic not found: /v1/user/self/pic::GET");
       handleError(res, 404, "Profile picture not found", null);
