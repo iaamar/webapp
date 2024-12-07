@@ -1,5 +1,5 @@
 ami_description       = "This is a custom AMI for CSYE6225"
 instance_type         = "t2.small"
 region                = "us-east-2"
-source_ami            = "ami-0c995fbcf9922249"
+source_ami            = "ami-042186b9a02d5de76"
 ssh_username          = "ubuntu"
