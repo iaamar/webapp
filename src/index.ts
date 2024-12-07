@@ -46,6 +46,11 @@ app.get("/healthz", dbCheck, healthCheck);
 // Respond with 405 Method Not Allowed for unsupported methods on /healthz
 app.all("/healthz", methodNotAllowed);
 
+// cicd check GET route
+app.get("/cicd", dbCheck, healthCheck);
+// Respond with 405 Method Not Allowed for unsupported methods on /cicd
+app.all("/cicd", methodNotAllowed);
+
 // User Routes
 
 // GET /v1/user/self - Get User Information excluding password
