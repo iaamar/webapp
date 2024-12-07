@@ -90,4 +90,5 @@ variable "ssh_username" {
 
 variable "ami_users" {
   type    = list(string)
+  default = ["615299759384"]
 }
